@@ -1,0 +1,34 @@
+package com.infra.factura.business.cfdi.ii.schema;
+
+import java.util.Calendar;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import com.infra.cliente.addenda.Date;
+
+public class Adapter3 extends XmlAdapter<String, Date> {
+
+	public Date unmarshal(String value) {
+		java.util.Date fec = com.infra.factura.business.schema.util.SATDateTimeBinder.parseDateTimeXML(value);
+		Calendar calendario = Calendar.getInstance();
+		Date fecha = new Date();
+
+		calendario.setTime(fec);
+		calendario.set(Calendar.MILLISECOND, 0);
+		fecha.setTime(calendario.getTime().getTime());
+		fecha.setFecha(value);
+
+		return fecha;
+	}
+
+	public String marshal(Date value) {
+		String fecha = com.infra.factura.business.schema.util.SATDateTimeBinder.printDateTime(value);
+
+		if (value != null && fecha != null && !fecha.equals(value.getFecha())) {
+			fecha = value.getFecha();
+		}
+
+		return fecha;
+	}
+
+}

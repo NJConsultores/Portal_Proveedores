@@ -1,0 +1,163 @@
+package com.infra.core.security;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import com.infra.core.model.UsuarioWS;
+import com.infra.core.service.WSLoginService;
+import com.infra.core.ws.login.holders.ZfeCprovOpcHolder;
+import com.infra.core.ws.login.holders.ZfeSLoginProvHolder;
+
+/**
+ *
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+public class AutentificadorProvider implements AuthenticationProvider {
+
+//	@Autowired
+//	private WSLoginService wsLoginService;
+
+	public Authentication authenticate(Authentication authentication) {
+		Authentication auth = null;
+		String claveUsuario = authentication.getName();
+		String contrasena = authentication.getCredentials().toString();
+//		System.out.println("Datos de acceso: " + claveUsuario + " y " + contrasena);
+//		Map<String, Object> resultado = wsLoginService.iniciarSesion("S", claveUsuario, contrasena);
+//		Integer status = (Integer) resultado.get("status");
+//		if (1 == status) {
+//			throw new BadCredentialsException((String) resultado.get("mensaje"));
+//		} else {
+//			auth = procesarSesion(claveUsuario, contrasena, (ZfeCprovOpcHolder) resultado.get("opciones"),
+//					(ZfeSLoginProvHolder) resultado.get("datos"));
+//		}
+		if(!("reyna".equals(claveUsuario) && "password".equals(contrasena))){
+			throw new BadCredentialsException("Credenciales incorrectas, verifique sus datos e intente nuevamente");
+		} else {
+			auth = procesarSesion(claveUsuario, contrasena, null, null);
+		}
+		return auth;
+	}
+
+	public boolean supports(Class<?> authentication) {
+		return authentication.equals(UsernamePasswordAuthenticationToken.class);
+	}
+
+	private Authentication procesarSesion(String usuario, String contrasena, ZfeCprovOpcHolder opciones,
+			ZfeSLoginProvHolder datos) {
+		UsuarioWS usuarioWS = new UsuarioWS();
+//		String sociedad = datos.value.getLifnr();
+//		String idProveedor = datos.value.getBukrs();
+//		String nombre = datos.value.getName1().concat(" ").concat(datos.value.getName2());
+//		String email = datos.value.getEmail();
+//		String rfc = datos.value.getStcd1();
+//		String dias = opciones.value.getConsper().toString();
+		
+		String sociedad = "ENABLE";
+		String idProveedor = "PROV001";
+		String nombre = "REYNA LAGUNAS ARANDA";
+		String email = "reyna1730@gmail.com";
+		String rfc = "LAAR891117T98";
+		String dias = "5";
+
+		usuarioWS.setIdUsuario(idProveedor);
+		usuarioWS.setPassword(contrasena);
+		usuarioWS.setNombreUser(usuario);
+		usuarioWS.setNombre(nombre);
+		usuarioWS.setCorreo(email);
+		usuarioWS.setRfc(rfc);
+		usuarioWS.setSociedad(sociedad);
+		usuarioWS.setConsper(dias);
+
+		AbstractAuthenticationToken auth = new UsernamePasswordAuthenticationToken(usuarioWS, contrasena,
+				procesarAuthorities(opciones));
+		auth.setDetails(usuarioWS);
+
+		return auth;
+	}
+
+	private List<GrantedAuthority> procesarAuthorities(ZfeCprovOpcHolder opciones) {
+		List<GrantedAuthority> authorities = new ArrayList();
+			authorities.add(new SimpleGrantedAuthority("ROLE_GET_AVISOS"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_GET_FACTURAS"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_V_CFDI_OC"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_V_CBB_OC"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_V_CFDI"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_V_CBB"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_STAT_RECEPCION"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_GET_OC_PENDIENTES"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_GET_EDO_CTA"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_VENCE_PASS"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_PDF_ADICIONAL"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_MONITOR_SESION"));
+			authorities.add(new SimpleGrantedAuthority("ROLE_VALIDA_XML"));
+			
+			authorities.add(new SimpleGrantedAuthority("ROLE_CONSIGNACION"));
+			
+		
+		// procesar el value de opciones para generar las authorities
+		// Pantalla de avisos
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getAvisos())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_GET_AVISOS"));
+//		}
+//		// Pantalla consulta de facturas
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getListfac())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_GET_FACTURAS"));
+//		}
+//		// Pantalla para recepcion de factura CFDI con OC
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getCfdiocv())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_V_CFDI_OC"));
+//		}
+//		// Pantalla para recepcion de factura CBB con OC
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getCbbocv())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_V_CBB_OC"));
+//		}
+//		// Pantalla para recepcion de factura CFDI sin OC
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getCfdi())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_V_CFDI"));
+//		}
+//		// Pantalla para recepcion de factura CBB sin OC
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getCbb())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_V_CBB"));
+//		}
+//		// Pantalla para estatus de recepcion
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getStatrec())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_STAT_RECEPCION"));
+//		}
+//		// Pantalla para listado de OC pendientes de facturar
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getListaoc())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_GET_OC_PENDIENTES"));
+//		}
+//		// Pantalla para el estado de cuenta
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getEdocta())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_GET_EDO_CTA"));
+//		}
+//		// Bandera que indica que se le debe solicitar el cambio de la
+//		// contrasena
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getPassven())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_VENCE_PASS"));
+//		}
+//		// Bandera que indica si puede o no cargar un PDF adicional
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getPdfotr())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_PDF_ADICIONAL"));
+//		}
+//		// Bandera que indica si puede ver o no el monitor de sesiones activas
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getMonses())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_MONITOR_SESION"));
+//		}
+//		// Bandera que indica si el proveedor puede validar XML Validad
+//		if (ConstantesGenerales.CORE_ROLE_ACTIVO.equals(opciones.value.getValidad())) {
+//			authorities.add(new SimpleGrantedAuthority("ROLE_VALIDA_XML"));
+//		}
+		return authorities;
+	}
+
+}

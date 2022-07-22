@@ -1,0 +1,22 @@
+/**
+ * TableOfZfeCsocAreaRHolder.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws.holders;
+
+import com.infra.cliente.ws.TableOfZfeCsocAreaR;
+
+public final class TableOfZfeCsocAreaRHolder implements javax.xml.rpc.holders.Holder {
+    public TableOfZfeCsocAreaR value;
+
+    public TableOfZfeCsocAreaRHolder() {
+    }
+
+    public TableOfZfeCsocAreaRHolder(TableOfZfeCsocAreaR value) {
+        this.value = value;
+    }
+
+}

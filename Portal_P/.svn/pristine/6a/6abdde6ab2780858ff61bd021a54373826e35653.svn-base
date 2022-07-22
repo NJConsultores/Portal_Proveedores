@@ -1,0 +1,90 @@
+/**
+ * ZfeTListaIi.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeTListaIi  implements java.io.Serializable {
+    private ZfeSListaIi[] item;
+
+    public ZfeTListaIi() {
+    }
+
+    public ZfeTListaIi(
+           ZfeSListaIi[] item) {
+           this.item = item;
+    }
+
+
+    /**
+     * Gets the item value for this ZfeTListaIi.
+     * 
+     * @return item
+     */
+    public ZfeSListaIi[] getItem() {
+        return item;
+    }
+
+
+    /**
+     * Sets the item value for this ZfeTListaIi.
+     * 
+     * @param item
+     */
+    public void setItem(ZfeSListaIi[] item) {
+        this.item = item;
+    }
+
+    public ZfeSListaIi getItem(int i) {
+        return this.item[i];
+    }
+
+    public void setItem(int i, ZfeSListaIi _value) {
+        this.item[i] = _value;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof ZfeTListaIi)) return false;
+        ZfeTListaIi other = (ZfeTListaIi) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = true && 
+            ((this.item==null && other.getItem()==null) || 
+             (this.item!=null &&
+              java.util.Arrays.equals(this.item, other.getItem())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = 1;
+        if (getItem() != null) {
+            for (int i=0;
+                 i<java.lang.reflect.Array.getLength(getItem());
+                 i++) {
+                java.lang.Object obj = java.lang.reflect.Array.get(getItem(), i);
+                if (obj != null &&
+                    !obj.getClass().isArray()) {
+                    _hashCode += obj.hashCode();
+                }
+            }
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+}

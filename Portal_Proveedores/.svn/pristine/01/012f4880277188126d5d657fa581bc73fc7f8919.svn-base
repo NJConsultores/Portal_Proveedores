@@ -1,0 +1,16 @@
+/*
+ * Prospectiva Anexo 24
+ */
+
+package com.infra.core.exposition;
+
+
+/**
+ *
+ * @author Jessika Cecilia Hernandez García <reyna.lagunas.aranda@gmail.com>
+ */
+public interface ToolbarGestion{
+    public void validar();
+    public void generar();
+    public void cancelar();
+}

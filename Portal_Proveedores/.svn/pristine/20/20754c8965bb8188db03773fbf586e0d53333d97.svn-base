@@ -1,0 +1,107 @@
+package com.infra.core.exposition;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
+
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.infra.cliente.service.ws.WSService;
+import com.infra.cliente.ws.ZfeSAviso;
+import com.infra.core.util.CoreConstantes;
+import com.infra.core.util.SessionUtil;
+import com.infra.util.AbstractControlador;
+
+/**
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+@Controller
+@Scope("session")
+public class AvisosMB extends AbstractControlador {
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(AvisosMB.class);
+	@Autowired
+	private WSService wsService;
+	@Autowired
+	private InternacionalizacionMB internacionalizacionMB;
+	private List<ZfeSAviso> avisos;
+	private StreamedContent descarga;
+
+	@PostConstruct
+	protected void init() {
+		loadAvisos();
+	}
+
+	public void loadAvisos() {
+		try {
+			avisos = new ArrayList<>();
+			Map<String, Object> respuesta = wsService.getAvisos(getLanguage(), SessionUtil.getUsuarioActual());
+			avisos = (List<ZfeSAviso>) respuesta.get("lista");
+		} catch (Exception e) {
+			logger.debug("Error al recuperar la pantalla de inicio", e);
+		}
+	}
+
+	private String getLanguage() {
+		return ("es".equals(internacionalizacionMB.getLanguage()) ? "S" : "E");
+	}
+
+	public void descartarAviso(short navis) {
+		String respuesta = wsService.descartarMensaje(navis, getLanguage(), SessionUtil.getUsuarioActual());
+		System.out.println("respuesta: " + respuesta);
+		if (null == respuesta || respuesta.isEmpty()) {
+			transaccionCompletada(TRANSACCION_CORRECTA, SEVERITY_FACES_CORRECTO, "OK", CoreConstantes.MSG_DESCARTAR_OK);
+		} else {
+			transaccionErronea("Error", respuesta);
+		}
+	}
+
+	public int checarAvisosProveedor() {
+		loadAvisos();
+		int cuantosAvisosProveedor = 0;
+		for (ZfeSAviso aviso : avisos) {
+			if ("P".equals(aviso.getTpavi())) {
+				cuantosAvisosProveedor++;
+			}
+		}
+		return cuantosAvisosProveedor;
+	}
+
+	public StreamedContent descargarAyuda() {
+		InputStream stream = null;
+		stream = ((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext())
+				.getResourceAsStream("/resources/MANUAL DE USUARIO.pdf");
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		return new DefaultStreamedContent(stream, externalContext.getMimeType("MANUAL DE USUARIO.pdf"),
+				"MANUAL DE USUARIO.pdf");
+	}
+
+	public List<ZfeSAviso> getAvisos() {
+		return avisos;
+	}
+
+	public void setAvisos(List<ZfeSAviso> avisos) {
+		this.avisos = avisos;
+	}
+
+	public StreamedContent getDescarga() {
+		return descarga;
+	}
+
+	public void setDescarga(StreamedContent descarga) {
+		this.descarga = descarga;
+	}
+
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{estatusRecepcionMB.reset()}" />
+		<p:panel header="#{msg['menu.estatus_recepcion']}"
+			styleClass="cfdp-panels" style="min-height: 380px;">
+			<p:messages id="msgOperacion" globalOnly="false" closable="true"
+				showDetail="true" />
+			<h:form id="formConsulta">
+				<h:panelGrid columns="6">
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad"
+						value="#{estatusRecepcionMB.sociedad}"
+						styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{estatusRecepcionMB.sociedades}" var="soc"
+							itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputLabel value="#{msg['fecha.inicial']}" />
+					<p:calendar value="#{estatusRecepcionMB.fechaDesde}"
+						navigator="true" pattern="dd/MM/yyyy"
+						requiredMessage="#{msg['fecha.inicial']}" required="true"
+						showOn="both" readonlyInput="true">
+					</p:calendar>
+					<h:outputLabel value="#{msg['fecha.final']}" />
+					<p:calendar value="#{estatusRecepcionMB.fechaHasta}"
+						navigator="true" pattern="dd/MM/yyyy"
+						requiredMessage="#{msg['fecha.final']}" required="true"
+						showOn="both" readonlyInput="true">
+					</p:calendar>
+				</h:panelGrid>
+				<p:commandButton value="#{msg['accion.buscar']}"
+					actionListener="#{estatusRecepcionMB.consultarStatus()}"
+					update=":tablaResultadosForm :msgOperacion"
+					onerror="PF('statusDialog').hide()"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide()" />
+			</h:form>
+			<h:form id="tablaResultadosForm">
+				<div
+					style="font-weight: bold; font-size: 13px; float: right; margin-right: 10px; margin-top: 5px; color: #000;">
+					<h:commandLink onclick="PrimeFaces.monitorDownload(start, stop);">
+						<p:graphicImage name="/images/csv.jpg" value="/images/csv.jpg"
+							width="30" alt="#{msg['msg.exportar.csv']}" />
+						<p:dataExporter type="csv" target="tablaFacturas"
+							fileName="reporteEstatus" encoding="ISO-8859-1" />
+					</h:commandLink>
+				</div>
+				<p:dataTable emptyMessage="" rows="50" paginator="true"
+					value="#{estatusRecepcionMB.listado}" var="f" id="tablaFacturas"
+					lazy="true" paginatorPosition="bottom" widgetVar="resultadoWidget">
+					<p:ajax event="page" onstart="PF('statusDialog').show()"
+						oncomplete="PF('statusDialog').hide()"
+						onerror="PF('statusDialog').hide()" />
+					<p:column
+						headerText="#{msg['aprobacion.agente.aduanal.detalle.factura.titulo']}">
+						<h:outputText value="#{f.XBLNR}" />
+					</p:column>
+					<p:column headerText="#{msg['estatus_rec.fecha']}">
+						<h:outputText value="#{f.FEREC}" />
+					</p:column>
+					<p:column headerText="#{msg['proveedor.estado']}">
+						<h:outputText
+							value="#{f.ESTAT eq 'A' ? msg['esre.aceptada'] : 
+							f.ESTAT eq 'S' ? msg['esre.satisfactorio'] : 
+							f.ESTAT eq 'R' ? msg['esre.en_revision'] :
+							f.ESTAT eq 'D' ? msg['esre.no_addenda'] : 
+							f.ESTAT eq 'F' ? msg['esre.rechazo_fiscal'] : 
+							f.ESTAT eq 'C' ? msg['esre.rechazo_comercial'] : 
+							f.ESTAT eq 'P' ? msg['esre.pendiente'] : 
+							f.ESTAT eq 'N' ? msg['esre.anulada'] : 
+							f.ESTAT eq 'V' ? msg['esre.validacion_fiscal'] : 
+							 msg['esre.error']}" />
+					</p:column>
+					<p:column headerText="#{msg['factura.consulta.mensaje']}">
+						<h:outputText value="#{f.MESGE}" />
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:panel>
+	</ui:define>
+</ui:composition>

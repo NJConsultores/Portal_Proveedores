@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<p:dialog id="dlg_detallePeticion" modal="true" width="100%"
+		position="top" header="#{msg['accion.detalle']}"
+		widgetVar="detallePeticionModal" closable="false">
+		<p:panel header="#{msg['menu.peticionesOferta']}"
+			styleClass="cfdp-panels" style="min-height: 380px;">
+			<h:form id="detallePeticionForm">
+				<p:messages id="messages" globalOnly="false" closable="true"
+					showDetail="true" />
+				<h:panelGrid columns="6">
+					<h:outputText value="#{msg['peticiones.id']}"
+						styleClass="textoNegrita" />
+					<h:outputText value="#{peticionOfertaMB.peticion.EBELN}" />
+					<h:outputLabel value="#{msg['fecha.inicial']}"
+						styleClass="textoNegrita" />
+					<h:outputText value="#{peticionOfertaMB.peticion.KDATB}" />
+					<h:outputLabel value="#{msg['fecha.final']}"
+						styleClass="textoNegrita" />
+					<h:outputText value="#{peticionOfertaMB.peticion.ANGDT}" />
+				</h:panelGrid>
+				<p:separator />
+				<h:panelGrid columns="4">
+					<h:outputText value="#{msg['peticiones.moneda']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_moneda" value="#{peticionOfertaMB.moneda}"
+						styleClass="selectStatic"
+						disabled="#{peticionOfertaMB.cabeceroCargado}"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{peticionOfertaMB.monedas}" var="mone"
+							itemLabel="#{mone.WAERS}" itemValue="#{mone}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputText value="#{msg['peticiones.texto1']}" />
+					<p:inputText value="#{peticionOfertaMB.texto1}"
+						disabled="#{peticionOfertaMB.cabeceroCargado}" />
+					<h:outputText value="#{msg['peticiones.condicion_pago']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_condicion"
+						disabled="#{peticionOfertaMB.cabeceroCargado}"
+						value="#{peticionOfertaMB.condicion}" styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{peticionOfertaMB.condiciones}" var="cond"
+							itemLabel="#{cond.TEXT1}" itemValue="#{cond}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputText value="#{msg['peticiones.texto2']}" />
+					<p:inputText value="#{peticionOfertaMB.texto2}"
+						disabled="#{peticionOfertaMB.cabeceroCargado}" />
+					<h:outputText value="#{msg['peticiones.incoterms']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_incoterm"
+						disabled="#{peticionOfertaMB.cabeceroCargado}"
+						value="#{peticionOfertaMB.incoterm}" styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{peticionOfertaMB.incoterms}" var="inco"
+							itemLabel="#{inco.INCO1} / #{inco.INCO2}" itemValue="#{inco}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputText value="#{msg['peticiones.pdf']}"
+						styleClass="obligatorio" />
+					<p:fileUpload fileUploadListener="#{peticionOfertaMB.manejadorPdf}"
+						label="#{msg['cargar.archivo']}"
+						style="width: 250px !important; height: 70px !important;"
+						mode="advanced" update="messages nombrePdf" auto="true"
+						allowTypes="/(\.|\/)(pdf)$/">
+						<f:attribute name="pos" value="#{f.posicion}" />
+					</p:fileUpload>
+					<p:outputLabel id="nombrePdf"
+						value="#{msg['contiguracion.nombre']}: #{peticionOfertaMB.pdf.fileName}" />
+				</h:panelGrid>
+
+				<p:scrollPanel style="width:100%;height:300px" mode="native">
+					<p:dataTable id="tbl_detalle" emptyMessage=""
+						style="width: 100%; height: 1500px"
+						value="#{peticionOfertaMB.detalles}" var="f">
+						<f:facet name="header">
+							<div style="text-align: center; width: 100%">
+								<p:spacer width="10px" height="1px" />
+								<p:commandButton value="#{msg['accion.guardar']}"
+									icon="ui-icon-check" update=":detallePeticionForm @form"
+									onstart="PF('statusDialog').show();"
+									oncomplete="PF('statusDialog').hide(); PF('detallePeticionModal').hide();"
+									actionListener="#{peticionOfertaMB.guardarDetalles()}" />
+								<p:spacer width="10px" height="1px" />
+								<p:commandButton value="#{msg['accion.cancelar']}"
+									immediate="true" icon="ui-icon-closethick"
+									update=":detallePeticionForm @form"
+									onstart="PF('statusDialog').show();"
+									oncomplete="PF('statusDialog').hide(); PF('detallePeticionModal').hide();"
+									actionListener="#{peticionOfertaMB.cancelarGuardadoDetalles()}" />
+								<p:spacer width="20%" height="1px" />
+							</div>
+						</f:facet>
+						<p:column headerText="#{msg['peticiones.posicion']}">
+							<h:outputText value="#{f.detalle.EBELN}" />
+						</p:column>
+						<p:column headerText="#{msg['peticiones.no_parte']}">
+							<h:outputText value="#{f.detalle.EBELP}" />
+						</p:column>
+						<p:column headerText="#{msg['peticiones.no_material']}">
+							<h:outputText value="#{f.detalle.MATNR}" />
+						</p:column>
+						<p:column headerText="#{msg['peticiones.desc_material']}">
+							<h:outputText value="#{f.detalle.MAKTX}" />
+						</p:column>
+						<p:column headerText="#{msg['peticiones.cantidad']}">
+							<h:outputText value="#{f.detalle.KTMNG}" />
+						</p:column>
+						<p:column headerText="#{msg['peticiones.unidad']}">
+							<h:outputText value="#{f.detalle.MEINS}" />
+						</p:column>
+						<p:column headerText="#{msg['peticiones.precio']}">
+							<p:inputText value="#{f.entradaProveedor.NETPR}" maxlength="15"
+								style="width: 100px !important;" />
+						</p:column>
+						<p:column headerText="#{msg['peticiones.cantidad_prove']}">
+							<p:inputText value="#{f.entradaProveedor.KTMNG}" maxlength="10"
+								style="width: 100px !important;" />
+						</p:column>
+						<p:column headerText="#{msg['peticiones.fecha_entrega']}">
+							<p:calendar value="#{f.fechaEntrega}"
+								style="width: 100px !important;" pattern="yyyy-MM-dd"
+								showOn="both" readonlyInput="true">
+							</p:calendar>
+						</p:column>
+					</p:dataTable>
+				</p:scrollPanel>
+
+			</h:form>
+		</p:panel>
+	</p:dialog>
+
+</ui:composition>

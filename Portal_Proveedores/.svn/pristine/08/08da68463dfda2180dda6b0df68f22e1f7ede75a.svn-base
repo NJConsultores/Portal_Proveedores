@@ -1,0 +1,56 @@
+<definitions
+	xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+	xmlns:wsp="http://www.w3.org/ns/ws-policy" xmlns:wsp1_2="http://schemas.xmlsoap.org/ws/2004/09/policy"
+	xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:tns="http://impl.service.ws.inter.infra.com/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://impl.service.ws.inter.infra.com/"
+	name="FacturaServiceImplService">
+	<import namespace="http://service.ws.inter.infra.com/"
+		location="http://localhost:8080/WebServicesIntermedio/factura?wsdl=1" />
+	<binding xmlns:ns1="http://service.ws.inter.infra.com/" name="FacturaServiceImplPortBinding"
+		type="ns1:FacturaService">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"
+			style="document" />
+		<operation name="status">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="sociedades">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="tipos">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+		<operation name="ostatus">
+			<soap:operation soapAction="" />
+			<input>
+				<soap:body use="literal" />
+			</input>
+			<output>
+				<soap:body use="literal" />
+			</output>
+		</operation>
+	</binding>
+	<service name="FacturaServiceImplService">
+		<port name="FacturaServiceImplPort" binding="tns:FacturaServiceImplPortBinding">
+			<soap:address location="http://localhost:8080/WebServicesIntermedio/factura" />
+		</port>
+	</service>
+</definitions>

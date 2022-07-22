@@ -1,0 +1,327 @@
+package com.infra.cliente.service.ws;
+
+import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import javax.xml.rpc.ServiceException;
+import javax.xml.rpc.holders.StringHolder;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import com.infra.cliente.ws.AVISOSLocator;
+import com.infra.cliente.ws.GET_LISTA_OCLocator;
+import com.infra.cliente.ws.GET_LISTA_SOCLocator;
+import com.infra.cliente.ws.GET_LISTA_TIPOSLocator;
+import com.infra.cliente.ws.Get_lista_areasLocator;
+import com.infra.cliente.ws.Get_lista_iiLocator;
+import com.infra.cliente.ws.Get_lista_monLocator;
+import com.infra.cliente.ws.Get_lista_resp_areaLocator;
+import com.infra.cliente.ws.SET_AVISO_STATUSLocator;
+import com.infra.cliente.ws.ZFE_GET_AVISOS;
+import com.infra.cliente.ws.ZFE_GET_LISTA_AREAS;
+import com.infra.cliente.ws.ZFE_GET_LISTA_II;
+import com.infra.cliente.ws.ZFE_GET_LISTA_MON;
+import com.infra.cliente.ws.ZFE_GET_LISTA_OC;
+import com.infra.cliente.ws.ZFE_GET_LISTA_RESP_AREA;
+import com.infra.cliente.ws.ZFE_GET_LISTA_SOC;
+import com.infra.cliente.ws.ZFE_GET_LISTA_TIPOS;
+import com.infra.cliente.ws.ZFE_SET_AVISO_STATUS;
+import com.infra.cliente.ws.ZfeCmonSol;
+import com.infra.cliente.ws.ZfeCsocArea;
+import com.infra.cliente.ws.ZfeCsocAreaR;
+import com.infra.cliente.ws.ZfeSAviso;
+import com.infra.cliente.ws.ZfeSListaIi;
+import com.infra.cliente.ws.ZfeSListaTpr;
+import com.infra.cliente.ws.ZfeSPolist;
+import com.infra.cliente.ws.holders.TableOfZfeCmonSolHolder;
+import com.infra.cliente.ws.holders.TableOfZfeCsocAreaHolder;
+import com.infra.cliente.ws.holders.TableOfZfeCsocAreaRHolder;
+import com.infra.cliente.ws.holders.ZfeTAvisoHolder;
+import com.infra.cliente.ws.holders.ZfeTListaIiHolder;
+import com.infra.cliente.ws.holders.ZfeTListaTprHolder;
+import com.infra.cliente.ws.holders.ZfeTPolistHolder;
+import com.infra.core.ws.exception.WSException;
+import com.infra.core.ws.login.ZfeSListaSoc;
+import com.infra.core.ws.login.holders.ZfeTListaSocHolder;
+import com.infra.factura.util.FechaUtil;
+
+/**
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+@Service
+public class WSServiceImpl implements WSService {
+
+	private final static Logger logger = Logger.getLogger(WSServiceImpl.class);
+
+	private final static ResourceBundle resources = ResourceBundle.getBundle("wsdl/wsdl");
+
+	@Override
+	public Map<String, Object> getMonedas(String idioma) {
+		List<ZfeCmonSol> listaMonedas = new ArrayList<ZfeCmonSol>();
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		TableOfZfeCmonSolHolder monedas = new TableOfZfeCmonSolHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		Map respuesta = new HashMap<String, Object>();
+		try {
+			Get_lista_monLocator locator = new Get_lista_monLocator();
+			locator.setget_lista_monEndpointAddress(resources.getString("listaMon"));
+			ZFE_GET_LISTA_MON getMonedas = locator.getget_lista_mon();
+			getMonedas.zfeGetListaMon(idioma, monedas, mensaje, status);
+			ZfeCmonSol[] arreglo = monedas.value.getItem();
+			if (null != arreglo) {
+				listaMonedas = Arrays.asList(arreglo);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaMonedas);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException:", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getOrdenes(String idioma, String sociedad, String proveedor, Date fechaDesde,
+			Date fechaHasta, String tipo, String filtroOrdenes) {
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		List<ZfeSPolist> listaOrdenes = new ArrayList();
+		ZfeTPolistHolder sLista = new ZfeTPolistHolder();
+		Map respuesta = new HashMap<String, Object>();
+		try {
+			GET_LISTA_OCLocator locator = new GET_LISTA_OCLocator();
+			locator.setGET_LISTA_OCEndpointAddress(resources.getString("listaOc"));
+			ZFE_GET_LISTA_OC getOrdenes = locator.getGET_LISTA_OC();
+			getOrdenes.zfeGetListaOc(FechaUtil.formatoWS(fechaHasta), FechaUtil.formatoWS(fechaDesde), proveedor,
+					idioma, sociedad, filtroOrdenes, tipo, sLista, mensaje, status);
+			ZfeSPolist[] lista = sLista.value.getItem();
+			if (null != lista) {
+				listaOrdenes = Arrays.asList(lista);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaOrdenes);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getSociedades(String idioma, String sociedad) {
+		logger.info("getSociedades [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTListaSocHolder sociedades = new ZfeTListaSocHolder();
+		List<ZfeSListaSoc> listaSociedades = null;
+		Map respuesta = new HashMap<String, Object>();
+		try {
+			GET_LISTA_SOCLocator locator = new GET_LISTA_SOCLocator();
+			locator.setGET_LISTA_SOCEndpointAddress(resources.getString("listaSoc"));
+			ZFE_GET_LISTA_SOC getSociedades = locator.getGET_LISTA_SOC();
+			getSociedades.zfeGetListaSoc(idioma, sociedad, sociedades, mensaje, status);
+			ZfeSListaSoc[] soc = sociedades.value.getItem();
+			if (null != soc) {
+				listaSociedades = Arrays.asList(soc);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaSociedades);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getImpuestos(String idioma, String sociedad) {
+		logger.info("getImpuestos [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		List<ZfeSListaIi> listaIndicadores = new ArrayList<>();
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTListaIiHolder indicadores = new ZfeTListaIiHolder();
+		Map respuesta = new HashMap<String, Object>();
+		try {
+			Get_lista_iiLocator locator = new Get_lista_iiLocator();
+			locator.setget_lista_iiEndpointAddress(resources.getString("listaIndicadores"));
+			ZFE_GET_LISTA_II getIndicadoresImpuestos = locator.getget_lista_ii();
+			getIndicadoresImpuestos.zfeGetListaIi(sociedad, idioma, indicadores, mensaje, status);
+			ZfeSListaIi[] arreglo = indicadores.value.getItem();
+			if (null != arreglo) {
+				listaIndicadores = Arrays.asList(arreglo);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaIndicadores);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getAvisos(String idioma, String sociedad) {
+		logger.info("getAvisos [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		List<ZfeSAviso> listaAvisos = new ArrayList<ZfeSAviso>();
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTAvisoHolder avisos = new ZfeTAvisoHolder();
+		Map respuesta = new HashMap<String, Object>();
+		try {
+			AVISOSLocator locator = new AVISOSLocator();
+			locator.setavisosEndpointAddress(resources.getString("avisos"));
+			ZFE_GET_AVISOS getAvisos = locator.getavisos();
+			getAvisos.zfeGetAvisos(idioma, sociedad, avisos, mensaje, status);
+			ZfeSAviso[] losAvisos = avisos.value.getItem();
+			if (null != losAvisos) {
+				listaAvisos = Arrays.asList(losAvisos);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaAvisos);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getTiposRecepcion(String idioma, String sociedad) {
+		logger.info("getTiposRecepcion [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTListaTprHolder tipos = new ZfeTListaTprHolder();
+		List<ZfeSListaTpr> listaTipos = null;
+		Map respuesta = new HashMap<String, Object>();
+		try {
+			GET_LISTA_TIPOSLocator locator = new GET_LISTA_TIPOSLocator();
+			locator.setGET_LISTA_TIPOSEndpointAddress(resources.getString("listaTiposRecepcion"));
+			ZFE_GET_LISTA_TIPOS getTipos = locator.getGET_LISTA_TIPOS();
+			getTipos.zfeGetListaTipos(idioma, sociedad, tipos, mensaje, status);
+			ZfeSListaTpr[] listaTpr = tipos.value.getItem();
+			if (null != listaTpr) {
+				listaTipos = Arrays.asList(listaTpr);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaTipos);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getAreas(String idioma, String sociedad) {
+		logger.info("getAreas [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		List<ZfeCsocArea> listaAreas = new ArrayList<ZfeCsocArea>();
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		TableOfZfeCsocAreaHolder areas = new TableOfZfeCsocAreaHolder();
+		TableOfZfeCsocAreaRHolder responsables = new TableOfZfeCsocAreaRHolder();
+		Map respuesta = new HashMap<String, Object>();
+		try {
+			Get_lista_areasLocator locator = new Get_lista_areasLocator();
+			locator.setget_lista_areasEndpointAddress(resources.getString("listaAreas"));
+			ZFE_GET_LISTA_AREAS getAreas = locator.getget_lista_areas();
+			getAreas.zfeGetListaAreas(sociedad, idioma, areas, responsables, mensaje, status);
+			ZfeCsocArea[] arreglo = areas.value.getItem();
+			if (null != arreglo) {
+				listaAreas = Arrays.asList(arreglo);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaAreas);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getResponsables(String idioma, String sociedad, String area) {
+		logger.info("getResponsables [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		List<ZfeCsocAreaR> listaResponsables = new ArrayList<ZfeCsocAreaR>();
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		TableOfZfeCsocAreaRHolder responsables = new TableOfZfeCsocAreaRHolder();
+		Map respuesta = new HashMap<String, Object>();
+		try {
+			Get_lista_resp_areaLocator locator = new Get_lista_resp_areaLocator();
+			locator.setget_lista_resp_areaEndpointAddress(resources.getString("listaRespArea"));
+			ZFE_GET_LISTA_RESP_AREA getResponsables = locator.getget_lista_resp_area();
+			getResponsables.zfeGetListaRespArea(area, sociedad, idioma, responsables, mensaje, status);
+			ZfeCsocAreaR[] arreglo = responsables.value.getItem();
+			if (null != arreglo) {
+				listaResponsables = Arrays.asList(arreglo);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaResponsables);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public String descartarMensaje(short idAviso, String idioma, String sociedad) {
+		logger.info("descartarMensaje [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		try {
+			SET_AVISO_STATUSLocator locator = new SET_AVISO_STATUSLocator();
+			locator.setSET_AVISO_STATUSEndpointAddress(resources.getString("descartarAviso"));
+			ZFE_SET_AVISO_STATUS setStatus = locator.getSET_AVISO_STATUS();
+			setStatus.zfeSetAvisoStatus(idioma, sociedad, idAviso, mensaje, status);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return mensaje.value.toString();
+	}
+
+}

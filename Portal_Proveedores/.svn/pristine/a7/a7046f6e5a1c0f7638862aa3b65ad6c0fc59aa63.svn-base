@@ -1,0 +1,30 @@
+package com.infra.cliente.addenda;
+
+public class BigDecimal extends java.math.BigDecimal {
+	public BigDecimal(String val) {
+		super(val);
+	}
+	
+	public BigDecimal(int numero){
+		super(numero);
+	}
+	
+	public BigDecimal(java.math.BigDecimal bigDecimal){
+		super(bigDecimal.doubleValue());
+	}
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private String numeroDecimal;
+
+	public String getNumeroDecimal() {
+		return numeroDecimal;
+	}
+
+	public void setNumeroDecimal(String numeroDecimal) {
+		this.numeroDecimal = numeroDecimal;
+	}
+}

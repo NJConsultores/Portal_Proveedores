@@ -1,0 +1,177 @@
+package com.infra.vis.util;
+
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+
+public class TextUtil {
+
+    public static final String EMPTY = "";
+    
+    public static final String SPACE = " ";
+    
+    public static final String AND = "Y";
+    public static final String POINT = ".";
+    
+    public static final String RFC = "R.F.C. "; 
+    
+    public static final String NEOLINE = System.getProperty("line.separator");
+    
+    public static final String IVA = "IVA";
+    public static final String IEPS = "IEPS";
+    public static final String ISR = "ISR";
+    public static final String UTF8 = "UTF-8";
+    public static final BigDecimal TASA_11 = BigDecimal.valueOf(11.00);
+    
+    public static final String VER2 = "2";
+    public static final String VER20 = "2.0";
+    public static final String VER22 = "2.2";
+    public static final String VER3 = "3";
+    public static final String VER30 = "3.0";
+    public static final String VER32 = "3.2";
+    
+    private static final char[] hexChar = { '0', '1', '2', '3', '4', '5', '6',
+        '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+    /**
+     * indica si una cadena de texto es usable
+     * si regresa false la cadena de texto es nula o vacia
+     * si regresa true la cadena de texto es NO nula o vacia
+     * @param cadena
+     * @return
+     */
+    public static boolean isUsableText(final String cadena) {
+    	if(null == cadena || TextUtil.EMPTY.equals(cadena.trim())){
+    		return false;
+    	}
+    	return true;
+    }
+    
+    /**
+     * indica si una cadena de texto NO es usable
+     * si regresa true la cadena de texto es nula o vacia
+     * si regresa false la cadena de texto es NO nula o vacia
+     * @param cadena
+     * @return
+     */
+    public static boolean isNotUsableText(final String cadena) {
+    	return !(TextUtil.isUsableText(cadena));
+    }
+    
+    /**
+     * indica si una cadena de texto es nula
+     * si regresa true la cadena de texto es nula
+     * si regresa false la cadena texto no es nula
+     * @param cadena
+     * @return
+     */
+    public static boolean isTextNulo(final String cadena) {
+    	if(null == cadena){
+    		return true;
+    	}
+    	return false;
+    }
+    
+    /**
+     * indica si una cadena de texto NO es nula
+     * @param cadena
+     * @return
+     */
+    public static boolean isNotTextNulo(final String cadena) {
+    	return !(TextUtil.isTextNulo(cadena));
+    }
+    
+    public static String removExt(final String fileName) {
+        final int lastPoint = fileName.lastIndexOf(TextUtil.POINT);
+        return fileName.substring(0, lastPoint);
+    }
+    
+    public static String toUpNSpace(final String texto) {
+        return texto.toUpperCase().replace(TextUtil.SPACE, TextUtil.EMPTY);
+    }
+    
+    public static String constIva(final Float porcentaje, final BigDecimal importe) {
+        if(null == porcentaje){
+            return TextUtil.EMPTY;
+        }
+        final StringBuilder cadena = new StringBuilder("( ")
+        .append(String.format("%1$2s", porcentaje))
+        .append("% )").append(importe);
+        
+        return cadena.toString();
+    }
+    
+    private static boolean isUtfBom(char c) {
+        boolean isBom = false;
+        byte[] bom;
+        try {
+            bom = String.valueOf(c).getBytes("UTF-8");
+            if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB)
+                    && (bom[2] == (byte) 0xBF)) {
+                isBom = true;
+            }
+        } catch (UnsupportedEncodingException e) {
+        }
+        return isBom;
+    }
+
+    
+    public static String unicodeEscape(final String cadena) {
+        if(null == cadena) {
+            return cadena;
+        }
+        final StringBuilder sibuilf = new StringBuilder();
+        for (int i = 0; i < cadena.length(); i++) {
+            char c = cadena.charAt(i);
+            if (!isUtfBom(c)) {
+                if ((c >> 7) > 0) {
+                    sibuilf.append("\\u");
+                    sibuilf.append(hexChar[(c >> 12) & 0xF]);
+                    sibuilf.append(hexChar[(c >> 8) & 0xF]);
+                    sibuilf.append(hexChar[(c >> 4) & 0xF]);
+                    sibuilf.append(hexChar[c & 0xF]);
+                } else {
+                    sibuilf.append(c);
+                }
+            }
+        }
+        return sibuilf.toString();
+    }
+    
+    public static String unescape(String str) {
+        StringBuffer outBuffer = new StringBuffer(str.length());
+        for (int index = 0; index < str.length();) {
+            char c = str.charAt(index++);
+            if (c == '\\') {
+                c = str.charAt(index++);
+                if (c == 't') {
+                    c = '\t';
+                }
+                else if (c == 'r') {
+                    c = '\r';
+                }
+                else if (c == 'n') {
+                    c = '\n';
+                }
+                else if (c == 'f') {
+                    c = '\f';
+                }
+            }
+            outBuffer.append(c);
+        }
+        return outBuffer.toString();
+    }
+    
+    public static StringBuilder neoSingB(final String firstText) {
+        if(TextUtil.isUsableText(firstText)) {
+            return new StringBuilder(firstText);
+        }
+        return new StringBuilder();
+    }
+    
+    public static String addTextSingB(final String texto) {
+        if(TextUtil.isUsableText(texto)) {
+            return texto;
+        }
+        return TextUtil.EMPTY;
+    }
+}

@@ -1,0 +1,61 @@
+package com.infra.cliente.ws;
+
+import com.infra.core.ws.login.holders.ZfeTListaSocHolder;
+
+public class ZFE_GET_LISTA_SOCProxy implements ZFE_GET_LISTA_SOC {
+	private String _endpoint = null;
+	private ZFE_GET_LISTA_SOC zFE_GET_LISTA_SOC = null;
+
+	public ZFE_GET_LISTA_SOCProxy() {
+		_initZFE_GET_LISTA_SOCProxy();
+	}
+
+	public ZFE_GET_LISTA_SOCProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_GET_LISTA_SOCProxy();
+	}
+
+	private void _initZFE_GET_LISTA_SOCProxy() {
+		try {
+			zFE_GET_LISTA_SOC = (new GET_LISTA_SOCLocator())
+					.getGET_LISTA_SOC();
+			if (zFE_GET_LISTA_SOC != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_GET_LISTA_SOC)._setProperty("javax.xml.rpc.service.endpoint.address",
+							_endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_GET_LISTA_SOC)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_GET_LISTA_SOC != null)
+			((javax.xml.rpc.Stub) zFE_GET_LISTA_SOC)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+
+	}
+
+	public ZFE_GET_LISTA_SOC getZFE_GET_LISTA_SOC() {
+		if (zFE_GET_LISTA_SOC == null)
+			_initZFE_GET_LISTA_SOCProxy();
+		return zFE_GET_LISTA_SOC;
+	}
+
+	public void zfeGetListaSoc(java.lang.String ELang, java.lang.String ELifnr,
+			ZfeTListaSocHolder SLista,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException {
+		if (zFE_GET_LISTA_SOC == null)
+			_initZFE_GET_LISTA_SOCProxy();
+		zFE_GET_LISTA_SOC.zfeGetListaSoc(ELang, ELifnr, SLista, SMsg, SStat);
+	}
+
+}

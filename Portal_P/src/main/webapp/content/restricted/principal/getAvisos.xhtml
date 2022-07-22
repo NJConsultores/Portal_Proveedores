@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+<!-- 	<f:event type="preRenderView" listener="#{avisosMB.checarAvisosProveedor()}" /> -->
+	<p:dialog id="dlg_avisos" modal="true"
+		header="#{msg['factura.ordenes.seleccionar']}"
+		widgetVar="avisosModal">
+		<h:form id="frmAvisos">
+			<p:panelGrid style="border: 0px">
+				<p:row>
+					<p:column>
+						<p:dataTable id="tbl_avisosModal" var="av"
+							emptyMessage="#{msg['avisos.ninguno']}" scrollable="true"
+							value="#{avisosMB.avisos}" style="width: 100%"
+							rowStyleClass="#{av.tpavi == 'P' ? 'porProveedor' : 'porSociedad'}">
+							<p:column headerText="#{msg['tablas.nombre']}" width="20%">
+								<p:outputLabel value="#{av.ttulo}" />
+							</p:column>
+							<p:column headerText="#{msg['tablas.tipo']}" width="10%">
+								<p:outputLabel
+									value="#{av.tpavi eq 'S' ? msg['avisos.tipo.S'] : msg['avisos.tipo.P']} " />
+							</p:column>
+							<p:column headerText="#{msg['tablas.descripcion']}" width="62%">
+								<p:outputLabel value="#{av.texto}" />
+							</p:column>
+							<p:column headerText="#{msg['tablas.acciones']}" width="8%">
+								<p:commandButton icon="ui-icon-closethick"
+									onstart="PF('statusDialog').show()"
+									onsuccess="PF('statusDialog').hide()"
+									action="#{avisosMB.descartarAviso(av.navis)}"
+									rendered="#{av.tpavi eq 'P'}" partialSubmit="true"
+									update=":frmAvisos" title="#{msg['avisos.confirmacion']}">
+									<p:confirm header="#{msg['avisos.confirmacion']}"
+										message="#{msg['avisos.mensaje']}" icon="ui-icon-alert" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+		</h:form>
+	</p:dialog>
+</ui:composition>

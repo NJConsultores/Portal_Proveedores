@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.infra.factura.persistence.ArchivosSatMapper">
+    <resultMap id="archivosSatMap" type="com.infra.factura.dto.FeCertificadoSat">
+    	<result property="noSerie" column="no_serie" /> 
+        <result property="fechaInicial" column="fecha_inicial" />
+        <result property="fechaFinal" column="fecha_final" />
+        <result property="rfc" column="rfc" /> 
+        <result property="estado" column="estado" />        
+    </resultMap>
+    
+    
+    
+    <update id="eliminarIndices" >
+        ALTER TABLE fe_c_certificados 
+        DROP INDEX IDX_CERT_SAT        
+    </update>
+    <delete id="borrarTabla" >
+	DELETE from fe_c_certificados
+    </delete>
+    <update id="cargarArchivoSat" parameterType="String">
+        LOAD DATA LOCAL INFILE #{rutaArchivoCert}  
+        INTO TABLE fe_c_certificados 
+        CHARACTER SET latin1 
+        FIELDS TERMINATED BY '|' ;        
+    </update>
+    <delete id="borrarTablaPorRFC">
+	DELETE from fe_c_certificados where rfc = 'RFC';
+    </delete>
+    <update id="agregarIndices" >
+        ALTER TABLE fe_c_certificados 
+        ADD INDEX IDX_CERT_SAT (no_serie ASC, rfc ASC);      
+    </update>
+    
+    <select id="obtenerCertificadosPaginacion" parameterType="Map" resultMap="archivosSatMap">
+        SELECT no_serie, fecha_inicial, fecha_final, rfc, estado
+        FROM  fe_c_certificados
+        WHERE 1 = 1
+        
+        <if test="noSerie != null and noSerie != ''">
+            AND no_serie = #{noSerie}
+        </if>
+        
+        <if test="rfc != null and rfc != ''">
+            AND rfc = #{rfc}
+        </if>
+        
+        LIMIT ${registroActual},${totalResultado}
+    </select>
+    
+  
+    
+    <select id="obtenerTotalCertificados"  resultType="Long" parameterType="Map">
+        SELECT COUNT(*) AS total
+        FROM  fe_c_certificados       
+        WHERE 1 = 1
+        
+         <if test="noSerie != null and noSerie != ''">
+            AND no_serie = #{noSerie}
+        </if>
+        
+        <if test="rfc != null and rfc != ''">
+            AND rfc = #{rfc}
+        </if>      
+         
+    </select>
+       
+</mapper>

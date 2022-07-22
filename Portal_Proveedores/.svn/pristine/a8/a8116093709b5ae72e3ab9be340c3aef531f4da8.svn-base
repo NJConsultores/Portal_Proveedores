@@ -1,0 +1,97 @@
+package com.infra.cliente.addenda.common;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+
+import javax.xml.XMLConstants;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.util.JAXBSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
+import org.xml.sax.ErrorHandler;
+
+import com.google.common.collect.ImmutableMap;
+
+import com.infra.cliente.addenda.pedimentos.Pedimentos;
+import com.infra.factura.bigdata.sat.common.NamespacePrefixMapperImpl;
+import com.infra.factura.business.schema.util.StringAndInputstreamUtil;
+
+public class APK {
+	public static final ImmutableMap<String, String> PREFIXES = ImmutableMap.of("http://www.w3.org/2001/XMLSchema-instance", "xsi");
+	
+	public static final String XSD          = "/xsd/addenda/addendaPedimentos.xsd";
+	public static final JAXBContext CONTEXT = createContext();
+
+	private static final JAXBContext createContext() {
+		try {
+			return JAXBContext.newInstance("com.infra.cliente.addenda.pedimentos");
+		}catch (Exception e) {
+			throw new Error(e);
+		}
+	}
+
+	private final Pedimentos addenda;
+
+	public APK(Pedimentos addenda){
+		this.addenda     = addenda;
+	}
+
+	public void validar() throws Exception {
+		validar(null);
+	}
+
+	public void validar(ErrorHandler handler) throws Exception {
+		SchemaFactory sf    = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		Schema schema       = sf.newSchema(getClass().getResource(XSD));
+		Validator validator = schema.newValidator();
+		
+		if (handler != null) {
+			validator.setErrorHandler(handler);
+		}
+		
+		validator.validate(new JAXBSource(CONTEXT, addenda));
+	}
+
+	public void guardar(StringWriter sw) throws Exception {
+		Marshaller m = CONTEXT.createMarshaller();
+
+		m.setProperty("com.sun.xml.bind.namespacePrefixMapper", new NamespacePrefixMapperImpl(PREFIXES));
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+		m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+		
+		if(addenda != null){
+			m.marshal(addenda, sw);
+		}
+	}
+	
+	public static Pedimentos newAddenda(String xmlString) throws Exception {
+		xmlString               = StringAndInputstreamUtil.unicodeEscape(xmlString);
+		InputStream inputStream = StringAndInputstreamUtil.convertStringToStream(xmlString);
+		return (Pedimentos) load(inputStream);
+	}
+	
+	protected static Object load(InputStream in, String... contexts) throws Exception {
+		try {
+			if(!(in instanceof FileInputStream)){
+				in.reset();
+			}
+		} catch (IOException e) {
+			throw new Exception("Error al reprocesar el InputStream del XML", e);
+		}
+		
+		try {
+			Unmarshaller u = CONTEXT.createUnmarshaller();
+			Object comprobanteUnmarshaled = (Pedimentos) u.unmarshal(in);
+			return comprobanteUnmarshaled;
+		} finally {
+			in.close();
+		}
+	}
+}

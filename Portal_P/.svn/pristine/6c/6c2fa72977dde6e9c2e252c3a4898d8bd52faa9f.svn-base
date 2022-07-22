@@ -1,0 +1,59 @@
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.TableOfZfeCmonSolHolder;
+
+public class ZFE_GET_LISTA_MONProxy implements ZFE_GET_LISTA_MON {
+	private String _endpoint = null;
+	private ZFE_GET_LISTA_MON zFE_GET_LISTA_MON = null;
+
+	public ZFE_GET_LISTA_MONProxy() {
+		_initZFE_GET_LISTA_MONProxy();
+	}
+
+	public ZFE_GET_LISTA_MONProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_GET_LISTA_MONProxy();
+	}
+
+	private void _initZFE_GET_LISTA_MONProxy() {
+		try {
+			zFE_GET_LISTA_MON = (new Get_lista_monLocator()).getget_lista_mon();
+			if (zFE_GET_LISTA_MON != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_GET_LISTA_MON)._setProperty("javax.xml.rpc.service.endpoint.address",
+							_endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_GET_LISTA_MON)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_GET_LISTA_MON != null)
+			((javax.xml.rpc.Stub) zFE_GET_LISTA_MON)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+
+	}
+
+	public ZFE_GET_LISTA_MON getZFE_GET_LISTA_MON() {
+		if (zFE_GET_LISTA_MON == null)
+			_initZFE_GET_LISTA_MONProxy();
+		return zFE_GET_LISTA_MON;
+	}
+
+	public void zfeGetListaMon(java.lang.String ELang, TableOfZfeCmonSolHolder SLista,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException {
+		if (zFE_GET_LISTA_MON == null)
+			_initZFE_GET_LISTA_MONProxy();
+		zFE_GET_LISTA_MON.zfeGetListaMon(ELang, SLista, SMsg, SStat);
+	}
+
+}

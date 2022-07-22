@@ -1,0 +1,194 @@
+package com.infra.factura.business.validation;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXParseException;
+
+import com.infra.cliente.addenda.dto.FeAddendaDto;
+import com.infra.core.util.CoreConstantes;
+import com.infra.core.util.ErrorValidacionUtil;
+import com.infra.factura.business.base.FeBaseBusiness;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDEstatus;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDOrigen;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDVersion;
+import com.infra.factura.dto.FeErrorValidacionDto;
+import com.infra.factura.dto.FeFacturaDto;
+import com.infra.factura.dto.FeResultadoValidaCFDDto;
+import com.infra.factura.exception.UnexpectedRuntimeException;
+
+public class FeValidadorExtranjeroBaseBusiness extends FeBaseBusiness {
+	protected static Logger logger = LoggerFactory.getLogger(FeValidadorExtranjeroBaseBusiness.class);
+	protected static final String ERROR_INVALID_ENCODING_NAME = "Error on line 1: Invalid encoding name";
+
+//	@Autowired
+//	protected ErrorValidacionMapper validacionMapper;
+//	@Autowired
+//	protected FacturaMapper facturaMapper;
+//	@Autowired
+//	protected PropiedadesUtil propiedadesUtil;
+//	@Autowired
+//	protected ErrorValidacionService errorValidacionService;
+
+	protected CFDOrigen origen;
+	protected CFDVersion version;
+	protected FeAddendaDto feAddendaDto;
+	protected int errorCount = 0;
+	protected boolean guardaFactura = true;
+	protected boolean contieneAddenda = true;
+	protected boolean proveedorTMS = false;
+	protected int addendaErrorCount = 0;
+	protected long idFactura = 0;
+	protected int idProveedor = 0;
+	protected String numProveedorSAP = "";
+	protected List<FeErrorValidacionDto> errors = new ArrayList<FeErrorValidacionDto>();
+	protected List<FeErrorValidacionDto> addendaErrors = new ArrayList<FeErrorValidacionDto>();
+	protected FeResultadoValidaCFDDto feResultadoValidaExtranjeroDto = new FeResultadoValidaCFDDto();
+	protected com.infra.factura.business.cfdi.ii.schema.Comprobante comprobanteV3_2 = null;
+	protected Locale locale;
+
+	public void registraError(String claveError, String... params) {
+		errorCount++;
+		FeErrorValidacionDto errorValidacion = new FeErrorValidacionDto();
+		String language = locale == null ? CoreConstantes.SUFIJO_ESP : locale.getLanguage();
+
+		try {
+			logger.debug("claveError::" + claveError);
+
+			if (language.equalsIgnoreCase(CoreConstantes.SUFIJO_ESP)) {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacion(claveError);
+			} else if (language.equalsIgnoreCase(CoreConstantes.SUFIJO_ING)) {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacionEn(claveError);
+			} else {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacion(claveError);
+			}
+		} catch (Exception e) {
+			logger.error("Error al recuperar el error de validación.", e);
+		}
+		errorValidacion.setParametros(params);
+		errors.add(errorValidacion);
+	}
+
+	protected boolean isCFDv2(String xmlString) {
+		return !(xmlString.contains("<cfdi:") || xmlString.contains("</cfdi:"));
+	}
+
+	protected boolean esComprobanteAceptado(CFDVersion version) {
+		long startTime = System.currentTimeMillis();
+		boolean esAceptado = false;
+		FeFacturaDto facturaDto = new FeFacturaDto();
+		switch (version) {
+		case CFDv3_2:
+			facturaDto.setIdProveedor(idProveedor);
+			facturaDto.setFolio(comprobanteV3_2.getFolio());
+			break;
+		default:
+			break;
+		}
+
+		List<?> listaFacturas = null;
+
+		try {
+			if (facturaDto.getIdProveedor() <= 0 || facturaDto.getFolio().isEmpty())
+				throw new Exception("La factura del Proveedor Extranjero no cuenta con Folio.");
+
+		} catch (Exception e) {
+			final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+			unexpectedRuntimeException.logException();
+			registraError("validacion-016", version.name(),
+					unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+							+ (e.getMessage() != null ? e.getMessage() : ""));
+		}
+
+		if (listaFacturas != null && listaFacturas.size() >= 1) {
+			facturaDto = (FeFacturaDto) listaFacturas.get(0);
+			if (facturaDto.getEstatus().equals(CFDEstatus.EnRevision)
+					|| facturaDto.getEstatus().equals(CFDEstatus.Pendiente)
+					|| facturaDto.getEstatus().equals(CFDEstatus.Aceptado)) {
+				registraError("validacion-017", numProveedorSAP + "-" + facturaDto.getFolio());
+				guardaFactura = false;
+				esAceptado = true;
+			} else if (facturaDto.getEstatus().equals(CFDEstatus.Cancelado)) {
+				registraError("validacion-084", numProveedorSAP + "-" + facturaDto.getFolio());
+				guardaFactura = false;
+				esAceptado = true;
+			}
+
+			idFactura = facturaDto.getIdFactura();
+		}
+		logger.info("esComprobanteAceptado : " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s");
+		return esAceptado;
+	}
+
+	protected Date getFecha(CFDVersion version) {
+		Date fechaEmision = null;
+		switch (version) {
+		case CFDv3_2:
+			fechaEmision = comprobanteV3_2.getFecha();
+			break;
+		default:
+			break;
+		}
+		return fechaEmision;
+	}
+
+	protected int getAnoFactura(CFDVersion version) {
+		int anoFactura = 0;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
+		switch (version) {
+		case CFDv3_2:
+			anoFactura = Integer.parseInt(dateFormat.format(comprobanteV3_2.getFecha()));
+			break;
+		default:
+			break;
+		}
+		return anoFactura;
+	}
+
+	public void registraErrorAddenda(String claveError, String... params) {
+		addendaErrorCount++;
+		FeErrorValidacionDto errorValidacion = new FeErrorValidacionDto();
+		String language = locale == null ? CoreConstantes.SUFIJO_ESP : locale.getLanguage();
+
+		try {
+			if (language.equalsIgnoreCase(CoreConstantes.SUFIJO_ESP)) {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacion(claveError);
+			} else if (language.equalsIgnoreCase(CoreConstantes.SUFIJO_ING)) {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacionEn(claveError);
+			} else {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacion(claveError);
+			}
+		} catch (Exception e) {
+			logger.error("Error al recuperar el error de validación.", e);
+		}
+		errorValidacion.setParametros(params);
+		addendaErrors.add(errorValidacion);
+	}
+
+	public class AddendaErrorHandler implements ErrorHandler {
+		public void warning(SAXParseException e) {
+			final String message = e.getMessage();
+			System.out.println("warningAddenda::: " + e);
+			registraErrorAddenda("validacion-045", message);
+		}
+
+		public void error(SAXParseException e) {
+			final String message = e.getMessage();
+			System.out.println("errorAddenda::: " + e);
+			registraErrorAddenda("validacion-045", message);
+		}
+
+		public void fatalError(SAXParseException e) {
+			final String message = e.getMessage();
+			System.out.println("fatalAddenda::: " + e);
+			registraErrorAddenda("validacion-045", message);
+		}
+	}
+
+}

@@ -1,0 +1,203 @@
+package com.infra.core.exposition;
+
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.faces.context.FacesContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+
+import com.infra.core.service.WSLoginService;
+import com.infra.core.util.CoreConstantes;
+import com.infra.core.util.LocaleUtil;
+import com.infra.util.AbstractControlador;
+
+/**
+ *
+ * @author Reyna Lagunas Aranda <reyna.lagunas@infra.com.mx>
+ */
+@Scope("session")
+@Controller
+public class RecuperarContrasenaMB extends AbstractControlador {
+
+	private static final long serialVersionUID = 1L;
+	private final Logger logger = LoggerFactory.getLogger(RecuperarContrasenaMB.class);
+
+	@Autowired
+	protected WSLoginService loginService;
+	@Autowired
+	protected InternacionalizacionMB internacionalizacionMB;
+
+	protected String username;
+	protected String nuevoPassword;
+	protected String nuevoPasswordConfirmar;
+	protected String pin;
+	protected boolean pinSolicitado;
+	protected boolean disable;
+	protected boolean recuperada;
+	protected boolean cambioEnProceso;
+
+	public void submit() {
+		pinSolicitado = true;
+		recuperada = false;
+		logger.debug("Intentando recuperar contrasena");
+		Map<String, String> respuesta = loginService.solicitarRestablecerPassword(getLanguage(), username);
+		if ("1".equals((String) respuesta.get("estatus"))) {
+			transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+			// para que no se muestre el formulario donde se ingresa el pin
+			pinSolicitado = false;
+			limpiarCampos(true);
+		} else {
+			String usuario = username;
+			username = usuario;
+			transaccionCompletada(false, SEVERITY_FACES_CORRECTO, "OK",
+					LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.solicitud.procesarPin"));
+			cambioEnProceso = true;
+		}
+	}
+
+	public void validarPin() {
+		logger.debug("Restableciendo contrasena");
+		pinSolicitado = true;
+		System.out.println("validarPIN: " + pin + " y nuevo pin: " + nuevoPassword + " y user: " + username);
+		if (validarDatos() && validaPassword(nuevoPassword)) {
+			try {
+				Map<String, String> respuesta = loginService.actualizarPassword(getLanguage(), nuevoPassword, null, pin,
+						username);
+				if (!respuesta.isEmpty()) {
+					if ("1".equals((String) respuesta.get("estatus"))) {
+						transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+					} else {
+						recuperada = true;
+						cambioEnProceso = false;
+						transaccionCompletada(false, SEVERITY_FACES_CORRECTO, "OK",
+								LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.ok"));
+						limpiarCampos(true);
+					}
+				} else {
+					transaccionErronea("Error: ", "No se recibio respuesta");
+				}
+			} catch (Exception ex) {
+				transaccionErronea("Error: ", ex.getMessage());
+			}
+		}
+	}
+
+	private boolean validarDatos() {
+		cambioEnProceso = true;
+		if (null == pin || pin.isEmpty()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.pin"));
+			return false;
+		}
+		if (null == nuevoPassword || nuevoPassword.isEmpty()) {
+			transaccionErronea("Error",
+					LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.nueva.requerido"));
+			return false;
+		}
+		if (null == nuevoPasswordConfirmar || nuevoPasswordConfirmar.isEmpty()
+				|| !nuevoPasswordConfirmar.equals(nuevoPassword)) {
+			transaccionErronea("Error",
+					LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.nuevas.no.coinciden"));
+			return false;
+		}
+		return true;
+	}
+
+	private boolean validaPassword(String password) {
+		boolean isCorrecto = false;
+		Pattern pattern;
+		Matcher matcher;
+		pattern = Pattern.compile(CoreConstantes.PASSWORD_PATTERN);
+		matcher = pattern.matcher(password);
+		isCorrecto = matcher.matches();
+		if (!isCorrecto) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.cuenta.cambio.password")
+					.replaceAll("\\{0\\}", nuevoPassword));
+		}
+		return isCorrecto;
+	}
+
+	public void limpiarCampos(boolean limpiar) {
+		if (!FacesContext.getCurrentInstance().isPostback() || limpiar) {
+			username = null;
+			nuevoPassword = null;
+			nuevoPasswordConfirmar = null;
+			pin = null;
+			recuperada = false;
+		}
+	}
+
+	public String getLanguage() {
+		return ("es".equals(internacionalizacionMB.getLanguage()) ? "S" : "E");
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getNuevoPassword() {
+		return nuevoPassword;
+	}
+
+	public void setNuevoPassword(String newPassword) {
+		this.nuevoPassword = newPassword;
+	}
+
+	public String getPin() {
+		return pin;
+	}
+
+	public void setPin(String pin) {
+		this.pin = pin;
+	}
+
+	public boolean isPinSolicitado() {
+		return pinSolicitado;
+	}
+
+	public void setPinSolicitado(boolean pinSolicitado) {
+		this.pinSolicitado = pinSolicitado;
+	}
+
+	public String getNuevoPasswordConfirmar() {
+		return nuevoPasswordConfirmar;
+	}
+
+	public void setNuevoPasswordConfirmar(String nuevoPasswordConfirmar) {
+		this.nuevoPasswordConfirmar = nuevoPasswordConfirmar;
+	}
+
+	public boolean isDisable() {
+		return disable;
+	}
+
+	public void setDisable(boolean disable) {
+		this.disable = disable;
+	}
+
+	public boolean isRecuperada() {
+		return recuperada;
+	}
+
+	public void setRecuperada(boolean recuperada) {
+		this.recuperada = recuperada;
+	}
+
+	public boolean isCambioEnProceso() {
+		return cambioEnProceso;
+	}
+
+	public void setCambioEnProceso(boolean cambioEnProceso) {
+		this.cambioEnProceso = cambioEnProceso;
+	}
+
+}

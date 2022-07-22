@@ -1,0 +1,212 @@
+package com.infra.core.exposition;
+
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+
+import com.infra.core.model.UsuarioWS;
+import com.infra.core.service.WSLoginService;
+import com.infra.core.util.CoreConstantes;
+import com.infra.core.util.LocaleUtil;
+import com.infra.core.util.SessionUtil;
+import com.infra.util.AbstractControlador;
+
+/**
+ *
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+@Controller
+@Scope("session")
+public class CuentaMB extends AbstractControlador {
+	private static final Logger logger = LoggerFactory.getLogger(CuentaMB.class);
+	private static final long serialVersionUID = 1L;
+	@Autowired
+	protected WSLoginService loginService;
+	@Autowired
+	protected InternacionalizacionMB internacionalizacionMB;
+	private UsuarioWS usuario;
+	protected String password;
+	protected String nuevoPassword;
+	protected String confirmarPassword;
+	protected boolean disable;
+
+	public void init() {
+		password = "";
+		nuevoPassword = "";
+		confirmarPassword = "";
+
+		buildUsuarioSeguridad();
+	}
+
+	public String getUsername() {
+		return SecurityContextHolder.getContext().getAuthentication().getName();
+	}
+
+	private void buildUsuarioSeguridad() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+
+			if (principal != null) {
+				usuario = (UsuarioWS) authentication.getDetails();
+			} else {
+				logger.debug("El objeto principal es nulo");
+			}
+
+		}
+	}
+
+	public String getNombreCompleto() {
+		logger.debug("Nombre completo");
+		disable = false;
+		String nombre = null;
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication != null) {
+			Object principal = authentication.getPrincipal();
+			UsuarioWS usuario = (UsuarioWS) authentication.getDetails();
+
+			if (usuario != null) {
+				return usuario.getNombre();
+			} else {
+				logger.debug("El objeto principal usuario es nulo");
+			}
+		}
+		return nombre;
+	}
+
+	public String getRfc() {
+		logger.debug("RFC");
+		disable = false;
+//		String nombre = null;
+//		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//		if (authentication != null) {
+//			UsuarioWS usuario = (UsuarioWS) authentication.getDetails();
+//			if (usuario != null) {
+//				return usuario.getRfc();
+//			} else {
+//				logger.debug("El objeto principal usuario es nulo");
+//			}
+//		}
+//		return nombre;
+		return SessionUtil.getRFCUsuarioActual();
+	}
+
+	public void cambiarPassword() {
+		logger.debug("Cambiar Password");
+		logger.debug("Cuenta");
+		try {
+			if (validarCampos()) {
+				if (validaPassword(nuevoPassword)) {
+					Map<String, String> respuesta = loginService.actualizarPassword(getLanguage(), nuevoPassword,
+							password, null, usuario.getNombreUser());
+					if ("1".equals((String) respuesta.get("estatus"))) {
+						transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+					} else {
+						transaccionCompletada(false, SEVERITY_FACES_CORRECTO, "OK",
+								LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.ok"));
+					}
+				} else {
+					FacesContext.getCurrentInstance().addMessage(null,
+							new FacesMessage(FacesMessage.SEVERITY_ERROR, LocaleUtil.getResourceBundle()
+									.getString("error.cuenta.cambio.password").replaceAll("\\{0\\}", nuevoPassword),
+									""));
+				}
+			}
+		} catch (Exception ex) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "",
+					LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.error")));
+		}
+	}
+
+	private boolean validarCampos() {
+		if (null == password || password.isEmpty()) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "",
+					LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.actual.requerido")));
+			return false;
+		}
+		if (null == nuevoPassword || nuevoPassword.isEmpty()) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "",
+					LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.nueva.requerido")));
+			return false;
+		}
+		if (null == confirmarPassword || confirmarPassword.isEmpty()) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "",
+					LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.nueva.confirmar.requerido")));
+			return false;
+		}
+		if ((null != nuevoPassword && !nuevoPassword.isEmpty())
+				&& (null != confirmarPassword || !confirmarPassword.isEmpty())) {
+			if (!nuevoPassword.equals(confirmarPassword)) {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "",
+						LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.nuevas.no.coinciden")));
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private boolean validaPassword(String password) {
+		Pattern pattern;
+		Matcher matcher;
+		pattern = Pattern.compile(CoreConstantes.PASSWORD_PATTERN);
+		matcher = pattern.matcher(password);
+		return matcher.matches();
+	}
+
+	private String getLanguage() {
+		return ("es".equals(internacionalizacionMB.getLanguage()) ? "S" : "E");
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getNuevoPassword() {
+		return nuevoPassword;
+	}
+
+	public void setNuevoPassword(String nuevoPassword) {
+		this.nuevoPassword = nuevoPassword;
+	}
+
+	public String getConfirmarPassword() {
+		return confirmarPassword;
+	}
+
+	public void setConfirmarPassword(String confirmarPassword) {
+		this.confirmarPassword = confirmarPassword;
+	}
+
+	public boolean isDisable() {
+		return disable;
+	}
+
+	public void setDisable(boolean disable) {
+		this.disable = disable;
+	}
+
+	public void setUsuario(UsuarioWS usuario) {
+		this.usuario = usuario;
+	}
+
+	public UsuarioWS getUsuario() {
+		return usuario;
+	}
+
+}

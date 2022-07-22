@@ -1,0 +1,47 @@
+package com.infra.core.security;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
+
+/**
+ *
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+@Component
+public class CoreAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication a)
+			throws IOException, ServletException {
+		logger.debug("onAuthenticationSuccess");
+
+		String username = a.getName();
+		// String ip = req.getRemoteAddr();
+
+		try {
+			req.getSession().removeAttribute("error");
+			if (username != null) {
+				// TODO en authorities checar si debe cambiar la contrasena
+				if (a.getAuthorities().contains("ROLE_VENCE_PASS")) {
+					setDefaultTargetUrl("/content/restricted/cuenta/configuracionInicial.do");
+				} else {
+					setDefaultTargetUrl("/content/restricted/principal/dashboard.do");
+				}
+			} else {
+				req.getSession().setAttribute("error", "Error al procesar el acceso.");
+				setDefaultTargetUrl("/index.do");
+			}
+		} catch (Exception e) {
+			logger.error("Error en onAuthenticationSuccess al validar el login POST Success", e);
+		}
+		super.onAuthenticationSuccess(req, res, a);
+	}
+
+}

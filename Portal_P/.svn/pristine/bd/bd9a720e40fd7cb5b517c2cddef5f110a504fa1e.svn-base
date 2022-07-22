@@ -1,0 +1,30 @@
+package com.infra.vis.dto;
+
+import java.io.Serializable;
+
+import org.springframework.web.multipart.MultipartFile;
+
+public class UploadInfoFile implements Serializable {
+
+    private static final long serialVersionUID = 1477677270111026422L;
+
+    private Integer idViUser;
+    private MultipartFile layoutFile;
+
+    public MultipartFile getLayoutFile() {
+        return layoutFile;
+    }
+
+    public void setLayoutFile(MultipartFile layoutFile) {
+        this.layoutFile = layoutFile;
+    }
+
+    public Integer getIdViUser() {
+        return idViUser;
+    }
+
+    public void setIdViUser(Integer idViUser) {
+        this.idViUser = idViUser;
+    }
+
+}

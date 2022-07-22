@@ -1,0 +1,305 @@
+//package com.infra.factura.service;
+//
+//import java.io.FileInputStream;
+//import java.io.IOException;
+//import java.io.InputStream;
+//import java.security.cert.X509Certificate;
+//import java.text.SimpleDateFormat;
+//import java.util.Calendar;
+//import java.util.Date;
+//import java.util.Locale;
+//import java.util.regex.Matcher;
+//import java.util.regex.Pattern;
+//
+//import org.jdom.Document;
+//import org.jdom.input.JDOMParseException;
+//import org.jdom.input.SAXBuilder;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
+//
+//import com.infra.core.model.UsuarioWS;
+//import com.infra.core.util.ErrorValidacionService;
+//import com.infra.factura.bigdata.sat.cfdi.CFDv3_2;
+//import com.infra.factura.bigdata.sat.cfdi.TFDv1;
+//import com.infra.factura.bigdata.sat.security.KeyLoader;
+//import com.infra.factura.business.cfdi.ii.schema.Comprobante;
+//import com.infra.factura.business.cfdi.timbre.schema.TimbreFiscalDigital;
+//import com.infra.factura.business.common.GenericCFD;
+//import com.infra.factura.business.schema.util.StringAndInputstreamUtil;
+//import com.infra.factura.business.validation.util.FeConstantesValidacion;
+//import com.infra.factura.dto.FeErrorValidacionDto;
+//import com.infra.factura.dto.FeFacturaDto;
+//import com.infra.factura.dto.FeResultadoValidaCFDDto;
+//import com.infra.factura.exception.UnexpectedRuntimeException;
+//import com.infra.factura.util.FechaUtil;
+//
+///**
+// * 07/05/2019
+// *
+// * @author rlagunas
+// */
+//@Service
+//public class ValidarFacturaServiceImpl implements ValidarFacturaService {
+//
+//	private static final Logger logger = LoggerFactory.getLogger(ValidarFacturaServiceImpl.class);
+//	protected static final String ERROR_INVALID_ENCODING_NAME = "Error on line 1: Invalid encoding name";
+////	@Autowired
+////	protected ErrorValidacionMapper validacionMapper;
+//	@Autowired
+//	protected ErrorValidacionService errorValidacionService;   
+//
+//	@Override
+//	public FeResultadoValidaCFDDto validarFactura(FeConstantesValidacion.CFDOrigen origen, InputStream xmlInputStream,
+//			InputStream certInputStream, UsuarioWS usuario) {
+//		logger.debug("Validar factura");
+//
+//		String xmlString = null;
+//		X509Certificate certificate;
+//		FeResultadoValidaCFDDto feResultadoValidaCFDDto = new FeResultadoValidaCFDDto();
+//
+//		try {
+//			xmlString = StringAndInputstreamUtil.convertStreamToStringUnicodeEscape(xmlInputStream);
+//
+//			if (xmlString != null) {
+//				xmlString = xmlString.trim();
+//				xmlString = xmlString.replaceAll("\r\n", " ");
+//				xmlString = xmlString.replaceAll("\n", " ");
+//				xmlString = xmlString.replaceAll("\r", " ");
+//				xmlString = xmlString.replaceAll("\t", " ");
+//			}
+//			try {
+//				if (null != certInputStream) {
+//					certificate = KeyLoader.loadX509Certificate(certInputStream);
+//				}
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//				final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+//				unexpectedRuntimeException.logException();
+//
+//			}
+//
+//			validaFacturaElectronica(xmlInputStream, xmlString, usuario);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//			final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+//			unexpectedRuntimeException.logException();
+//
+//			feResultadoValidaCFDDto.setValido(false);
+//			feResultadoValidaCFDDto.setAceptada(false);
+//			// feResultadoValidaCFDDto.setErrores(errors);
+//		}
+//		return feResultadoValidaCFDDto;
+//
+//	}
+//
+//	private FeResultadoValidaCFDDto validaFacturaElectronica(InputStream xmlInputStream, String xmlString,
+//			UsuarioWS usuario) {
+//
+//		logger.info("Validar factura electronica");
+//		try {
+//			if (!(xmlInputStream instanceof FileInputStream)) {
+//				xmlInputStream.reset();
+//			}
+//		} catch (IOException e) {
+//			logger.error("Error al reprocesar el InputStream del XML", e);
+//		}
+//
+//		Locale.setDefault(new Locale("es", "ES"));
+//		boolean isValidCfdUTF8Encoding = false;
+//		GenericCFD cfd = null;
+//		SAXBuilder builder = new SAXBuilder();
+//		String uriNamespace = null;
+//
+//		if (null != xmlString) {
+//			Document d = null;
+//			try {
+//				d = builder.build(xmlInputStream);
+//				uriNamespace = d.getRootElement().getNamespace().getURI();
+//				isValidCfdUTF8Encoding = true;
+//
+//			} catch (JDOMParseException e) {
+//				if (e.getMessage().contains(ERROR_INVALID_ENCODING_NAME)) {
+//					registraError("validacion-003");
+//				} else {
+//					final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+//					unexpectedRuntimeException.logException();
+//					registraError("validacion-004", unexpectedRuntimeException.getExceptionInfo().getExceptionID()
+//							+ ". " + (e.getMessage() != null ? e.getMessage() : ""));
+//				}
+//
+//			} catch (Exception e) {
+//				final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+//				unexpectedRuntimeException.logException();
+//				registraError("validacion-005", unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+//						+ (e.getMessage() != null ? e.getMessage() : ""));
+//			}
+//
+//			if (isValidCfdUTF8Encoding) {
+//				Comprobante comprobante = null;
+//
+//				try {
+//					comprobante = CFDv3_2.newComprobante(xmlString);
+//					cfd = new CFDv3_2(comprobante);
+//				} catch (Exception e) {
+//					logger.error("Error al crear el comprobante", e);
+//				}
+//
+//				if (null != cfd) {
+//
+//					cfd.setXmlDocument(xmlString);
+//					if (esSociedadRegistrada(comprobante.getReceptor().getRfc())) {
+//						if (true) {// if (esProveedorRegistrado(usuario,
+//									// comprobante)) {
+//							if (!esComprobanteAceptado(comprobante)) {
+//								if (contieneCertificadoEmisor(xmlString)) {
+//
+//									SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
+//
+//									if (Integer.parseInt(dateFormat.format(new Date())) != Integer
+//											.parseInt(dateFormat.format(comprobante.getFecha()))) {
+//										registraError("validacion-008", "",
+//												"Solo se aceptan facturas del año en curso");
+//									} else {
+//
+//										try {
+//
+//											Calendar newCalendar = Calendar.getInstance();
+//											newCalendar.setTime(comprobante.getFecha());
+//
+//											Calendar newCalendarHoy = Calendar.getInstance();
+//											newCalendarHoy.setTime(new Date());
+//
+//											if (FechaUtil.esMenor(newCalendar, newCalendarHoy)) {
+//												// verificarAddenda(cfd,
+//												// xmlString);
+//											} else {
+//												registraError("validacion-008", "",
+//														" La fecha de emision de el comprobante es mayor a la fecha actual.");
+//											}
+//
+//										} catch (Exception e) {
+//											// TODO Auto-generated catch block
+//											final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(
+//													e);
+//											unexpectedRuntimeException.logException();
+//											registraError("validacion-008", "",
+//													unexpectedRuntimeException.getExceptionInfo().getExceptionID()
+//															+ ". " + (e.getMessage() != null ? e.getMessage() : ""));
+//										}
+//
+//									}
+//									/**
+//									 * if
+//									 * ((origen.equals(FeConstantesValidacion.CFDOrigen.WEB_PORTAL)
+//									 * && addendaErrorCount != 0)) { errorCount
+//									 * = 0; errors.clear(); } else {
+//									 * System.out.println("Validar
+//									 * comprobante");
+//									 * validarComprobante(xmlInputStream, cfd);
+//									 * if (version ==
+//									 * FeConstantesValidacion.CFDVersion.CFDv3
+//									 * && errorCount == 0) {
+//									 * verificarTimbrado(cfd, comprobanteV3); }
+//									 * else if (version ==
+//									 * FeConstantesValidacion.CFDVersion.CFDv3_2
+//									 * && errorCount == 0) {
+//									 * verificarTimbrado(cfd, comprobanteV3_2);
+//									 * } }
+//									 **/
+//								}
+//							} else {
+//								// guardaFactura = false;
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//
+//		// System.out.println ("Procesa Resultado validacion");
+//		// procesaResultadoValidacion(version, cfd);
+//
+//		// return feResultadoValidaCFDDto ;
+//		return null;
+//	}
+//
+//	private boolean esSociedadRegistrada(String rfcReceptor) {
+//		boolean sociedadRegistrada = false;
+//
+//		logger.debug("Buscando RFC Receptor {}", rfcReceptor);
+//
+//		return sociedadRegistrada;
+//	}
+//
+//	protected boolean esComprobanteAceptado(Comprobante comprobante) {
+//		boolean esAceptado = true;//RLA estaba como false
+//		TimbreFiscalDigital timbreFiscalDigital;
+//		FeFacturaDto facturaDto = new FeFacturaDto();
+//
+//		try {
+//			timbreFiscalDigital = TFDv1.getTimbreFiscalDigital(comprobante);
+//			if (timbreFiscalDigital != null) {
+//				facturaDto.setUuid(timbreFiscalDigital.getUUID());
+//			}
+//		} catch (Exception e) {
+//			logger.error("No se pudo obtener el TFD del comprobante", e);
+//		}
+//
+////		List<?> listaFacturas = null;
+////		try {
+////			listaFacturas = facturaMapper.consultarFacturas(facturaDto);
+////		} catch (Exception e) {
+////			final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+////			unexpectedRuntimeException.logException();
+////			registraError("validacion-016", "", unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+////					+ (e.getMessage() != null ? e.getMessage() : ""));
+////		}
+////
+////		if (listaFacturas != null && listaFacturas.size() >= 1) {
+////			facturaDto = (FeFacturaDto) listaFacturas.get(0);
+////			if (facturaDto.getEstatus().equals(CFDEstatus.EnRevision)
+////					|| facturaDto.getEstatus().equals(CFDEstatus.Pendiente)
+////					|| facturaDto.getEstatus().equals(CFDEstatus.Aceptado)
+////					|| facturaDto.getEstatus().equals(CFDEstatus.PorAutorizar)) {
+////				registraError("validacion-017");
+////				esAceptado = true;
+////			} else if (facturaDto.getEstatus().equals(CFDEstatus.Cancelado)) {
+////				registraError("validacion-084");
+////				esAceptado = true;
+////			}
+////		}
+//		return esAceptado;
+//	}
+//
+//	private boolean contieneCertificadoEmisor(String xmlString) {
+//		boolean tieneCertificado = true;
+//
+//		final Pattern pattern = Pattern
+//				.compile(" certificado(\\s){0,}=(\\s){0,}[\"']" + "[0-9a-zA-Z\\\\+/=\\s&#;]{20,}" + "[\"']");
+//		final Matcher matcher = pattern.matcher(xmlString.toLowerCase());
+//		if (!matcher.find()) {
+//			tieneCertificado = false;
+//			// feResultadoValidaCFDDto.setValido(true);
+//			// feResultadoValidaCFDDto.setTieneCertificado(false);
+//			registraError("validacion-028");
+//		}
+//
+//		return tieneCertificado;
+//	}
+//
+//	public void registraError(String claveError, String... params) {
+//
+//		FeErrorValidacionDto errorValidacion = new FeErrorValidacionDto();
+//		try {
+//			logger.debug("claveError:: {}", claveError);
+//			errorValidacion = errorValidacionService.obtenerErrorValidacion(claveError);
+//		} catch (Exception e) {
+//			logger.error("Error al recuperar el error de validación.", e);
+//		}
+//		errorValidacion.setParametros(params);
+//
+//	}
+//
+//}

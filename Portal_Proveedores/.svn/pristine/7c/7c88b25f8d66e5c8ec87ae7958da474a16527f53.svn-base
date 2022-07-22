@@ -1,0 +1,308 @@
+package com.infra.factura.business;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+
+import com.infra.factura.business.base.FeBaseBusiness;
+
+/**
+ * Clase para manejo de negocio en el modulo de facturas de Proveedores Extranjeros
+ * @author infra
+ */
+@Component
+public class FeFacturaExtranjeroBusiness extends FeBaseBusiness {
+	private final static Logger LOGGER               = Logger.getLogger(FeFacturaBusiness.class);
+	
+//	@Autowired
+//	private FacturaMapper facturaDao;
+//    @Autowired
+//	private CertificadoPacMapper certificadoPacDao;
+	
+//	private PropiedadesUtil propiedadesUtil;
+//	public FacturaMapper getFacturaDao() {
+//		return facturaDao;
+//	}
+//	public void setFacturaDao(FacturaMapper facturaDao) {
+//		this.facturaDao = facturaDao;
+//	}
+//	public CertificadoPacMapper getCertificadoPacDao() {
+//		return certificadoPacDao;
+//	}
+//	public void setCertificadoPacDao(CertificadoPacMapper certificadoPacDao) {
+//		this.certificadoPacDao = certificadoPacDao;
+//	}
+//	public PropiedadesUtil getPropiedadesUtil() {
+//		return propiedadesUtil;
+//	}
+//	public void setPropiedadesUtil(PropiedadesUtil propiedadesUtil) {
+//		this.propiedadesUtil = propiedadesUtil;
+//	}
+    
+//	public FeResultadoValidaCFDDto validarFactura(FeProveedorDto proveedor, RFCReceptor sociedad, String folio, Date fechaFactura, BigDecimal total,
+//													int idTipoDocumento, UsuarioWS usuario, boolean flujoAgenciaViajes, Locale locale) throws Exception{
+//		FeResultadoValidaCFDDto respuesta                         = new FeResultadoValidaCFDDto();
+//		String xmlString = convertirACfdi(proveedor, sociedad, folio, fechaFactura, total, idTipoDocumento, flujoAgenciaViajes);
+//		byte []dataXML = xmlString.getBytes("UTF-8");
+//		InputStream xml = new ByteArrayInputStream(dataXML);
+//		
+//		try{
+//			respuesta   = validarFactura(FeConstantesValidacion.CFDOrigen.WEB_PORTAL, xml, proveedor, usuario, locale, flujoAgenciaViajes,null);
+//		}catch(Exception e){
+//			handleException(e);
+//			LOGGER.error("Ocurrió un error al obtener los datos del archivo", e);
+//		}
+//		
+//		return respuesta;
+//	}
+	
+	
+//	public String convertirACfdi(FeProveedorDto proveedor, RFCReceptor sociedad, String folio, Date fechaFactura, BigDecimal total, int idTipoDocumento, 
+//			boolean flujoAgenciaViajes) {
+//		ByteArrayOutputStream out = null;
+//		ObjectFactory factory = null;
+//		Comprobante comprobante = null;
+//		Comprobante.Emisor emisor = null;
+//		TUbicacionFiscal domicilioFiscal = null;
+//		Comprobante.Emisor.RegimenFiscal regimenFiscal = null;
+//		Comprobante.Receptor receptor = null;
+//		Comprobante.Conceptos conceptos = null;
+//		Comprobante.Conceptos.Concepto concepto = null;
+//		Comprobante.Impuestos impuestos = null;
+//		Comprobante.Complemento complemento = null;
+//		CFDv3_2 cfdv3_2 = null;
+//		DecimalFormat formato = null;
+//		String xml = null;
+//		com.infra.cliente.addenda.Date fecha = new com.infra.cliente.addenda.Date(fechaFactura.getTime());
+//		
+//		fecha.setFecha(com.infra.factura.business.schema.util.SATDateTimeBinder.printDateTime(fecha));
+//		
+//		Locale.setDefault(new Locale("es_MX"));
+//		
+//		try {
+//			/*
+//			 * Inicializamos Objetos a utilizar
+//			 */
+//			out             = new ByteArrayOutputStream();
+//			factory         = new ObjectFactory();
+//			comprobante     = factory.createComprobante();
+//			emisor          = factory.createComprobanteEmisor();
+//			domicilioFiscal = factory.createTUbicacionFiscal();
+//			regimenFiscal   = factory.createComprobanteEmisorRegimenFiscal();
+//			receptor        = factory.createComprobanteReceptor();
+//			conceptos       = factory.createComprobanteConceptos();
+//			impuestos       = factory.createComprobanteImpuestos();
+//			complemento     = factory.createComprobanteComplemento();
+//			formato         = new DecimalFormat("#####0.0000");
+//			
+//			/*
+//			 * Asignamos valores para el Elemento de Emisor
+//			 */
+//			domicilioFiscal.setCalle(proveedor.getCalleNum());
+//			domicilioFiscal.setCodigoPostal(proveedor.getCodPostal());
+//			if (proveedor.getDistrito() != null && !proveedor.getDistrito().trim().isEmpty()){
+//				domicilioFiscal.setColonia(proveedor.getDistrito());
+//			}
+//			domicilioFiscal.setEstado(proveedor.getRegion());
+//			if (proveedor.getPoblacion() != null && !proveedor.getPoblacion().trim().isEmpty()){
+//				domicilioFiscal.setLocalidad(proveedor.getPoblacion());
+//			}
+////			domicilioFiscal.setMunicipio(proveedor.get);
+//			domicilioFiscal.setPais(proveedor.getCvePais());
+//
+//			emisor.setDomicilioFiscal(domicilioFiscal);
+//			emisor.getRegimenFiscal().add(regimenFiscal);
+//			emisor.setNombre(proveedor.getNombre1() + (proveedor.getNombre2() == null ? "" : proveedor.getNombre2().trim()));
+//			emisor.setRfc(flujoAgenciaViajes ? proveedor.getRfc() : proveedor.getNumCta());
+//
+//			/*
+//			 * Asignamos valores para el Elemento de Receptor
+//			 */
+//			receptor.setNombre(sociedad.getDescripcion());
+//			receptor.setRfc(sociedad.getClave());
+//
+//			/*
+//			 * Asignamos valores para el Elemento de Conceptos
+//			 */
+//			concepto = factory.createComprobanteConceptosConcepto();
+//			concepto.setCantidad(new com.infra.cliente.addenda.BigDecimal(BigDecimal.ONE));
+//			concepto.setDescripcion("Factura Proveedor Extranjero");
+//			concepto.setImporte(new com.infra.cliente.addenda.BigDecimal(total));
+//
+//			conceptos.getConcepto().add(concepto);
+//
+//			/*
+//			 * Asignamos valores para el Elemento de Impuestos
+//			 */
+//			impuestos.setTotalImpuestosRetenidos(new com.infra.cliente.addenda.BigDecimal(BigDecimal.ZERO));
+//			impuestos.setTotalImpuestosTrasladados(new com.infra.cliente.addenda.BigDecimal(BigDecimal.ZERO));
+//
+//			/*
+//			 * Asignamos valores para el Elemento de Complemento
+//			 */
+//
+//			/*
+//			 * Asignamos valores para el Elemento de Addenda
+//			 */
+//
+//			/*
+//			 * Asignamos valores para el Elemento de Comprobante
+//			 */
+//			comprobante.setEmisor(emisor);
+//			comprobante.setReceptor(receptor);
+//			comprobante.setConceptos(conceptos);
+//			comprobante.setImpuestos(impuestos);
+//			comprobante.setComplemento(complemento);
+//			// comprobante.setAddenda(addenda);
+//			comprobante.setFolio(folio);
+//			comprobante.setFecha(fecha);
+//			comprobante.setSubTotal(formato.format(total));
+//			comprobante.setTipoDeComprobante(CFDTipo.values()[idTipoDocumento] == CFDTipo.RECIBO ? CFDTipo.INGRESO.toString() : CFDTipo.values()[idTipoDocumento].toString());
+//			comprobante.setTotal(formato.format(total));
+//			comprobante.setVersion("3.2");
+//
+//			cfdv3_2 = new CFDv3_2(comprobante);
+//			
+//			cfdv3_2.guardar(out);
+//			
+//			xml = out.toString();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		} finally {
+//			out = null;
+//			factory = null;
+//			comprobante = null;
+//			emisor = null;
+//			domicilioFiscal = null;
+//			regimenFiscal = null;
+//			receptor = null;
+//			conceptos = null;
+//			impuestos = null;
+//			complemento = null;
+//			out = null;
+//			formato = null;
+//		}
+//		
+//		return xml;
+//	}
+	
+//	private void actualizarEstatusSap(FeActualizaEstatusDto estatusDto){
+//    	long startTime = System.currentTimeMillis();
+//    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//    	Date fechaPago = null;
+//    	try{
+//    		
+//    		if(estatusDto.getEstatusPortal() == CFDEstatus.Aceptado.ordinal()){
+//    			
+//    			fechaPago = sdf.parse(estatusDto.getFechaPago());
+//    			facturaDao.actualizaDatosSAP(estatusDto.getIdFactura(), estatusDto.getNoDocto(), fechaPago);
+//    			
+//    		}
+//    		
+//    		facturaDao.actualizaEstatusFactura(estatusDto.getIdFactura(), estatusDto.getEstatusPortal());
+//    		
+//    		if(estatusDto.getMensajes() != null && estatusDto.getMensajes().length > 0){
+//    			
+//    			for(int i = 0; i < estatusDto.getMensajes().length; i++){
+//        			
+//        			facturaDao.insertaLogValidacion(estatusDto.getIdFactura(), 73, new Date(), estatusDto.getMensajes()[i]);
+//        			
+//        		}
+//    		}
+//    		
+//    	}catch(Exception e){
+//    		e.printStackTrace();
+//    	}
+//    	LOGGER.info("actualizarEstatusSap("+estatusDto.getIdFactura()+") : " + ( (System.currentTimeMillis()-startTime) / 1000.0 ) + "s");
+//    }
+	
+//	public FeResultadoValidaCFDDto integrarAddenda(FeAddendaDto addendaDto, long idFactura, UsuarioWS usuario, FeProveedorDto proveedor, Locale locale, boolean flujoAgenciaViajes, Integer idEscenario){
+//		long startTime = System.currentTimeMillis();
+//		FeResultadoValidaCFDDto resultadoValidaCFDDto = null;
+//		
+//		JAXBContext jaxbContext;
+//		String CFD_NAMESPACE;
+//		ImmutableMap<String, String> PREFIXES;
+//		com.infra.cliente.addenda.Addenda addendaV3;
+//		StringWriter sw = new StringWriter();
+//		Map<String, String> localPrefixes;
+//		Marshaller marshaller;
+//
+//		if (addendaDto != null) {
+//			String nuevoXml = null;
+//			String xmlOriginal = null;
+//			CFDVersion version = addendaDto.getVersion();
+//
+//			try{
+//				switch (version) {
+//				
+//				case CFDv3_2:
+//				case CFDv3_3:
+//				case CFDv3:
+//					CFD_NAMESPACE = GenericCFD.CFD_3_NAMESPACE;
+//					PREFIXES = ImmutableMap.of("http://www.w3.org/2001/XMLSchema-instance", "xsi", CFD_NAMESPACE, "cfdi");
+//					jaxbContext = JAXBContext.newInstance(com.infra.cliente.addenda.ObjectFactory.class.getPackage().getName());
+//					addendaV3 = (com.infra.cliente.addenda.Addenda) addendaDto.getAddendaForXML();
+//					localPrefixes = Maps.newHashMap(PREFIXES);
+//					marshaller = jaxbContext.createMarshaller();
+//					marshaller.setProperty("com.sun.xml.bind.namespacePrefixMapper",new NamespacePrefixMapperImpl(localPrefixes));
+//					marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
+//					marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+//					marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+//					marshaller.marshal(addendaV3, sw);
+//					break;
+//				default:
+//					break;
+//				}
+//				
+//				String addendaStr = sw.toString();
+//				LOGGER.debug("Factura: " + idFactura + "\n" + addendaStr);
+//				xmlOriginal = facturaDao.obtenerXMLFactura(idFactura);
+//				xmlOriginal = xmlOriginal.trim();
+//				xmlOriginal = xmlOriginal.replaceAll("\r\n", " ");
+//				xmlOriginal = xmlOriginal.replaceAll("\r", " ");
+//				xmlOriginal = xmlOriginal.replaceAll("\n", " ");
+//				xmlOriginal = xmlOriginal.replaceAll("\t", " ");
+//				xmlOriginal = StringAndInputstreamUtil.convertUnicodeEscape(xmlOriginal);
+//				
+//				switch (version) {
+//				
+//				case CFDv3_2:
+//				case CFDv3_3:
+//				case CFDv3:
+//					if(null != xmlOriginal){
+//						if(xmlOriginal.contains(FeConstantesValidacion.CFDI_ADDENDA_EMPTY_TAG) || xmlOriginal.contains(FeConstantesValidacion.CFDI_ADDENDA_EMPTY_TAG_ALT)){
+//							xmlOriginal = xmlOriginal.replaceFirst(FeConstantesValidacion.CFDI_ADDENDA_EMPTY_TAG,"");
+//							xmlOriginal = xmlOriginal.replaceFirst(FeConstantesValidacion.CFDI_ADDENDA_EMPTY_TAG_ALT,"");
+//						}
+//						final Pattern pattern1 = Pattern.compile(FeConstantesValidacion.CFDI_COMPLEMENTO_END_TAG + "[\\S\\s]*" + FeConstantesValidacion.CFDI_ADDENDA_START_TAG + "(.+?)" + FeConstantesValidacion.CFDI_ADDENDA_END_TAG);
+//						final Matcher matcher1 = pattern1.matcher(xmlOriginal);
+//						final Pattern pattern = Pattern.compile(FeConstantesValidacion.CFDI_ADDENDA_START_TAG + "(.+?)" + FeConstantesValidacion.CFDI_ADDENDA_END_TAG);
+//						final Matcher matcher = pattern.matcher(xmlOriginal);
+//						if(matcher1.find() && matcher.find()){
+//							nuevoXml = matcher.replaceAll(addendaStr);
+//						}else{
+//							nuevoXml = xmlOriginal.replaceFirst(FeConstantesValidacion.CFDI_COMPROBANTE_END_TAG, addendaStr + "\n" + FeConstantesValidacion.CFDI_COMPROBANTE_END_TAG);
+//						}
+//
+//					}
+//					break;
+//				default:
+//					break;
+//				}
+//				
+//				resultadoValidaCFDDto = validarFactura(CFDOrigen.WEB_PORTAL, StringAndInputstreamUtil.convertStringToStream(nuevoXml), proveedor, usuario, locale, flujoAgenciaViajes, idEscenario);
+//							            
+//				facturaDao.guardarXMLFactura(idFactura, xmlOriginal);
+//			}catch (Exception e) {
+//				LOGGER.error("Error al generar la Addenda",e);
+//				handleException(e);
+//				resultadoValidaCFDDto = new FeResultadoValidaCFDDto();
+//				resultadoValidaCFDDto.setAceptada(false);
+//				resultadoValidaCFDDto.setValido(false);
+//				resultadoValidaCFDDto.setEditarAddenda(true);
+//			}
+//		}
+//		LOGGER.info("integrarAddenda : " + ( (System.currentTimeMillis()-startTime) / 1000.0 ) + "s");
+//		return resultadoValidaCFDDto;
+//	}
+}

@@ -1,0 +1,14 @@
+/**
+ * ZFE_GET_LISTA_OC.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTPolistHolder;
+
+public interface ZFE_GET_LISTA_OC extends java.rmi.Remote {
+    public void zfeGetListaOc(java.lang.String EBedatHigh, java.lang.String EBedatLow, java.lang.String EBukrs, java.lang.String ELang, java.lang.String ELifnr, java.lang.String EListaOc, java.lang.String ETipo, ZfeTPolistHolder SLista, javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat) throws java.rmi.RemoteException;
+}

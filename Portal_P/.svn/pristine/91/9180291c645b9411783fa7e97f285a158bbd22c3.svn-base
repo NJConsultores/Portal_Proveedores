@@ -1,0 +1,64 @@
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTPorecHolder;
+
+public class ZFE_CREA_FACTProxy implements ZFE_CREA_FACT {
+	private String _endpoint = null;
+	private ZFE_CREA_FACT zFE_CREA_FACT = null;
+
+	public ZFE_CREA_FACTProxy() {
+		_initZFE_CREA_FACTProxy();
+	}
+
+	public ZFE_CREA_FACTProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_CREA_FACTProxy();
+	}
+
+	private void _initZFE_CREA_FACTProxy() {
+		try {
+			zFE_CREA_FACT = (new Crea_factLocator()).getcrea_fact();
+			if (zFE_CREA_FACT != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_CREA_FACT)._setProperty("javax.xml.rpc.service.endpoint.address",
+							_endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_CREA_FACT)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_CREA_FACT != null)
+			((javax.xml.rpc.Stub) zFE_CREA_FACT)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+
+	}
+
+	public ZFE_CREA_FACT getZFE_CREA_FACT() {
+		if (zFE_CREA_FACT == null)
+			_initZFE_CREA_FACTProxy();
+		return zFE_CREA_FACT;
+	}
+
+	public void zfeCreaFact(java.lang.String EArea, java.lang.String EBukrs, java.lang.String EConc,
+			java.lang.String EFecha, java.lang.String EFolio, java.math.BigDecimal EIva, java.lang.String ELang,
+			java.lang.String ELifnr, java.lang.String EListaOc, java.lang.String EMoneda, java.lang.String EOpdf,
+			java.lang.String EPdf, java.lang.String EResp, java.lang.String ERfc, java.lang.String ESerie,
+			java.math.BigDecimal ESubtt, java.lang.String ETipo, java.math.BigDecimal ETotal, java.lang.String EXml,
+			ZfeTPorecHolder TPorec, javax.xml.rpc.holders.StringHolder SMsg,
+			org.apache.axis.holders.UnsignedByteHolder SStat) throws java.rmi.RemoteException {
+		if (zFE_CREA_FACT == null)
+			_initZFE_CREA_FACTProxy();
+		zFE_CREA_FACT.zfeCreaFact(EArea, EBukrs, EConc, EFecha, EFolio, EIva, ELang, ELifnr, EListaOc, EMoneda, EOpdf,
+				EPdf, EResp, ERfc, ESerie, ESubtt, ETipo, ETotal, EXml, TPorec, SMsg, SStat);
+	}
+
+}

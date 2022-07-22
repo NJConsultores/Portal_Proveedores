@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{listadoPreciosMB.reset()}"
+			update="frm_precios" />
+		<p:panel header="#{msg['panel.proveedor.listadoNuevo']}">
+			<h:form enctype="multipart/form-data" id="frm_precios">
+				<p:messages id="msgOperacion" showDetail="true" escape="false"
+					closable="true" />
+
+				<h:panelGrid columns="2">
+
+					<p:commandButton icon="ui-icon-document"
+						value="#{msg['opcion.listado_nuevo']}" ajax="false"
+						onclick="PrimeFaces.monitorDownload(start, stop);">
+						<p:fileDownload value="#{listadoPreciosMB.descargarFormato()}" />
+					</p:commandButton>
+					<p:spacer height="50px" />
+
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad"
+						value="#{listadoPreciosMB.sociedad}"
+						styleClass="selectStatic obligatorio"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{listadoPreciosMB.sociedades}" var="soc"
+							itemLabel="#{soc.bukrs} / #{soc.butxt}" itemValue="#{soc}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+
+					<h:outputText value="#{msg['proveedor.listado_precios.archivo']}"
+						styleClass="obligatorio" />
+					<p:fileUpload value="#{listadoPreciosMB.xls}" mode="simple" />
+					<br />
+					<br />
+				</h:panelGrid>
+
+				<p:commandButton value="#{msg['accion.cargar']}"
+					action="#{listadoPreciosMB.cargarArchivo()}" ajax="false"
+					update="@form" onclick="PF('statusDialog').show();"
+					oncomplete="PF('statusDialog').hide();" />
+			</h:form>
+		</p:panel>
+	</ui:define>
+</ui:composition>

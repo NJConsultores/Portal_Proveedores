@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.infra.factura.persistence.FacturaMapper">
+
+	<resultMap id="facturaMap"
+		type="com.infra.factura.dto.html.FeFacturaDtoHtml">
+		<id property="idFactura" column="id_factura" />
+		<result property="folio" column="folio_sat" />
+		<result property="rfcEmisor" column="rfc" />
+		<result property="rfcReceptor" column="rfc_receptor" />
+		<result property="serie" column="serie" />
+		<result property="anioAprobacion" column="aapro" />
+		<result property="numeroAprobacion" column="num_aprobacion" />
+		<result property="numeroCertificado" column="num_certificado" />
+		<result property="estatus" column="id_estatus"
+			typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+		<result property="tipoCFD" column="id_tipo_docto"
+			typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+		<result property="nombre" column="nombre_1" />
+		<result property="fechaEmision" column="fecha_hora_fact" />
+		<result property="fechaRecepcion" column="fecha_rec" />
+		<result property="xmlComprobante" column="xml" />
+		<result property="versionCFD" column="version"
+			typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+		<result property="idProveedor" column="id_proveedor" />
+		<result property="subTotal" column="sub_total" />
+		<result property="total" column="total" />
+		<result property="origen" column="id_origen"
+			typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+		<result property="currencyCode" column="currency_code" />
+		<result property="purchaseOrder" column="purchase_order" />
+		<result property="goodReceipt" column="good_receipt" />
+		<result property="deliveryNote" column="delivery_note" />
+		<result property="parkNumber" column="parkNumber" />
+		<result property="accountNumber" column="accountNumber" />
+		<result property="uuid" column="uuid" />
+		<result property="tmsBillingId" column="tms_billing_id" />
+		<result property="tmsServiceType" column="service_type" />
+		<result property="esEnviadoWs" column="ws_enviado" />
+		<result property="xmlAddenda" column="xml_addenda" />
+		<result property="idEscenario" column="id_escenario" />
+		<result property="fechaPago" column="fecha_pago" />
+		<result property="sociedad" column="soc" />
+		<result property="pdf" column="pdf" />
+		<result property="pdfSellado" column="pdfSellado" />
+		<result property="xml" column="xml" />
+	</resultMap>
+
+	<resultMap id="certificadoFacturaMap"
+		type="com.infra.factura.business.validation.dto.FeCertificadoFacturaDto">
+		<result property="rfc" column="rfc" />
+		<result property="numeroCertificado" column="no_serie" />
+		<result property="fechaInicial" column="fecha_inicial" />
+		<result property="fechaFinal" column="fecha_final" />
+	</resultMap>
+
+	<resultMap id="errorValidacionMap"
+		type="com.infra.factura.dto.FeErrorValidacionDto">
+		<result property="idErrorValidacion" column="id_error_validacion" />
+		<result property="clave" column="clave" />
+		<result property="descripcion" column="descripcion" />
+		<result property="estatus" column="estatus" />
+	</resultMap>
+
+	<select id="consultarFacturaPorUuid" parameterType="String"
+		resultMap="facturaMap">
+		SELECT f.id_factura, f.id_estatus, f.uuid
+		FROM fe_t_recibida
+		f
+		WHERE f.uuid = #{uuid}
+	</select>
+
+	<select id="consultarCertificados" parameterType="com.infra.factura.dto.FeFacturaDto"
+		resultMap="certificadoFacturaMap">
+		SELECT rfc, no_serie, fecha_inicial, fecha_final
+		FROM fe_c_certificados
+		WHERE rfc IS NOT NULL
+		<if test="numeroCertificado != null and numeroCertificado != ''">
+			AND no_serie = #{numeroCertificado}
+		</if>
+	</select>
+
+	<select id="existeCertificadoFiel" resultType="boolean"
+		parameterType="String">
+		SELECT (CASE WHEN COUNT(no_serie)>0 THEN 1 ELSE 0 END)
+		as resultado
+		FROM fe_c_certificado_fiel
+		WHERE no_serie = #{numeroSerie}
+	</select>
+
+	<insert id="registrarFiel" parameterType="HashMap">
+		INSERT INTO
+		fe_c_certificado_fiel(no_serie, fecha_inicial, fecha_final, rfc,
+		fecha_carga)
+		VALUES(#{certificadoPac.numeroCertificado},#{certificadoPac.fechaValidezIni},#{certificadoPac.fechaValidezFin},#{rfcFiel},#{certificadoPac.fechaCarga})
+	</insert>
+
+	<select id="buscarFielPorRfcYNumSerie" resultType="boolean"
+		parameterType="Map">
+		SELECT (CASE WHEN COUNT(no_serie)>0 THEN 1 ELSE 0 END)
+		as resultado
+		FROM fe_c_certificado_fiel
+		WHERE rfc = #{rfcFiel}
+		AND
+		no_serie = #{numeroSerie}
+	</select>
+
+	<update id="actualizarFiel" parameterType="HashMap">
+		UPDATE
+		fe_c_certificado_fiel
+		SET fecha_carga = #{fechaCarga}
+		WHERE rfc =
+		#{rfcFiel} and no_serie = #{numeroCertificado}
+	</update>
+
+	<select id="consultarCertificadosFiel" parameterType="com.infra.factura.dto.FeFacturaDto"
+		resultMap="certificadoFacturaMap">
+		SELECT rfc, no_serie, fecha_inicial, fecha_final, fecha_carga
+		FROM
+		fe_c_certificado_fiel c
+		WHERE c.rfc IS NOT NULL
+		<if test="numeroCertificado != null and numeroCertificado != ''">
+			AND no_serie = #{numeroCertificado}
+		</if>
+	</select>
+
+	<select id="buscarCertificadosFiel" parameterType="com.infra.factura.dto.FeFacturaDto"
+		resultMap="certificadoFacturaMap">
+		SELECT rfc, no_serie, fecha_inicial, fecha_final, fecha_carga
+		FROM
+		fe_c_certificado_fiel c
+		WHERE 1 = 1
+
+		<if test="rfc != null and rfc != ''">
+			AND c.rfc = #{rfc}
+		</if>
+
+		<if test="numeroCertificado != null and numeroCertificado != ''">
+			AND no_serie = #{numeroCertificado}
+		</if>
+	</select>
+
+</mapper>

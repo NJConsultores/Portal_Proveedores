@@ -1,0 +1,111 @@
+package com.infra.cliente.service.ws;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import javax.xml.rpc.ServiceException;
+import javax.xml.rpc.holders.StringHolder;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import com.infra.cliente.ws.GET_STATUS_RECLocator;
+import com.infra.cliente.ws.SET_STATUSLocator;
+import com.infra.cliente.ws.ZFE_GET_STATUS_REC;
+import com.infra.cliente.ws.ZfeSStrecep;
+import com.infra.cliente.ws.Zfe_SET_STATUS;
+import com.infra.cliente.ws.holders.ZfeTStrecepHolder;
+import com.infra.core.ws.exception.WSException;
+import com.infra.factura.business.schema.util.StringAndInputstreamUtil;
+import com.infra.factura.util.FechaUtil;
+
+/**
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+@Service
+public class WSStatusRecepcionImpl implements WSStatusRecepcion {
+
+	private final static Logger logger = Logger.getLogger(WSStatusRecepcionImpl.class);
+
+	private final static ResourceBundle resources = ResourceBundle.getBundle("wsdl/wsdl");
+
+	@Override
+	public Map<String, String> guardarStatusRecepcion(String idioma, String proveedorActual, InputStream xml,
+			InputStream pdf, String resultado, String statusResultado) {
+		logger.info("guardarStatusRecepcion [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		Map respuesta = new HashMap<String, String>();
+		try {
+			byte[] bytesPDF = null;
+			String cadenaXML = "";
+			try {
+				if (null != pdf)
+					bytesPDF = IOUtils.toByteArray(pdf);
+				cadenaXML = StringAndInputstreamUtil.convertStreamToString(xml);
+			} catch (IOException e) {
+				System.out.println("Surgio un error al convertir Stream a String");
+				e.printStackTrace();
+			}
+			SET_STATUSLocator locator = new SET_STATUSLocator();
+			locator.setSET_STATUSEndpointAddress(resources.getString("guardarStatusRecep"));
+			Zfe_SET_STATUS setStatus = locator.getSET_STATUS();
+			setStatus.zfeSetStatus(FechaUtil.formatoWS(new Date()), idioma, proveedorActual, resultado,
+					(null != pdf ? Base64.encodeBase64String(bytesPDF) : ""), statusResultado,
+					Base64.encodeBase64String(cadenaXML.getBytes()), mensaje, status);
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getEstatusRecepcion(Date fechaDesde, Date fechaHasta, String idioma,
+			String proveedorActual, String sociedad) {
+		logger.info("getEstatusRecepcion [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTStrecepHolder holder = new ZfeTStrecepHolder();
+		Map respuesta = new HashMap<String, String>();
+		List<ZfeSStrecep> listaRecepciones = new ArrayList();
+		try {
+			GET_STATUS_RECLocator locator = new GET_STATUS_RECLocator();
+			locator.setGET_STATUS_RECEndpointAddress(resources.getString("listaStatusRecep"));
+			ZFE_GET_STATUS_REC getRecepciones = locator.getGET_STATUS_REC();
+			getRecepciones.zfeGetStatusRec(sociedad, FechaUtil.formatoWS(fechaHasta), FechaUtil.formatoWS(fechaDesde),
+					idioma, proveedorActual, holder, mensaje, status);
+			ZfeSStrecep[] arreglo = holder.value.getItem();
+			if (null != arreglo) {
+				listaRecepciones = Arrays.asList(arreglo);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaRecepciones);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+}

@@ -1,0 +1,60 @@
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTListaTprHolder;
+
+public class ZFE_GET_LISTA_TIPOSProxy implements ZFE_GET_LISTA_TIPOS {
+	private String _endpoint = null;
+	private ZFE_GET_LISTA_TIPOS zFE_GET_LISTA_TIPOS = null;
+
+	public ZFE_GET_LISTA_TIPOSProxy() {
+		_initZFE_GET_LISTA_TIPOSProxy();
+	}
+
+	public ZFE_GET_LISTA_TIPOSProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_GET_LISTA_TIPOSProxy();
+	}
+
+	private void _initZFE_GET_LISTA_TIPOSProxy() {
+		try {
+			zFE_GET_LISTA_TIPOS = (new GET_LISTA_TIPOSLocator()).getGET_LISTA_TIPOS();
+			if (zFE_GET_LISTA_TIPOS != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_GET_LISTA_TIPOS)._setProperty("javax.xml.rpc.service.endpoint.address",
+							_endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_GET_LISTA_TIPOS)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_GET_LISTA_TIPOS != null)
+			((javax.xml.rpc.Stub) zFE_GET_LISTA_TIPOS)._setProperty("javax.xml.rpc.service.endpoint.address",
+					_endpoint);
+
+	}
+
+	public ZFE_GET_LISTA_TIPOS getZFE_GET_LISTA_TIPOS() {
+		if (zFE_GET_LISTA_TIPOS == null)
+			_initZFE_GET_LISTA_TIPOSProxy();
+		return zFE_GET_LISTA_TIPOS;
+	}
+
+	public void zfeGetListaTipos(java.lang.String ELang, java.lang.String ELifnr, ZfeTListaTprHolder SLista,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException {
+		if (zFE_GET_LISTA_TIPOS == null)
+			_initZFE_GET_LISTA_TIPOSProxy();
+		zFE_GET_LISTA_TIPOS.zfeGetListaTipos(ELang, ELifnr, SLista, SMsg, SStat);
+	}
+
+}

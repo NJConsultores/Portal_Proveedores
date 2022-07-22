@@ -1,0 +1,449 @@
+
+# Resources for parameter 'com.capullo.struts.ApplicationResources'
+# Project Sistema de Factura Electronica
+
+app.title = &nbsp;&nbsp;Recepci&oacute;n Factura Electr&oacute;nica
+app.error.page.title = ERROR - Recepci&oacute;n Factura Electr&oacute;nica
+
+footer = <div align="center" style="color: gray;">Prospectiva en Tecnologia e Integradora de Sistemas S.A. de C.V.<br>Adolfo Prieto No. 623  Piso 10 | Col. del Valle | C.P. 03100 <br>M\u00e9xico, D.F.</div>
+footer.matrices.prueba = Matrices de Prueba
+footer.manual.usuario = Manual de Usuario
+
+# Mensajes Comunes
+boton.aceptar = Aceptar
+boton.enviar = Enviar
+boton.limpiar = Limpiar
+boton.buscar = Buscar
+boton.cancelar = Cancelar
+boton.actualizar = Actualizar
+boton.recuperar = Recuperar
+boton.cargar = Cargar
+boton.rechazar = Rechazar
+boton.generar = Generar
+boton.archivo = Archivo
+boton.detener = Detener
+boton.reiniciar = Reiniciar
+
+boton.subir.archivo = Subir Archivo
+checkbox.mostrar = Mostrar
+combobox.seleccionar = Seleccione...
+link.cerrar = Cerrar sesi&oacute;n
+texto.campo.requerido = (Campo requerido)
+texto.campo.correo.invalido = (Correo invalido)
+texto.campo.formato.numeros.invalido = (Formato inv&aacute;lido; s&oacute;lo n&uacute;meros)<br>{0}
+texto.campo.formato.numeros.guion.invalido = (Formato inv&aacute;lido; s&oacute;lo n&uacute;meros y/o -)<br>{0}
+texto.campo.formato.alfanumerico.invalido = (Formato inv&aacute;lido; s&oacute;lo alfanum&eacute;rico)<br>{0}
+texto.campo.periodo.fechas = (La FECHA FINAL debe ser mayor a la FECHA INICIAL)
+etiqueta.fecha.inicio = Fecha Inicial
+etiqueta.fecha.fin = Fecha Final
+etiqueta.periodo.ultimo.login = Periodo de ultimo login
+etiqueta.fecha.emision.inicio = Fecha de Emisi&oacute;n Inicial
+etiqueta.fecha.emision.fin = Fecha de Emisi&oacute;n Final
+etiqueta.fecha.recepcion.inicio = Fecha de Recepci&oacute;n Inicial
+etiqueta.fecha.recepcion.fin = Fecha de Recepci&oacute;n Final
+etiqueta.todos = Todos
+etiqueta.mostrar = Mostrar
+etiqueta.busqueda = Criterios B&uacute;squeda
+etiqueta.agregar.registro = Agregar Registro
+etiqueta.cargar.archivo = Cargar Archivo
+etiqueta.cargar.archivo.zip = Cargar Zip
+etiqueta.si = Si
+etiqueta.no = No
+etiqueta.nombre.archivo = Nombre CBB (PDF)
+
+# Pantalla de Login
+error.login.username = Debe proporcionar el nombre de usuario.
+error.login.password = Debe proporcionar la contrase\u00f1a.
+error.login.invalido = [Sistema-083]: Los datos proporcionados no son correctos, favor de verificar.
+error.login.expiro = [Sistema-084]: El periodo de vigencia ha terminado para la cuenta de este usuario, contacte al administrador.
+error.login.duplicado = [Sistema-106]: Existe una sesi&oacute;n abierta para este usuario, \u00bfDesea cerrar la sesi&oacute;n anterior?
+advertencia.login.por.expirar = Su contrae\u00f1a est\u00e1 por expirar. Quedan {0} d\u00edas para que pueda cambiar su contrase\u00f1a.<br>Si lo desea puede realizar la operaci\u00f3n ahora mismo; presione CANCELAR para hacerlo despu\u00e9s.
+error.login.perfiles = Existe mas de un perfil para este usuario, seleccione uno de la lista
+error.login.cambiar.password = [Sistema-107]: Por razones de seguridad debes cambiar la contrase\u00f1a
+login.acceso = Acceso al sistema
+login.recuperacion = Recuperaci\u00f3n Contrase\u00f1a
+login.cambio.password = Cambio de Contrase\u00f1a
+login.usuario = Usuario (email)
+login.password = Contrase\u00f1a
+login.password.nuevo = Contrase\u00f1a nueva
+login.confirmar.password.nuevo = Confirmar Contrase\u00f1a nueva
+login.invalidar = Se invalido&oacute; la sesi&oacute;n del usuario de forma exitosa.
+login.password.olvidado = Recuperar contrase\u00f1a
+login.password.solicitado = Se ha enviado por correo electronico un password temporal.<br>Deber&aacute; cambiarlo al ingresar al sistema
+login.password.caracteristicas = <u>La contrase\u00f1a debe tener las siguientes caracteristicas:</u><ul><li>Al menos una letra may&uacute;scula.</li><li>Al menos una letra min&uacute;scula.</li><li>Al menos un n&uacute;mero o caracter especial.</li><li>Longitud m&iacute;nima de 8 caracteres.</li><li>M&aacute;ximo 3 caracteres alfanumericos por secuencia(p.e. 123, abc).</li></ul>
+
+# Pantalla de Registro Usuario
+usuario.leyenda = Usuario
+usuario.registro = Registro de usuarios
+usuario.lista = Lista Usuarios
+usuario.monitor.sesiones.lista = Lista Sesiones de Usuarios 
+usuario.rol = Rol
+usuario.sesion.abierta = Sesi&oacute;n abierta
+usuario.ultimo.logon = Ult&iacute;mo login
+usuario.nombre = Nombre
+usuario.ap.paterno = Apellido Paterno
+usuario.ap.materno = Apellido Materno
+usuario.correo.electronico = Correo electr&oacute;nico
+usuario.usuario = Usuario
+usuario.password = Contrase\u00f1a
+usuario.proveedor = Proveedor
+usuario.rfc.proveedor.busqueda = RFC Proveedor (b\u00fasqueda)
+usuario.proveedores = Proveedores Asignados
+usuario.eliminar.proveedores = (doble click para eliminar un Proveedor)
+usuario.fecha.periodo = Periodo de Validez
+usuario.log.consulta = Consulta de Log de Usuarios
+usuario.log.accion = Acci&oacute;n
+usuario.log.lista = Log de Usuario
+usuario.perfil = Perfil
+usuario.eliminacion.mensaje = Se elimin&oacute; el usuario y sus perfiles de forma exitosa.
+usuario.eliminacion.perfil.mensaje = Se elimin&oacute; el perfil del usuario de forma exitosa.
+usuario.actualizacion.mensaje = El usuario se guard&oacute; de forma exitosa.
+usuario.actualizacion.error.mensaje = [Sistema-085]: El usuario se guard&oacute; de forma exitosa pero no se pudo enviar la notificaci&oacute;n al correo indicado.
+
+# Pantalla de Consulta Usuario
+usuario.consulta = Consulta de usuarios
+
+# Pantalla de Consulta Proveedor
+proveedor.consulta = Consulta de proveedores
+
+# Pantalla de Registro Proveedor
+proveedor.leyenda = Proveedor
+proveedor.leyenda.administrador.pg = Administrador P&G
+proveedor.registro = Registro de proveedores
+proveedor.num.cta = No. Cuenta
+proveedor.rfc = RFC
+proveedor.cve.pais = Clave de Pa&iacute;s
+proveedor.nombre1 = Nombre
+proveedor.nombre2 = Nombre 2
+proveedor.nombre3 = Nombre 3
+proveedor.nombre4 = Nombre 4
+proveedor.poblacion = Colonia
+proveedor.distrito = Municipio o Delegaci&oacute;n
+proveedor.cod.postal = C&oacute;digo Postal
+proveedor.region = Estado
+proveedor.calle.num = Calle y No.
+proveedor.correo.electronico = Correo electr&oacute;nico
+proveedor.eliminacion.mensaje = Se elimin&oacute; el proveedor de forma exitosa.
+proveedor.lista = Lista Proveedores
+proveedor.datos = Datos del Proveedor
+proveedor.notificar = Notificar al Proveedor la Validaci&oacute;n
+proveedor.notificar.receptor = Notificar al Receptor la Validaci&oacute;n
+proveedor.generar.usuario = Generar usuario Portal SRFE
+proveedor.estatus = Proveedor Activo
+proveedor.bloqueo = Bloqueos
+proveedor.sin.bloqueo = Sin bloqueo
+proveedor.bloqueado = Bloqueado
+proveedor.bloqueo.temporal = Temporal
+proveedor.bloqueo.temporal.de = De:
+proveedor.bloqueo.temporal.hasta = Hasta:
+proveedor.bloqueo.masivo.leyenda = Bloqueo de Proveedores de forma masiva
+proveedor.bloqueo.error.lectura.archivo = El archivo CSV no se puede leer correctamente
+proveedor.bloqueo.error = El RFC [{0}] del proveedor no esta registrado en el cat\u00e1logo del Sistema
+proveedor.bloqueo.exito.proveedor = El Proveedor con RFC [{0}] se bloque\u00f3 satisfactoriamente
+proveedor.bloqueo.exito = Proveedores bloqueados satisfactoriamente
+proveedor.desbloqueo.exito.proveedor = El Proveedor con RFC [{0}] se desbloque\u00f3 satisfactoriamente
+proveedor.desbloqueo.exito = Proveedores desbloqueados satisfactoriamente
+proveedor.envioWs = Envio por Web Service
+proveedor.poTms = Proveedor TMS
+proveedor.poTms.rfc = RFC
+proveedor.poTms.po = Orden Compra TMS
+
+# Pantalla de Envio de Facturas
+factura.envio = Envio de facturas
+factura.envio.xml = Factura (XML)
+factura.envio.certificado = Certificado
+factura.envio.archivos = Archivo de Soporte (PDF)
+
+# Pantalla de Consulta Facturas
+factura.consulta = Consulta de Comprobantes Fiscales Digitales Recibidos
+factura.rfc.proveedor = RFC Proveedor
+factura.lista = Lista Facturas
+factura.folio = Folio
+factura.folio.fiscal = Folio fiscal
+factura.errores.validacion = Errores de Validaci&oacuten Factura 
+error.factura.formato.fecha = El formato de la fecha no es v\u00e1lido.
+factura.rechazo = Rechazo Manual de Factura
+factura.reenvio = Reenvio de Factura.
+factura.envio.proveedor.bloqueado = Estimado proveedor: Le informamos que por el momento usted no puede enviar facturas.
+
+# Pantalla de Reporte Facturas
+factura.reporte = Reporte de Facturas
+factura.sistema.sap = Sistema SAP
+factura.tipo.factura = Tipo de Factura
+
+# Pantalla de Rechazo Manual de Factura
+factura.id = ID Factura
+factura.serie = Serie
+factura.tipo.documento = Tipo Documento
+factura.nombre.proveedor = Proveedor
+factura.fecha.emision = Fecha de Emisi&oacute;n
+factura.fecha.recepcion = Fecha de Recepci&oacute;n
+factura.estatus = Estatus
+factura.motivo.rechazo = Motivo Rechazo
+factura.rechazo.correcto = La Factura se ha rechazado correctamente de Forma Manual.
+
+# Pantalla de Consulta de CBB validados
+factura.lista.cfi = Lista CFI's
+factura.consulta.num.aprobacion = N&uacute;mero Aprobaci&oacute;n
+factura.consulta.folio = Folio(CFI)
+factura.consulta.tipo.documento = Tipo Documento(CFI)
+factura.uuid = UUID
+factura.numero.aprobacion = N&uacute;mero Aprobaci&oacute;n
+factura.documento = Tipo Documento
+
+# Pantalla de Validacion de CBB
+factura.codigoqr.validacion = Validaci&oacute;n de C&oacute;digos Bidimensionales
+factura.codigoqr.validacion.nota = <br>El tama\u00f1o total de archivos a cargar no debe ser superior a 5MB.<br>El campo #Pag. indica el n&uacute;mero de la p&aacute;gina del PDF que contiene el CBB.<br>
+factura.codigoqr.validacion.lista.cfi = CFI's
+factura.codigoqr.validacion.lista.errores = Errores
+factura.codigoqr.consulta = Consulta de CBB's validados satisfactoriamente
+factura.codigoqr.consulta.estatus = Estatus
+factura.codigoqr.consulta.opcion.aceptadas = V\u00e1lidos
+factura.codigoqr.consulta.opcion.error = Con error
+factura.codigoqr.tipo = Tipo de CBB
+factura.codigoqr.archivo = Archivo
+factura.codigoqr.pagina =  # P&aacute;g.
+factura.codigoqr.tipo.docto = Tipo Documento
+factura.codigoqr.no.folio = No. Folio
+factura.codigoqr.no.caja.sap = SAP Box
+factura.codigoqr.consulta.tipo.cfi = CFI
+factura.codigoqr.doc.type=Doc Type
+factura.codigoqr.invoice.type=Invoice Type
+factura.codigoqr.mm.index=MM Index
+factura.codigoqr.comment=Comment
+factura.credito=cr&eacute;dito
+factura.debito=d&eacute;bito
+factura.codigoqr.sat.correcto = SAT: Los datos del comprobante que verific&oacute; se encuentran registrados en los controles del Servicio de Administraci&oacute;n Tributaria
+error.factura.codigoqr.invalido = ERROR[Sistema-086]: No se encontro un CBB en la imagen
+error.factura.codigoqr.checksum = ERROR[Sistema-087]: Se encontro una falla en la integridad de los datos del CBB
+error.factura.codigoqr.formato = ERROR[Sistema-088]: El CBB esta incompleto, imposible sustraer los datos
+error.factura.codigoqr.io = ERROR[Sistema-089]: No se puede leer la imagen
+error.factura.codigoqr.nulo = ERROR[Sistema-090]: La imagen tiene contenido nulo
+error.factura.codigoqr.vacio = ERROR[Sistema-091]: CBB con Informaci&oacute;n Nula
+error.factura.codigoqr.otro = ERROR[Sistema-092]: El CBB no es comprobante fiscal
+error.factura.codigoqr.tam.archivo = [Sistema-093]: El tama\u00f1o total para subir CBB's no debe ser mayor a 5MB, verifique por favor.
+error.factura.envio.tam.archivo = [Sistema-094]: El tama\u00f1o total de los archivos no debe ser superior a 2MB, verifique por favor.
+error.factura.codigoqr.sat.01 = ERROR SAT[Sistema-095]: El comprobante que verific&oacute; es presumiblemente ap&oacute;crifo
+error.factura.codigoqr.sat.02 = ERROR SAT[Sistema-096]: SoapMapper, Saving SoapMapper tpComprobante failed HRESULT=0x80020005= Type mismatch.
+error.factura.codigoqr.sat.03 = ERROR SAT[Sistema-097]: Http error while parsing server's response. HRESULT=0x800A1526 - Client:An unanticipated error occurred during the processing of this request.
+error.factura.codigoqr.sat.04 = ERROR SAT[Sistema-109]: El CBB fue le\u00eddo y procesado correctamente, sin embargo no se ha podido validar. El servicio del SAT no se encuentra disponible o est\u00e1 demorando mucho en responder; favor de intentar m\u00e1s tarde.
+error.factura.codigoqr.sat = ERROR SAT[Sistema-108]: No se pudo obtener la informaci\u00f3n del SAT para el CBB; favor de intentar m\u00e1s tarde.
+error.factura.codigoqr.proveedor = ERROR[Sistema-098]: El proveedor de este CBB no existe en el cat&aacute;logo
+error.factura.codigoqr.rango = ERROR[Sistema-099]: El No. Folio no se encuentra dentro del rango de Folios autorizados
+envio.fact.error.actualiza.status.cbb = Error CBB
+envio.fact.error.actualiza.status = ErrorFactura WS
+
+# Pantalla de Carga de Certificados de PAC
+factura.carga.certificados.archivo = Archivo .cer
+factura.carga.certificados.archivo.zip = Archivo .zip
+factura.carga.certificado.pac = Carga de Certificado PAC
+factura.carga.certificado.pac.zip = Carga Masiva de Certificados PAC
+factura.carga.certificado.pac.mensaje = El certificado se ha cargado correctamente.
+factura.carga.masiva.certificado.pac.mensaje = El archivo zip con los certificados se ha cargado correctamente.
+factura.carga.certificado.pac.mensaje.actualizar = El certificado se ha actualizado correctamente.
+factura.carga.certificado.pac.mensaje.repetido = El certificado ya existe en el catalogo,<br/>\u00bfDesea sobreescribir el Certificado?.
+
+# Pantalla de Carga de Certificados de PAC
+factura.scorecard = ScoreCard
+factura.scorecard.dia = D&iacute;a
+factura.scorecard.periodo = Periodo
+factura.scorecard.periodo.semanal = Semanal
+factura.scorecard.periodo.mensual = Mensual
+factura.scorecard.resultante = Resultado
+
+# Pantalla status de reenvio
+factura.reenviar.mensaje.reenvio = Reenv&iacute;o de factura 
+factura.reenviar.mensaje = Resultado del reenv&iacute;o de la factura 
+# Sistema
+sistema.excepciones.consulta=Consulta de excepciones
+sistema.excepciones.lista=Lista de Excepciones
+sistema.log.cbb.consulta=Consulta de Log de CBB
+sistema.log.cbb.lista=Lista de Errores CBB
+sistema.idFactura=Id Factura
+sistema.fecha.inicio=Fecha Inicio
+sistema.fecha.fin=Fecha Fin
+
+
+# Excepciones
+error.app.title = Error en la Aplicaci\u00f3n
+error.404 = [Sistema-100]: Error 404
+
+# Pantalla de Configuracion
+configuracion.sat = Propiedades conexi&oacute;n SAT
+configuracion.mail = Propiedades conexi&oacute;n Mail
+configuracion.as2 = Propiedades conexi&oacute;n AS2
+configuracion.catalogos = Propiedades Catalogos Addenda
+configuracion.pdf.imagen = Propiedades para convertidor PDF a Imagen
+configuracion.usr.cuentas = Propiedades para Cuentas de Usuario
+configuracion.sistema = Propiedades Funcionamiento del Sistema
+configuracion.actualizar = La configuraci&oacute;n se actualiz&oacute; de forma exitosa.
+
+# Monitor
+monitor.so = Sistema Operativo
+monitor.memoria = Memoria
+monitor.heap = Heap
+monitor.table = Tabla
+monitor.ejemplo.csv = Ejemplo de archivo CSV
+
+# Catalogo General
+catalogo.clave = Clave
+catalogo.descripcion = Descripci&oacute;n
+catalogo.receptor.rfc = RFC Receptor
+
+# Catalogo Sistemas SAP
+catalogo.sistema.sap.lista = Lista Sistemas SAP
+catalogo.sistema.sap.leyenda = Registro/Actualizaci\u00f3n Sistema SAP
+catalogo.sistema.sap.actualizacion.mensaje = El sistema SAP se guard&oacute; de forma exitosa.
+catalogo.sistema.sap.cargamasiva.mensaje = La carga masiva del sistema SAP se guard&oacute; de forma exitosa.
+catalogo.sistema.sap.cargamasiva.leyenda = Carga Masiva de Sistema SAP
+catalogo.sistema.sap.eliminacion.mensaje = El sistema SAP se elimin&oacute; de forma exitosa.
+
+
+# Catalogo Tms (P&G)
+catalogo.tms.receptor.lista = Lista, Orden de compra TMS
+catalogo.tms.receptor.leyenda = Registro/Actualizaci\u00f3n TMS
+catalogo.tms.receptor.actualizacion.mensaje = El TMS se guard&oacute; de forma exitosa.
+catalogo.tms.receptor.cargamasiva.mensaje = La carga masiva del TMS Receptor se guard&oacute; de forma exitosa.
+catalogo.tms.receptor.cargamasiva.leyenda = Carga Masiva de TMS Receptor
+catalogo.tms.receptor.eliminacion.mensaje = El TMS Receptor se elimin&oacute; de forma exitosa.
+
+# Catalogo RFC Receptor(P&G)
+catalogo.rfc.receptor.lista = Lista RFC's Receptor
+catalogo.rfc.receptor.leyenda = Registro/Actualizaci\u00f3n RFC Receptor
+catalogo.rfc.receptor.actualizacion.mensaje = El RFC Receptor se guard&oacute; de forma exitosa.
+catalogo.rfc.receptor.cargamasiva.mensaje = La carga masiva del RFC Receptor se guard&oacute; de forma exitosa.
+catalogo.rfc.receptor.cargamasiva.leyenda = Carga Masiva de RFC Receptor
+catalogo.rfc.receptor.eliminacion.mensaje = El RFC Receptor se elimin&oacute; de forma exitosa.
+
+# Catalogo Codigos de Moneda
+catalogo.codigo.moneda.lista = Lista C&oacute;digo Moneda
+catalogo.codigo.moneda.leyenda = Registro/Actualizaci\u00f3n C&oacute;digo Moneda
+catalogo.codigo.moneda.actualizacion.mensaje = El C&oacute;digo Moneda se guard&oacute; de forma exitosa.
+catalogo.codigo.moneda.cargamasiva.mensaje = La carga masiva de la Moneda se guard&oacute; de forma exitosa.
+catalogo.codigo.moneda.cargamasiva.leyenda = Carga Masiva de Codigo Moneda
+catalogo.codigo.moneda.eliminacion.mensaje = El C&oacute;digo Moneda se elimin&oacute; de forma exitosa.
+
+# Catalogo Codigos de Moneda
+catalogo.rechazo.lista = Lista Rechazo P&amp;G
+catalogo.rechazo.leyenda = Registro/Actualizaci&oacute;n Rechazo P&amp;G
+catalogo.rechazo.actualizacion.mensaje = El Rechazo P&amp;G se guard&oacute; de forma exitosa.
+catalogo.rechazo.cargamasiva.mensaje = La carga masiva del Rechazo P&amp;G se guard&oacute; de forma exitosa.
+catalogo.rechazo.cargamasiva.leyenda = Carga Masiva de Rechazo P&amp;G
+catalogo.rechazo.eliminacion.mensaje = El Rechazo P&amp;G se elimin&oacute; de forma exitosa.
+
+# Catalogo Cuentas
+catalogo.cuenta.lista = Lista Cuentas
+catalogo.cuenta.leyenda = Registro/Actualizaci\u00f3n Cuenta
+catalogo.cuenta.actualizacion.mensaje = La Cuenta se guard&oacute; de forma exitosa.
+catalogo.cuenta.cargamasiva.mensaje = La carga masiva de la Cuenta se guard&oacute; de forma exitosa.
+catalogo.cuenta.cargamasiva.leyenda = Carga Masiva de Cuenta
+catalogo.cuenta.eliminacion.mensaje = La Cuenta se elimin&oacute; de forma exitosa.
+
+# Catalogo Centros de Costo
+catalogo.centro.costo.lista = Lista Centros de Costo
+catalogo.centro.costo.leyenda = Registro/Actualizaci\u00f3n Centro de Costo
+catalogo.centro.costo.actualizacion.mensaje = El Centro de Costo se guard&oacute; de forma exitosa.
+catalogo.centro.costo.cargamasiva.mensaje = La carga masiva del Centro de Costo se guard&oacute; de forma exitosa.
+catalogo.centro.costo.cargamasiva.leyenda = Carga Masiva de Centro de Costo
+catalogo.centro.costo.eliminacion.mensaje = El Centro de Costo se elimin&oacute; de forma exitosa.
+
+# Catalogo Proveedores
+catalogo.proveedores.cargamasiva.mensaje = La carga masiva de Proveedores se realiz\u00f3 de forma exitosa.
+catalogo.proveedores.cargamasiva.leyenda = Carga Masiva de Proveedores
+
+# Catalogo Mensajes Comunes
+catalogo.error.file = [Sistema-101]: El archivo no es del tipo CSV
+catalogo.error.no.encoding.file = [Sistema-102]: No se detecto la codificaci\u00f3n del archivo
+catalogo.error.encoding.file = [Sistema-103]: El archivo tiene una codificaci\u00f3n distinta a {0}
+
+#LOG
+etiqueta.eliminar.log.monitor = Eliminar Monitor log 
+
+#expired logout
+fe.common.session.timeout=Ha superado el tiempo de inactividad.<br>Su sesi\u00f3n en el Portal de Recepci\u00f3n ha finalizado.
+fe.common.logout.instructions=Para volver a ingresar al sistema
+fe.common.logout.click.here=Click aqu\u00ed
+
+# ----------------------------------
+# Texto para ventana de Bienvenida
+# ----------------------------------
+bienvenida.avisos = NOTAS IMPORTANTES:
+bienvenida.sistema = Bienvenido al Sistema de Recepci&oacute;n de Facturaci&oacute;n Electr&oacute;nica de <br>Procter &amp; Gamble M&eacute;xico.
+bienvenida.sistema.descripcion.1 = Por medio de este portal usted puede:
+bienvenida.sistema.descripcion.acciones.1 = Realizar el env\u00edo de tus Comprobantes Fiscales Digitales
+bienvenida.sistema.descripcion.acciones.2 = Delegar accesos para que otros usuarios puedan realizar tambi\u00e9n el env\u00edo de sus documentos para pago.
+bienvenida.sistema.descripcion.acciones.3 = Realizar Consultas sobre el estado de recepci\u00f3n de tus facturas electr\u00f3nicas (XML)
+bienvenida.sistema.descripcion.acciones.4 = Editar la Addenda P&G
+bienvenida.sistema.descripcion.2 = Para revisar los Manuales de Entrenamiento relacionados al uso de este sistema de recepci\u00f3n pulse
+bienvenida.sistema.descripcion.3 = aqu\u00ed.
+bienvenida.sistema.descripcion.4 = Para consultas sobre el estatus de sus pagos s\u00edrvase utilizar las herramientas mencionadas abajo:
+bienvenida.sistema.descripcion.5 = Portal de Suplidores:
+bienvenida.sistema.descripcion.6 = P&G pone a disposici\u00f3n del proveedor un sitio Web en donde puede consultar y obtener informaci\u00f3n acerca de los requisitos de facturaci\u00f3n, estatus de  pagos y rastrear sus pedidos de compra creados en nuestro sistema. Para acceder a la p\u00e1gina web, ingrese aqu\u00ed
+bienvenida.sistema.descripcion.7 = www.pgsupplier.com
+bienvenida.sistema.descripcion.8 = Centro de Atenci\u00f3n al Suplidor:
+bienvenida.sistema.descripcion.9 = P&G cuenta con un centro de llamadas para responder cualquier duda a nuestros proveedores sobre sus pagos y  dudas con relaci\u00f3n a este nuevo sistema de facturaci\u00f3n electr\u00f3nica.
+bienvenida.sistema.descripcion.10 = El Horario de atenci\u00f3n es de Lunes a Viernes de 8:00 am a 5:00 pm. N\u00famero telef\u00f3nico 
+bienvenida.sistema.descripcion.telefono = 1-800-123-4753
+
+# Addenda
+editor.addenda.leyenda=Editor de Addenda
+editor.addenda.instrucciones=<br>Primeramente seleccione el tipo de comprobante adecuado para edici\u00f3n de la Addenda.
+editor.addenda.vacia.mensaje=Su comprobante no contiene una Addenda.<br>Para que P&G pueda recibir su factura es necesario que usted tome las siguientes acciones:<br><ol><li>Ingrese en este momento la informaci\u00f3n requerida o bien,</li><li>Cierre esta sesi\u00f3n y modifique la addenda directamente en su XML  e intente ingresarlo nuevamente.</li></ol>
+editor.addenda.invalida.mensaje=Su comprobante contiene una Addenda con datos incorrectos.<br>Para que P&G pueda recibir su factura  es necesario que usted tome las siguientes acciones:<br><ol><li>Edite en este momento la informaci\u00f3n requerida o bien,</li><li>Cierre esta sesi\u00f3n y modifique la addenda directamente en su XML  e intente ingresarlo nuevamente.</li></ol>
+editor.addenda.nopndg.mensaje=Su comprobante contiene una Addenda distinta a la definida por P&G.<br>Para que P&G pueda recibir su factura  es necesario que usted tome las siguientes acciones:<br><ol><li>Edite en este momento la informaci\u00f3n requerida o bien,</li><li>Cierre esta sesi\u00f3n y modifique la addenda directamente en su XML  e intente ingresarlo nuevamente.</li></ol>
+campo.addenda.tipo.po=Con Orden de Compra
+campo.addenda.tipo.fi=Sin Orden de Compra
+campo.addenda.tipo.tms = Facturas TMS
+campo.addenda.sap.box=SAP Box / Caja SAP
+campo.addenda.purchase.order=Purchase Order / Orden de Compra y L\u00ednea
+campo.addenda.scheduling.agreement=Scheduling Agreement (SA) y L\u00ednea
+campo.addenda.tms= TMS Billing ID
+campo.addenda.entry.sheet=Entry Sheet
+campo.addenda.spool.reference=Spool Reference
+campo.addenda.good.receipt=Good Receipt (GR) / N\u00famero de Confirmaci\u00f3n
+campo.addenda.delivery.note=N\u00famero de Nota de Entrega / Delivery Note
+campo.addenda.park.number=N\u00famero de Parqueo / Park Number (Egresos o Creditos)
+campo.addenda.currency.code=C\u00f3digo de  Moneda
+campo.addenda.approver.email=Aprobador Email/ Correo Electr\u00f3nico
+campo.addenda.account=Cuenta (S)
+campo.addenda.cost.center=Centro(S) de Costos
+campo.addenda.sap.service.type=Service Type / Tipo de Servicio
+
+# Mensajes de correo electr\u00f3nico
+mail.saludo = <br>Reciba un cordial saludo,<br>Procter & Gamble M\u00e9xico.<br>Sistema de Recepci\u00f3n de Factura Electr\u00f3nica.<br>
+mail.aviso = <br><b>NOTA: Este es un correo autom\u00e1tico, favor de no responder pues esta cuenta no es monitoreada.<br>Si requiere mayor informaci\u00f3n puede comunicarse a nuestro call Center 1-800-123-4753.</b>
+mail.footer = <div align="center" style="color: gray;">Prospectiva en Tecnologia e Integradora de Sistemas S.A. de C.V.<br>Adolfo Prieto No. 623  Piso 10 | Col. del Valle | C.P. 03100 <br>M\u00e9xico, D.F. | Tel\u00e9fono: (52-55)-5536-0626</div>
+
+mail.usuarios.alta.subject = Portal de Recepci\u00f3n de Factura Electr\u00f3nica P&G (SRFE) | Registro de Usuario
+mail.usuarios.alta.header = Estimado Proveedor:<br><br>Le informamos que el usuario para <b>{0}</b> ha sido creado en el sistema SRFE de forma exitosa; puede acceder al portal con el usuario y contrase\u00f1a que a continuaci&oacute;n se menciona, <br>Usuario : {1} <br>Contrase\u00f1a : {2}
+mail.usuarios.alta.body = La contrase\u00f1a proporcionada es provisional y deber\u00e1 cambiarla al ingresar al portal. La direcci\u00f3n de acceso es: https://{0} <br>
+
+mail.usuarios.recuperacion.password.subject = Portal de Recepci\u00f3n de Factura Electr\u00f3nica P&G (SRFE) | Recuperaci\u00f3n de contrase\u00f1a
+mail.usuarios.recuperacion.password.header = Estimado Proveedor:<br><br>Ha solicitado la recuperaci\u00f3n de la clave de acceso para el usuario {0}.<br>
+mail.usuarios.recuperacion.password.body = La nueva contrase\u00f1a proporcionada es provisional y deber\u00e1 cambiarla al ingresar al portal. La direcci\u00f3n de acceso es: https://{0} <br><br>Contrase\u00f1a: {1}<br>
+
+mail.validacion.subject = SRFE | Notificaci\u00f3n de Recepci\u00f3n de Factura Electr\u00f3nica.
+mail.validacion.header = Estimado Proveedor {0}:<br><br>
+mail.validacion.correo.subject = SRFE | Notificaci\u00f3n de Recepci\u00f3n de Factura Electr\u00f3nica por correo electr\u00f3nico.
+mail.validacion.correo.header = Estimado Proveedor:<br><br>
+mail.reinicioAs2.correo.subject = SRFE P&G Mexico | Notificaci\u00f3n de archivos encolados en el servidor AS2.
+mail.reinicioAs2.correo.header = Estimado cololaborador: <br><br>
+mail.alerta.max.num.conexiones.correo.subject = SRFE P&G Mexico | Se informa que el pool de conexiones se est\u00e1 saturando.
+mail.alerta.cbb.invalido.subject = SRFE P&G Mexico | Se informa se ha recibido un CBB invalido
+mail.alerta.cbb.invalido.header= Estimado cololaborador: <br><br>
+
+# NOM-151
+nom151.error.factura.inexistente=No se encontr\u00f3 informaci\u00f3n de la factura a resguardar
+nom151.error.constancia.sello=La constancia no fue sellada por Advantage Security
+nom151.error.constancia.parametros=Los parametros de verificaci\u00f3n de la constancia no son correctos
+nom151.error.constancia.rechazo=El expediente fue rechazado para ser resguardado
+nom151.error.constancia.insercion=La constancia no fue guardada en la BD correctamente
+nom151.resguardo.correcto=La constancia se gener\u00f3 correctamente
+
+# Pantalla de reenvio de facturas
+factura.reenvio.title = Reenvio de facturas
+factura.reenvio.archivo = Archivo con facturas (CSV)
+factura.reenvio.masdetalle = Si desea mas informaci\u00f3n sobre la carga masiva consulte el manual de usuario, seccion 5.7 Reenvio
+factura.reenvio.forma.title=Forma de reenv\u00edo
+factura.reenvio.forma.as2=AS2
+factura.reenvio.forma.ws=Web Service

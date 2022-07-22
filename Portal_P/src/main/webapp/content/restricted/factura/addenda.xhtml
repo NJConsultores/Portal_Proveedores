@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{addendaMB.reset()}"
+			update="frm_addenda" />
+		<p:panel header="#{msg['menu.factura.carga.masiva']}">
+			<h:form enctype="multipart/form-data" id="frm_addenda">
+				<p:messages id="messages" showDetail="true" escape="false"
+					closable="true" />
+
+				<br />
+				<center>
+					<h:outputText style="color: blue; font-weight: bold;"
+						value="#{msg['addenda.leyenda']}" />
+				</center>
+				<br />
+
+				<h:panelGrid columns="2">
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad" value="#{addendaMB.sociedad}"
+						styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{addendaMB.sociedades}" var="soc"
+							itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+					</p:selectOneMenu>
+
+					<p:fileUpload uploadLabel="#{msg['accion.cargar']}"
+						style="height: 400px; !important; "
+						cancelLabel="#{msg['accion.cancelar']}"
+						label="#{msg['accion.examinar']}"
+						fileUploadListener="#{addendaMB.manejadorArchivo}" mode="advanced"
+						dragDropSupport="false" multiple="true"
+						update="messages tbl_archivos" sizeLimit="2000000"
+						fileLimit="2000" allowTypes="/(\.|\/)(xml|pdf)$/" 
+						onstart="PF('statusDialog').show();" 
+						oncomplete="PF('statusDialog').hide();"/>
+
+					<p:dataTable id="tbl_archivos" emptyMessage=""
+						style="width: 100%; height: 50%" value="#{addendaMB.archivos}"
+						var="f">
+						<f:facet name="header">
+							<div style="text-align: center; width: 100%"> 
+								<h:outputText
+									value="#{msg['cargar.archivos.seleccionados']}: #{addendaMB.archivos.size()}"/>
+									<p:spacer width="40%" height="1px" />
+									<p:commandButton value="#{msg['accion.actualizar']}" update="tbl_archivos"/>
+							</div>
+						</f:facet>
+						<p:column headerText="#{msg['usuario.nombre']}">
+							<h:outputText value="#{f.fileName}" />
+						</p:column>
+						<p:column headerText="#{msg['accion.eliminar']}">
+							<p:commandLink id="downloadLinkPdf" ajax="false"
+								onclick="PrimeFaces.monitorDownload(start, stop)"
+								update="tbl_archivos"
+								actionListener="#{addendaMB.eliminaArchivo(f)}">
+								<p:graphicImage value="/resources/images/borrar.png" width="24" />
+							</p:commandLink>
+						</p:column>
+					</p:dataTable>
+
+
+				</h:panelGrid>
+
+				<p:commandButton value="#{msg['accion.guardar']}"
+					actionListener="#{addendaMB.guardarFacturas()}" update="@form"
+					onerror="PF('statusDialog').hide()"
+					onstart="PF('statusDialog').show()"
+					oncomplete="PF('statusDialog').hide();" />
+
+			</h:form>
+		</p:panel>
+	</ui:define>
+</ui:composition>

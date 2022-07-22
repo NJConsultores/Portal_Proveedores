@@ -1,0 +1,837 @@
+/**
+ * ZfeSPolist.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeSPolist implements java.io.Serializable {
+	private java.lang.String ebeln;
+
+	private java.lang.String mblnr;
+
+	private java.lang.String xblnr;
+
+	private java.lang.String ebelp;
+
+	private java.lang.String buzei;
+
+	private java.lang.String mjahr;
+
+	private java.lang.String matnr;
+
+	private java.lang.String txz01;
+
+	private java.lang.String meins;
+
+	private java.math.BigDecimal menge;
+
+	private java.math.BigDecimal zmenge;
+
+	private java.math.BigDecimal netwr;
+
+	private java.lang.String waers;
+
+	private java.lang.String aedat;
+
+	private java.lang.String budat;
+
+	private java.math.BigDecimal punit;
+
+	private java.lang.String invoiceDocItem;
+
+	private java.lang.String poNumber;
+
+	private java.lang.String poItem;
+
+	private java.lang.String refDoc;
+
+	private java.lang.String refDocYear;
+
+	private java.lang.String refDocIt;
+
+	private java.math.BigDecimal itemAmount;
+
+	private java.math.BigDecimal quantity;
+
+	private java.lang.String poUnit;
+
+	private java.math.BigDecimal poPrQnt;
+
+	private java.lang.String poPrUom;
+
+	private java.lang.String condType;
+
+	private java.lang.String sheetNo;
+
+	private java.lang.String sheetItem;
+
+	public ZfeSPolist() {
+	}
+
+	public ZfeSPolist(java.lang.String ebeln, java.lang.String mblnr, java.lang.String xblnr, java.lang.String ebelp,
+			java.lang.String buzei, java.lang.String mjahr, java.lang.String matnr, java.lang.String txz01,
+			java.lang.String meins, java.math.BigDecimal menge, java.math.BigDecimal zmenge, java.math.BigDecimal netwr,
+			java.lang.String waers, java.lang.String aedat, java.lang.String budat, java.math.BigDecimal punit,
+			java.lang.String invoiceDocItem, java.lang.String poNumber, java.lang.String poItem,
+			java.lang.String refDoc, java.lang.String refDocYear, java.lang.String refDocIt,
+			java.math.BigDecimal itemAmount, java.math.BigDecimal quantity, java.lang.String poUnit,
+			java.math.BigDecimal poPrQnt, java.lang.String poPrUom, java.lang.String condType, java.lang.String sheetNo,
+			java.lang.String sheetItem) {
+		this.ebeln = ebeln;
+		this.mblnr = mblnr;
+		this.xblnr = xblnr;
+		this.ebelp = ebelp;
+		this.buzei = buzei;
+		this.mjahr = mjahr;
+		this.matnr = matnr;
+		this.txz01 = txz01;
+		this.meins = meins;
+		this.menge = menge;
+		this.zmenge = zmenge;
+		this.netwr = netwr;
+		this.waers = waers;
+		this.aedat = aedat;
+		this.budat = budat;
+		this.punit = punit;
+		this.invoiceDocItem = invoiceDocItem;
+		this.poNumber = poNumber;
+		this.poItem = poItem;
+		this.refDoc = refDoc;
+		this.refDocYear = refDocYear;
+		this.refDocIt = refDocIt;
+		this.itemAmount = itemAmount;
+		this.quantity = quantity;
+		this.poUnit = poUnit;
+		this.poPrQnt = poPrQnt;
+		this.poPrUom = poPrUom;
+		this.condType = condType;
+		this.sheetNo = sheetNo;
+		this.sheetItem = sheetItem;
+	}
+
+	/**
+	 * Gets the ebeln value for this ZfeSPolist.
+	 * 
+	 * @return ebeln
+	 */
+	public java.lang.String getEbeln() {
+		return ebeln;
+	}
+
+	/**
+	 * Sets the ebeln value for this ZfeSPolist.
+	 * 
+	 * @param ebeln
+	 */
+	public void setEbeln(java.lang.String ebeln) {
+		this.ebeln = ebeln;
+	}
+
+	/**
+	 * Gets the mblnr value for this ZfeSPolist.
+	 * 
+	 * @return mblnr
+	 */
+	public java.lang.String getMblnr() {
+		return mblnr;
+	}
+
+	/**
+	 * Sets the mblnr value for this ZfeSPolist.
+	 * 
+	 * @param mblnr
+	 */
+	public void setMblnr(java.lang.String mblnr) {
+		this.mblnr = mblnr;
+	}
+
+	/**
+	 * Gets the xblnr value for this ZfeSPolist.
+	 * 
+	 * @return xblnr
+	 */
+	public java.lang.String getXblnr() {
+		return xblnr;
+	}
+
+	/**
+	 * Sets the xblnr value for this ZfeSPolist.
+	 * 
+	 * @param xblnr
+	 */
+	public void setXblnr(java.lang.String xblnr) {
+		this.xblnr = xblnr;
+	}
+
+	/**
+	 * Gets the ebelp value for this ZfeSPolist.
+	 * 
+	 * @return ebelp
+	 */
+	public java.lang.String getEbelp() {
+		return ebelp;
+	}
+
+	/**
+	 * Sets the ebelp value for this ZfeSPolist.
+	 * 
+	 * @param ebelp
+	 */
+	public void setEbelp(java.lang.String ebelp) {
+		this.ebelp = ebelp;
+	}
+
+	/**
+	 * Gets the buzei value for this ZfeSPolist.
+	 * 
+	 * @return buzei
+	 */
+	public java.lang.String getBuzei() {
+		return buzei;
+	}
+
+	/**
+	 * Sets the buzei value for this ZfeSPolist.
+	 * 
+	 * @param buzei
+	 */
+	public void setBuzei(java.lang.String buzei) {
+		this.buzei = buzei;
+	}
+
+	/**
+	 * Gets the mjahr value for this ZfeSPolist.
+	 * 
+	 * @return mjahr
+	 */
+	public java.lang.String getMjahr() {
+		return mjahr;
+	}
+
+	/**
+	 * Sets the mjahr value for this ZfeSPolist.
+	 * 
+	 * @param mjahr
+	 */
+	public void setMjahr(java.lang.String mjahr) {
+		this.mjahr = mjahr;
+	}
+
+	/**
+	 * Gets the matnr value for this ZfeSPolist.
+	 * 
+	 * @return matnr
+	 */
+	public java.lang.String getMatnr() {
+		return matnr;
+	}
+
+	/**
+	 * Sets the matnr value for this ZfeSPolist.
+	 * 
+	 * @param matnr
+	 */
+	public void setMatnr(java.lang.String matnr) {
+		this.matnr = matnr;
+	}
+
+	/**
+	 * Gets the txz01 value for this ZfeSPolist.
+	 * 
+	 * @return txz01
+	 */
+	public java.lang.String getTxz01() {
+		return txz01;
+	}
+
+	/**
+	 * Sets the txz01 value for this ZfeSPolist.
+	 * 
+	 * @param txz01
+	 */
+	public void setTxz01(java.lang.String txz01) {
+		this.txz01 = txz01;
+	}
+
+	/**
+	 * Gets the meins value for this ZfeSPolist.
+	 * 
+	 * @return meins
+	 */
+	public java.lang.String getMeins() {
+		return meins;
+	}
+
+	/**
+	 * Sets the meins value for this ZfeSPolist.
+	 * 
+	 * @param meins
+	 */
+	public void setMeins(java.lang.String meins) {
+		this.meins = meins;
+	}
+
+	/**
+	 * Gets the menge value for this ZfeSPolist.
+	 * 
+	 * @return menge
+	 */
+	public java.math.BigDecimal getMenge() {
+		return menge;
+	}
+
+	/**
+	 * Sets the menge value for this ZfeSPolist.
+	 * 
+	 * @param menge
+	 */
+	public void setMenge(java.math.BigDecimal menge) {
+		this.menge = menge;
+	}
+
+	/**
+	 * Gets the zmenge value for this ZfeSPolist.
+	 * 
+	 * @return zmenge
+	 */
+	public java.math.BigDecimal getZmenge() {
+		return zmenge;
+	}
+
+	/**
+	 * Sets the zmenge value for this ZfeSPolist.
+	 * 
+	 * @param zmenge
+	 */
+	public void setZmenge(java.math.BigDecimal zmenge) {
+		this.zmenge = zmenge;
+	}
+
+	/**
+	 * Gets the netwr value for this ZfeSPolist.
+	 * 
+	 * @return netwr
+	 */
+	public java.math.BigDecimal getNetwr() {
+		return netwr;
+	}
+
+	/**
+	 * Sets the netwr value for this ZfeSPolist.
+	 * 
+	 * @param netwr
+	 */
+	public void setNetwr(java.math.BigDecimal netwr) {
+		this.netwr = netwr;
+	}
+
+	/**
+	 * Gets the waers value for this ZfeSPolist.
+	 * 
+	 * @return waers
+	 */
+	public java.lang.String getWaers() {
+		return waers;
+	}
+
+	/**
+	 * Sets the waers value for this ZfeSPolist.
+	 * 
+	 * @param waers
+	 */
+	public void setWaers(java.lang.String waers) {
+		this.waers = waers;
+	}
+
+	/**
+	 * Gets the aedat value for this ZfeSPolist.
+	 * 
+	 * @return aedat
+	 */
+	public java.lang.String getAedat() {
+		return aedat;
+	}
+
+	/**
+	 * Sets the aedat value for this ZfeSPolist.
+	 * 
+	 * @param aedat
+	 */
+	public void setAedat(java.lang.String aedat) {
+		this.aedat = aedat;
+	}
+
+	/**
+	 * Gets the budat value for this ZfeSPolist.
+	 * 
+	 * @return budat
+	 */
+	public java.lang.String getBudat() {
+		return budat;
+	}
+
+	/**
+	 * Sets the budat value for this ZfeSPolist.
+	 * 
+	 * @param budat
+	 */
+	public void setBudat(java.lang.String budat) {
+		this.budat = budat;
+	}
+
+	/**
+	 * Gets the punit value for this ZfeSPolist.
+	 * 
+	 * @return punit
+	 */
+	public java.math.BigDecimal getPunit() {
+		return punit;
+	}
+
+	/**
+	 * Sets the punit value for this ZfeSPolist.
+	 * 
+	 * @param punit
+	 */
+	public void setPunit(java.math.BigDecimal punit) {
+		this.punit = punit;
+	}
+
+	/**
+	 * Gets the invoiceDocItem value for this ZfeSPolist.
+	 * 
+	 * @return invoiceDocItem
+	 */
+	public java.lang.String getInvoiceDocItem() {
+		return invoiceDocItem;
+	}
+
+	/**
+	 * Sets the invoiceDocItem value for this ZfeSPolist.
+	 * 
+	 * @param invoiceDocItem
+	 */
+	public void setInvoiceDocItem(java.lang.String invoiceDocItem) {
+		this.invoiceDocItem = invoiceDocItem;
+	}
+
+	/**
+	 * Gets the poNumber value for this ZfeSPolist.
+	 * 
+	 * @return poNumber
+	 */
+	public java.lang.String getPoNumber() {
+		return poNumber;
+	}
+
+	/**
+	 * Sets the poNumber value for this ZfeSPolist.
+	 * 
+	 * @param poNumber
+	 */
+	public void setPoNumber(java.lang.String poNumber) {
+		this.poNumber = poNumber;
+	}
+
+	/**
+	 * Gets the poItem value for this ZfeSPolist.
+	 * 
+	 * @return poItem
+	 */
+	public java.lang.String getPoItem() {
+		return poItem;
+	}
+
+	/**
+	 * Sets the poItem value for this ZfeSPolist.
+	 * 
+	 * @param poItem
+	 */
+	public void setPoItem(java.lang.String poItem) {
+		this.poItem = poItem;
+	}
+
+	/**
+	 * Gets the refDoc value for this ZfeSPolist.
+	 * 
+	 * @return refDoc
+	 */
+	public java.lang.String getRefDoc() {
+		return refDoc;
+	}
+
+	/**
+	 * Sets the refDoc value for this ZfeSPolist.
+	 * 
+	 * @param refDoc
+	 */
+	public void setRefDoc(java.lang.String refDoc) {
+		this.refDoc = refDoc;
+	}
+
+	/**
+	 * Gets the refDocYear value for this ZfeSPolist.
+	 * 
+	 * @return refDocYear
+	 */
+	public java.lang.String getRefDocYear() {
+		return refDocYear;
+	}
+
+	/**
+	 * Sets the refDocYear value for this ZfeSPolist.
+	 * 
+	 * @param refDocYear
+	 */
+	public void setRefDocYear(java.lang.String refDocYear) {
+		this.refDocYear = refDocYear;
+	}
+
+	/**
+	 * Gets the refDocIt value for this ZfeSPolist.
+	 * 
+	 * @return refDocIt
+	 */
+	public java.lang.String getRefDocIt() {
+		return refDocIt;
+	}
+
+	/**
+	 * Sets the refDocIt value for this ZfeSPolist.
+	 * 
+	 * @param refDocIt
+	 */
+	public void setRefDocIt(java.lang.String refDocIt) {
+		this.refDocIt = refDocIt;
+	}
+
+	/**
+	 * Gets the itemAmount value for this ZfeSPolist.
+	 * 
+	 * @return itemAmount
+	 */
+	public java.math.BigDecimal getItemAmount() {
+		return itemAmount;
+	}
+
+	/**
+	 * Sets the itemAmount value for this ZfeSPolist.
+	 * 
+	 * @param itemAmount
+	 */
+	public void setItemAmount(java.math.BigDecimal itemAmount) {
+		this.itemAmount = itemAmount;
+	}
+
+	/**
+	 * Gets the quantity value for this ZfeSPolist.
+	 * 
+	 * @return quantity
+	 */
+	public java.math.BigDecimal getQuantity() {
+		return quantity;
+	}
+
+	/**
+	 * Sets the quantity value for this ZfeSPolist.
+	 * 
+	 * @param quantity
+	 */
+	public void setQuantity(java.math.BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+
+	/**
+	 * Gets the poUnit value for this ZfeSPolist.
+	 * 
+	 * @return poUnit
+	 */
+	public java.lang.String getPoUnit() {
+		return poUnit;
+	}
+
+	/**
+	 * Sets the poUnit value for this ZfeSPolist.
+	 * 
+	 * @param poUnit
+	 */
+	public void setPoUnit(java.lang.String poUnit) {
+		this.poUnit = poUnit;
+	}
+
+	/**
+	 * Gets the poPrQnt value for this ZfeSPolist.
+	 * 
+	 * @return poPrQnt
+	 */
+	public java.math.BigDecimal getPoPrQnt() {
+		return poPrQnt;
+	}
+
+	/**
+	 * Sets the poPrQnt value for this ZfeSPolist.
+	 * 
+	 * @param poPrQnt
+	 */
+	public void setPoPrQnt(java.math.BigDecimal poPrQnt) {
+		this.poPrQnt = poPrQnt;
+	}
+
+	/**
+	 * Gets the poPrUom value for this ZfeSPolist.
+	 * 
+	 * @return poPrUom
+	 */
+	public java.lang.String getPoPrUom() {
+		return poPrUom;
+	}
+
+	/**
+	 * Sets the poPrUom value for this ZfeSPolist.
+	 * 
+	 * @param poPrUom
+	 */
+	public void setPoPrUom(java.lang.String poPrUom) {
+		this.poPrUom = poPrUom;
+	}
+
+	/**
+	 * Gets the condType value for this ZfeSPolist.
+	 * 
+	 * @return condType
+	 */
+	public java.lang.String getCondType() {
+		return condType;
+	}
+
+	/**
+	 * Sets the condType value for this ZfeSPolist.
+	 * 
+	 * @param condType
+	 */
+	public void setCondType(java.lang.String condType) {
+		this.condType = condType;
+	}
+
+	/**
+	 * Gets the sheetNo value for this ZfeSPolist.
+	 * 
+	 * @return sheetNo
+	 */
+	public java.lang.String getSheetNo() {
+		return sheetNo;
+	}
+
+	/**
+	 * Sets the sheetNo value for this ZfeSPolist.
+	 * 
+	 * @param sheetNo
+	 */
+	public void setSheetNo(java.lang.String sheetNo) {
+		this.sheetNo = sheetNo;
+	}
+
+	/**
+	 * Gets the sheetItem value for this ZfeSPolist.
+	 * 
+	 * @return sheetItem
+	 */
+	public java.lang.String getSheetItem() {
+		return sheetItem;
+	}
+
+	/**
+	 * Sets the sheetItem value for this ZfeSPolist.
+	 * 
+	 * @param sheetItem
+	 */
+	public void setSheetItem(java.lang.String sheetItem) {
+		this.sheetItem = sheetItem;
+	}
+
+	private java.lang.Object __equalsCalc = null;
+
+	public synchronized boolean equals(java.lang.Object obj) {
+		if (!(obj instanceof ZfeSPolist))
+			return false;
+		ZfeSPolist other = (ZfeSPolist) obj;
+		if (obj == null)
+			return false;
+		if (this == obj)
+			return true;
+		if (__equalsCalc != null) {
+			return (__equalsCalc == obj);
+		}
+		__equalsCalc = obj;
+		boolean _equals;
+		_equals = true
+				&& ((this.ebeln == null && other.getEbeln() == null)
+						|| (this.ebeln != null && this.ebeln.equals(other.getEbeln())))
+				&& ((this.mblnr == null && other.getMblnr() == null)
+						|| (this.mblnr != null && this.mblnr.equals(other.getMblnr())))
+				&& ((this.xblnr == null && other.getXblnr() == null)
+						|| (this.xblnr != null && this.xblnr.equals(other.getXblnr())))
+				&& ((this.ebelp == null && other.getEbelp() == null)
+						|| (this.ebelp != null && this.ebelp.equals(other.getEbelp())))
+				&& ((this.buzei == null && other.getBuzei() == null)
+						|| (this.buzei != null && this.buzei.equals(other.getBuzei())))
+				&& ((this.mjahr == null && other.getMjahr() == null)
+						|| (this.mjahr != null && this.mjahr.equals(other.getMjahr())))
+				&& ((this.matnr == null && other.getMatnr() == null)
+						|| (this.matnr != null && this.matnr.equals(other.getMatnr())))
+				&& ((this.txz01 == null && other.getTxz01() == null)
+						|| (this.txz01 != null && this.txz01.equals(other.getTxz01())))
+				&& ((this.meins == null && other.getMeins() == null)
+						|| (this.meins != null && this.meins.equals(other.getMeins())))
+				&& ((this.menge == null && other.getMenge() == null)
+						|| (this.menge != null && this.menge.equals(other.getMenge())))
+				&& ((this.zmenge == null && other.getZmenge() == null)
+						|| (this.zmenge != null && this.zmenge.equals(other.getZmenge())))
+				&& ((this.netwr == null && other.getNetwr() == null)
+						|| (this.netwr != null && this.netwr.equals(other.getNetwr())))
+				&& ((this.waers == null && other.getWaers() == null)
+						|| (this.waers != null && this.waers.equals(other.getWaers())))
+				&& ((this.aedat == null && other.getAedat() == null)
+						|| (this.aedat != null && this.aedat.equals(other.getAedat())))
+				&& ((this.budat == null && other.getBudat() == null)
+						|| (this.budat != null && this.budat.equals(other.getBudat())))
+				&& ((this.punit == null && other.getPunit() == null)
+						|| (this.punit != null && this.punit.equals(other.getPunit())))
+				&& ((this.invoiceDocItem == null && other.getInvoiceDocItem() == null)
+						|| (this.invoiceDocItem != null && this.invoiceDocItem.equals(other.getInvoiceDocItem())))
+				&& ((this.poNumber == null && other.getPoNumber() == null)
+						|| (this.poNumber != null && this.poNumber.equals(other.getPoNumber())))
+				&& ((this.poItem == null && other.getPoItem() == null)
+						|| (this.poItem != null && this.poItem.equals(other.getPoItem())))
+				&& ((this.refDoc == null && other.getRefDoc() == null)
+						|| (this.refDoc != null && this.refDoc.equals(other.getRefDoc())))
+				&& ((this.refDocYear == null && other.getRefDocYear() == null)
+						|| (this.refDocYear != null && this.refDocYear.equals(other.getRefDocYear())))
+				&& ((this.refDocIt == null && other.getRefDocIt() == null)
+						|| (this.refDocIt != null && this.refDocIt.equals(other.getRefDocIt())))
+				&& ((this.itemAmount == null && other.getItemAmount() == null)
+						|| (this.itemAmount != null && this.itemAmount.equals(other.getItemAmount())))
+				&& ((this.quantity == null && other.getQuantity() == null)
+						|| (this.quantity != null && this.quantity.equals(other.getQuantity())))
+				&& ((this.poUnit == null && other.getPoUnit() == null)
+						|| (this.poUnit != null && this.poUnit.equals(other.getPoUnit())))
+				&& ((this.poPrQnt == null && other.getPoPrQnt() == null)
+						|| (this.poPrQnt != null && this.poPrQnt.equals(other.getPoPrQnt())))
+				&& ((this.poPrUom == null && other.getPoPrUom() == null)
+						|| (this.poPrUom != null && this.poPrUom.equals(other.getPoPrUom())))
+				&& ((this.condType == null && other.getCondType() == null)
+						|| (this.condType != null && this.condType.equals(other.getCondType())))
+				&& ((this.sheetNo == null && other.getSheetNo() == null)
+						|| (this.sheetNo != null && this.sheetNo.equals(other.getSheetNo())))
+				&& ((this.sheetItem == null && other.getSheetItem() == null)
+						|| (this.sheetItem != null && this.sheetItem.equals(other.getSheetItem())));
+		__equalsCalc = null;
+		return _equals;
+	}
+
+	private boolean __hashCodeCalc = false;
+
+	public synchronized int hashCode() {
+		if (__hashCodeCalc) {
+			return 0;
+		}
+		__hashCodeCalc = true;
+		int _hashCode = 1;
+		if (getEbeln() != null) {
+			_hashCode += getEbeln().hashCode();
+		}
+		if (getMblnr() != null) {
+			_hashCode += getMblnr().hashCode();
+		}
+		if (getXblnr() != null) {
+			_hashCode += getXblnr().hashCode();
+		}
+		if (getEbelp() != null) {
+			_hashCode += getEbelp().hashCode();
+		}
+		if (getBuzei() != null) {
+			_hashCode += getBuzei().hashCode();
+		}
+		if (getMjahr() != null) {
+			_hashCode += getMjahr().hashCode();
+		}
+		if (getMatnr() != null) {
+			_hashCode += getMatnr().hashCode();
+		}
+		if (getTxz01() != null) {
+			_hashCode += getTxz01().hashCode();
+		}
+		if (getMeins() != null) {
+			_hashCode += getMeins().hashCode();
+		}
+		if (getMenge() != null) {
+			_hashCode += getMenge().hashCode();
+		}
+		if (getZmenge() != null) {
+			_hashCode += getZmenge().hashCode();
+		}
+		if (getNetwr() != null) {
+			_hashCode += getNetwr().hashCode();
+		}
+		if (getWaers() != null) {
+			_hashCode += getWaers().hashCode();
+		}
+		if (getAedat() != null) {
+			_hashCode += getAedat().hashCode();
+		}
+		if (getBudat() != null) {
+			_hashCode += getBudat().hashCode();
+		}
+		if (getPunit() != null) {
+			_hashCode += getPunit().hashCode();
+		}
+		if (getInvoiceDocItem() != null) {
+			_hashCode += getInvoiceDocItem().hashCode();
+		}
+		if (getPoNumber() != null) {
+			_hashCode += getPoNumber().hashCode();
+		}
+		if (getPoItem() != null) {
+			_hashCode += getPoItem().hashCode();
+		}
+		if (getRefDoc() != null) {
+			_hashCode += getRefDoc().hashCode();
+		}
+		if (getRefDocYear() != null) {
+			_hashCode += getRefDocYear().hashCode();
+		}
+		if (getRefDocIt() != null) {
+			_hashCode += getRefDocIt().hashCode();
+		}
+		if (getItemAmount() != null) {
+			_hashCode += getItemAmount().hashCode();
+		}
+		if (getQuantity() != null) {
+			_hashCode += getQuantity().hashCode();
+		}
+		if (getPoUnit() != null) {
+			_hashCode += getPoUnit().hashCode();
+		}
+		if (getPoPrQnt() != null) {
+			_hashCode += getPoPrQnt().hashCode();
+		}
+		if (getPoPrUom() != null) {
+			_hashCode += getPoPrUom().hashCode();
+		}
+		if (getCondType() != null) {
+			_hashCode += getCondType().hashCode();
+		}
+		if (getSheetNo() != null) {
+			_hashCode += getSheetNo().hashCode();
+		}
+		if (getSheetItem() != null) {
+			_hashCode += getSheetItem().hashCode();
+		}
+		__hashCodeCalc = false;
+		return _hashCode;
+	}
+
+}

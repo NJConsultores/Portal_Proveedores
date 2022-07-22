@@ -1,0 +1,190 @@
+/**
+ * ZfeSAviso.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeSAviso  implements java.io.Serializable {
+    private java.lang.String tpavi;
+
+    private short navis;
+
+    private java.lang.String fecha;
+
+    private java.lang.String ttulo;
+
+    private java.lang.String texto;
+
+    public ZfeSAviso() {
+    }
+
+    public ZfeSAviso(
+           java.lang.String tpavi,
+           short navis,
+           java.lang.String fecha,
+           java.lang.String ttulo,
+           java.lang.String texto) {
+           this.tpavi = tpavi;
+           this.navis = navis;
+           this.fecha = fecha;
+           this.ttulo = ttulo;
+           this.texto = texto;
+    }
+
+
+    /**
+     * Gets the tpavi value for this ZfeSAviso.
+     * 
+     * @return tpavi
+     */
+    public java.lang.String getTpavi() {
+        return tpavi;
+    }
+
+
+    /**
+     * Sets the tpavi value for this ZfeSAviso.
+     * 
+     * @param tpavi
+     */
+    public void setTpavi(java.lang.String tpavi) {
+        this.tpavi = tpavi;
+    }
+
+
+    /**
+     * Gets the navis value for this ZfeSAviso.
+     * 
+     * @return navis
+     */
+    public short getNavis() {
+        return navis;
+    }
+
+
+    /**
+     * Sets the navis value for this ZfeSAviso.
+     * 
+     * @param navis
+     */
+    public void setNavis(short navis) {
+        this.navis = navis;
+    }
+
+
+    /**
+     * Gets the fecha value for this ZfeSAviso.
+     * 
+     * @return fecha
+     */
+    public java.lang.String getFecha() {
+        return fecha;
+    }
+
+
+    /**
+     * Sets the fecha value for this ZfeSAviso.
+     * 
+     * @param fecha
+     */
+    public void setFecha(java.lang.String fecha) {
+        this.fecha = fecha;
+    }
+
+
+    /**
+     * Gets the ttulo value for this ZfeSAviso.
+     * 
+     * @return ttulo
+     */
+    public java.lang.String getTtulo() {
+        return ttulo;
+    }
+
+
+    /**
+     * Sets the ttulo value for this ZfeSAviso.
+     * 
+     * @param ttulo
+     */
+    public void setTtulo(java.lang.String ttulo) {
+        this.ttulo = ttulo;
+    }
+
+
+    /**
+     * Gets the texto value for this ZfeSAviso.
+     * 
+     * @return texto
+     */
+    public java.lang.String getTexto() {
+        return texto;
+    }
+
+
+    /**
+     * Sets the texto value for this ZfeSAviso.
+     * 
+     * @param texto
+     */
+    public void setTexto(java.lang.String texto) {
+        this.texto = texto;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof ZfeSAviso)) return false;
+        ZfeSAviso other = (ZfeSAviso) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = true && 
+            ((this.tpavi==null && other.getTpavi()==null) || 
+             (this.tpavi!=null &&
+              this.tpavi.equals(other.getTpavi()))) &&
+            this.navis == other.getNavis() &&
+            ((this.fecha==null && other.getFecha()==null) || 
+             (this.fecha!=null &&
+              this.fecha.equals(other.getFecha()))) &&
+            ((this.ttulo==null && other.getTtulo()==null) || 
+             (this.ttulo!=null &&
+              this.ttulo.equals(other.getTtulo()))) &&
+            ((this.texto==null && other.getTexto()==null) || 
+             (this.texto!=null &&
+              this.texto.equals(other.getTexto())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = 1;
+        if (getTpavi() != null) {
+            _hashCode += getTpavi().hashCode();
+        }
+        _hashCode += getNavis();
+        if (getFecha() != null) {
+            _hashCode += getFecha().hashCode();
+        }
+        if (getTtulo() != null) {
+            _hashCode += getTtulo().hashCode();
+        }
+        if (getTexto() != null) {
+            _hashCode += getTexto().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+}

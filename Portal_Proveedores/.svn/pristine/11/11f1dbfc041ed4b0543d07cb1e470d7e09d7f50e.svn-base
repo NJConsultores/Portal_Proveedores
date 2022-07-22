@@ -1,0 +1,122 @@
+package com.infra.core.exposition;
+
+import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+
+import com.infra.core.util.CoreConstantes;
+import com.infra.core.util.LocaleUtil;
+import com.infra.core.util.jsf.MsgUtil;
+
+/**
+ *
+ * @author Jessika Cecilia Hernández García <reyna.lagunas.aranda@gmail.com>
+ */
+@Controller
+@Scope("session")
+public class CambioPasswordMB implements Serializable {
+
+	private static final Logger logger = LoggerFactory.getLogger(CambioPasswordMB.class);
+	private static final long serialVersionUID = 1L;
+	protected String password;
+	protected String nuevoPassword;
+	protected String confirmarPassword;
+	protected boolean diseable;
+
+	public String getUsername() {
+		return SecurityContextHolder.getContext().getAuthentication().getName();
+	}
+
+	public String getNombreCompleto() {
+		logger.debug("Nombre completo");
+		diseable = false;
+		String nombre = "NOMBRE COMPLETO";
+		return nombre;
+	}
+
+	public void cambiarPassword() {
+		logger.debug("Cambiar Password");
+		try {
+			logger.debug("NUEVO PASSWORD: " + nuevoPassword);
+
+			if (validaPassword(nuevoPassword)) {
+				// cuentaService.cambiarContrasena(getUsername(), password,
+				// nuevoPassword);
+				// Usuario u = SessionUtil.getUsuario();
+				//
+				// UsuarioLogin ul =
+				// loginService.buscarUsuarioLogin(u.getIdUsuario());
+				//
+				// ul.setCambiarPassword(CoreConstantes.NO);
+				// loginService.actualizarUsuarioLogin(ul);
+
+				password = "";
+				nuevoPassword = "";
+				confirmarPassword = "";
+				diseable = true;
+
+				MsgUtil.addMsgInfo(LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.ok"),
+						LocaleUtil.getResourceBundle().getString("msg.cuenta.cambio.password.cerrar.sesion"));
+			} else {
+				MsgUtil.addMsgError(LocaleUtil.getResourceBundle().getString("error.cuenta.cambio.password")
+						.replaceAll("\\{0\\}", nuevoPassword), "");
+			}
+		} catch (Exception ex) {
+			logger.error("Error al cambiar contraseña ", ex);
+			FacesContext.getCurrentInstance().addMessage(null,
+					new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Error al guardar la contraseña"));
+
+		}
+
+	}
+
+	private boolean validaPassword(String password) {
+		Pattern pattern;
+		Matcher matcher;
+		pattern = Pattern.compile(CoreConstantes.PASSWORD_PATTERN);
+		matcher = pattern.matcher(password);
+
+		return matcher.matches();
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getNuevoPassword() {
+		return nuevoPassword;
+	}
+
+	public void setNuevoPassword(String nuevoPassword) {
+		this.nuevoPassword = nuevoPassword;
+	}
+
+	public String getConfirmarPassword() {
+		return confirmarPassword;
+	}
+
+	public void setConfirmarPassword(String confirmarPassword) {
+		this.confirmarPassword = confirmarPassword;
+	}
+
+	public boolean isDiseable() {
+		return diseable;
+	}
+
+	public void setDiseable(boolean diseable) {
+		this.diseable = diseable;
+	}
+}

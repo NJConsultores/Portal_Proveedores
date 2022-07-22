@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+
+	<ui:define name="content">
+		<f:event type="preRenderView"
+			listener="#{peticionOfertaMB.resetConsultaEstatus()}" />
+		<p:panel header="#{msg['menu.peticionesOferta']}"
+			styleClass="cfdp-panels" style="min-height: 380px;">
+			<p:messages id="msgOperacion" globalOnly="false" closable="true"
+				showDetail="true" />
+			<h:form id="formConsulta">
+				<h:panelGrid columns="4">
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad"
+						value="#{peticionOfertaMB.sociedad}" styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{peticionOfertaMB.sociedades}" var="soc"
+							itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputText value="#{msg['factura.estatus']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_status" value="#{peticionOfertaMB.status}"
+						styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{peticionOfertaMB.listaEstatus}" var="est"
+							itemLabel="#{est.STATUS} / #{est.TEXTO}" itemValue="#{est}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputLabel value="#{msg['fecha.inicial']}" />
+					<p:calendar value="#{peticionOfertaMB.fechaDesde}"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.inicial']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+					<h:outputLabel value="#{msg['fecha.final']}" />
+					<p:calendar value="#{peticionOfertaMB.fechaHasta}"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.final']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+				</h:panelGrid>
+				<p:commandButton value="#{msg['accion.buscar']}"
+					actionListener="#{peticionOfertaMB.consultarStatusPeticiones()}"
+					update="@form :msgOperacion" onerror="PF('statusDialog').hide()"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide()" />
+				<div
+					style="font-weight: bold; font-size: 13px; float: right; margin-right: 10px; margin-top: 5px; color: #000;">
+					<h:commandLink onclick="PrimeFaces.monitorDownload(start, stop);">
+						<p:graphicImage name="/images/csv.jpg" value="/images/csv.jpg"
+							width="30" alt="#{msg['msg.exportar.csv']}" />
+						<p:dataExporter type="xls" target="tablaPeticiones"
+							fileName="reportePeticiones" encoding="ISO-8859-1" />
+					</h:commandLink>
+				</div>
+				<p:dataTable emptyMessage="" rows="20" paginator="true"
+					value="#{peticionOfertaMB.peticiones}" var="f" id="tablaPeticiones"
+					lazy="true" paginatorPosition="bottom" widgetVar="resultadoWidget">
+					<p:ajax event="page" onstart="PF('statusDialog').show()"
+						oncomplete="PF('statusDialog').hide()"
+						onerror="PF('statusDialog').hide()" />
+					<f:facet name="header">
+						<h:outputText value="#{msg['menu.peticionesOferta']}" />
+					</f:facet>
+					<p:column headerText="#{msg['peticiones.id']}">
+						<h:outputText value="#{f.EBELN}" />
+					</p:column>
+					<p:column headerText="#{msg['peticiones.posicion']}">
+						<h:outputText value="#{f.EBELP}" />
+					</p:column>
+					<p:column headerText="#{msg['peticiones.fecha_oferta']}">
+						<h:outputText value="#{f.IHRAN}" />
+					</p:column>
+					<p:column headerText="#{msg['peticiones.fecha_limite']}">
+						<h:outputText value="#{f.ANGDT}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.material']}">
+						<h:outputText value="#{f.MATNR}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.desc_material']}">
+						<h:outputText value="#{f.MAKTX}" />
+					</p:column>
+					<p:column headerText="#{msg['peticiones.cantidad_prove']}">
+						<h:outputText value="#{f.ANMNG}" />
+					</p:column>
+					<p:column headerText="#{msg['peticiones.monto']}">
+						<h:outputText value="#{f.NETPR}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['peticiones.estatus']}">
+						<h:outputText value="#{f.STATU}" />
+					</p:column>
+					<p:column headerText="#{msg['pdf.titulo']}">
+						<p:commandLink id="downloadLinkPdf" ajax="false"
+							onclick="PrimeFaces.monitorDownload(start, stop)"
+							rendered="#{f.PDF ne null and f.PDF ne ''}"
+							actionListener="#{peticionOfertaMB.armarPDFPeticion(f)}">
+							<p:fileDownload value="#{peticionOfertaMB.pdfCargado}" />
+							<p:graphicImage value="/resources/images/pdf-32.png" width="24" />
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+
+			</h:form>
+		</p:panel>
+
+	</ui:define>
+</ui:composition>

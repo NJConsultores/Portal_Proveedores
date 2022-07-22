@@ -1,0 +1,143 @@
+package com.infra.vis.util;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+public class NumberUtil {
+
+    public static final String CERO = "CERO";
+    public static final String DOBCERO = "00";
+    public static final String POSTCENT = "/100";
+    public static final int ZERO = 0;
+    public static final int ONE_PIECE = 1;
+    public static final int TEN = 10;
+    public static final int CASINO = 29;
+    
+    
+    public static final Map<Integer, String> MAP_UNI;
+    static {
+        final Map<Integer, String> uniMap = new HashMap<Integer, String>();
+        uniMap.put(0, "CERO");
+        uniMap.put(1, "UN");
+        uniMap.put(2, "DOS");
+        uniMap.put(3, "TRES");
+        uniMap.put(4, "CUATRO");
+        uniMap.put(5, "CINCO");
+        uniMap.put(6, "SEIS");
+        uniMap.put(7, "SIETE");
+        uniMap.put(8, "OCHO");
+        uniMap.put(9, "NUEVE");
+        MAP_UNI = Collections.unmodifiableMap(uniMap);
+    }
+    
+    public static final Map<Integer, String> MAP_CEROTRE;
+    static {
+        final Map<Integer, String> decMap = new HashMap<Integer, String>();
+        decMap.put(10, "DIEZ");
+        decMap.put(11, "ONCE");
+        decMap.put(12, "DOCE");
+        decMap.put(13, "TRECE");
+        decMap.put(14, "CATORCE");
+        decMap.put(15, "QUINCE");
+        decMap.put(16, "DEICISÉIS");
+        decMap.put(17, "DIECISIETE");
+        decMap.put(18, "DIECIOCHO");
+        decMap.put(19, "DIECINUEVE");
+        decMap.put(20, "VEINTE");
+        decMap.put(21, "VEINTIUNO");
+        decMap.put(22, "VEINTIDÓS");
+        decMap.put(23, "VEINTITRÉS");
+        decMap.put(24, "VEINTICUATRO");
+        decMap.put(25, "VEINTICINCO");
+        decMap.put(26, "VEINTISÉIS");
+        decMap.put(27, "VEINTISIETE");
+        decMap.put(28, "VEINTIOCHO");
+        decMap.put(29, "VEINTINUEVE");
+        
+        MAP_CEROTRE = Collections.unmodifiableMap(decMap);
+    }
+    
+    public static final Map<Integer, String> MAP_DEC;
+    static {
+        final Map<Integer, String> decMap = new HashMap<Integer, String>();
+        decMap.put(3, "TREINTA");
+        decMap.put(4, "CUARENTA");
+        decMap.put(5, "CINCUENTA");
+        decMap.put(6, "SESENTA");
+        decMap.put(7, "SETENTA");
+        decMap.put(8, "OCHENTA");
+        decMap.put(9, "NOVENTA");
+        MAP_DEC = Collections.unmodifiableMap(decMap);
+    }
+    
+    public static final Map<Integer, String> MAP_CENT;
+    static {
+        final Map<Integer, String> centMap = new HashMap<Integer, String>();
+        centMap.put(0, "CIEN");
+        centMap.put(1, "CIENTO");
+        centMap.put(2, "DOSCIENTOS");
+        centMap.put(3, "TRESCIENTOS");
+        centMap.put(4, "CUATROCIENTOS");
+        centMap.put(5, "QUINIENTOS");
+        centMap.put(6, "SEISCIENTOS");
+        centMap.put(7, "SETECIENTOS");
+        centMap.put(8, "OCHOCIENTOS");
+        centMap.put(9, "NOVECIENTOS");
+        MAP_CENT = Collections.unmodifiableMap(centMap);
+    }
+    
+    public static String isMenorTreinta(final int valor) {
+        if(NumberUtil.CASINO < valor){
+            return TextUtil.EMPTY;
+        } else if(NumberUtil.TEN > valor){
+            return MAP_UNI.get(valor);
+        } else {
+            return MAP_CEROTRE.get(valor);
+        }
+    }
+    
+    public static String detUnid(final int unidad) {
+        if(!NumberUtil.MAP_UNI.containsKey(unidad)){
+            return TextUtil.EMPTY;
+        }
+        return NumberUtil.MAP_UNI.get(unidad);
+    }
+    
+    public static String detDece(final int decena) {
+        if(!NumberUtil.MAP_DEC.containsKey(decena)){
+            return TextUtil.EMPTY;
+        }
+        return NumberUtil.MAP_DEC.get(decena);
+    }
+    
+    public static String detCenten(final int centena) {
+        if(!NumberUtil.MAP_CENT.containsKey(centena)){
+            return TextUtil.EMPTY;
+        }
+        return NumberUtil.MAP_CENT.get(centena);
+    }
+    
+    public static int getDivisor(final BigDecimal[] divRem){
+        if(null == divRem){
+            return NumberUtil.ZERO;
+        } 
+        return (divRem[NumberUtil.ZERO]).intValue();
+    }
+    
+    public static int getRemain(final BigDecimal[] divRem){
+        if(null == divRem){
+            return NumberUtil.ZERO;
+        } 
+        return (divRem[NumberUtil.ONE_PIECE]).intValue();
+    }
+    
+    public static String gectCent(final BigDecimal currency){
+        final BigDecimal fraction = currency.remainder(BigDecimal.ONE);
+        final DecimalFormat decFormat = new DecimalFormat(NumberUtil.DOBCERO);
+        return decFormat.format(fraction.movePointRight(2).intValue());
+    }
+
+}

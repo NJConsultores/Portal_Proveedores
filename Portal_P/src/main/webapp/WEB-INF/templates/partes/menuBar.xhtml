@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<p:menubar autoDisplay="false" rendered="#{cuentaMB.rfc ne ''}">
+		<p:menuitem value="#{msg['accion.inicio']}"
+			url="/content/restricted/principal/dashboard.do" icon="ui-icon-home" />
+
+		<p:menuitem value="#{msg['menu.listadoOC']}" icon="ui-icon-clipboard"
+			url="/content/restricted/factura/listadoOC.do"
+			rendered="#{p:ifAnyGranted('ROLE_LISTA_OC2')}" />
+
+		<p:submenu label="#{msg['menu.facturas']}" icon="ui-icon-document"
+			rendered="#{p:ifAnyGranted('ROLE_GET_FACTURAS, 
+			ROLE_V_CFDI_OC, 
+			ROLE_V_CBB_OC, 
+			ROLE_V_CFDI,
+			ROLE_V_CBB')}">
+
+			<p:submenu label="#{msg['menu.factura.envio']}"
+				rendered="#{p:ifAnyGranted('ROLE_V_CFDI_OC, 
+			ROLE_V_CBB_OC, 
+			ROLE_V_CFDI,
+			ROLE_V_CBB')}">
+
+				<p:menuitem value="#{msg['menu.facturas.con_oc']}" url="#"
+					disabled="true"
+					style="background-color: #000000; font-weight:bold; color:#FFFFFF"
+					rendered="#{p:ifAnyGranted('ROLE_V_CFDI_OC, ROLE_V_CBB_OC')}" />
+				<p:menuitem value="#{msg['menu.facturas.con_cfdi']}"
+					url="/content/restricted/factura/CFDI_OC.do"
+					rendered="#{p:ifAnyGranted('ROLE_V_CFDI_OC')}" />
+				<p:menuitem value="#{msg['menu.facturas.sin_cfdi']}"
+					url="/content/restricted/factura/CBB_OC.do"
+					rendered="#{p:ifAnyGranted('ROLE_V_CBB_OC')}" />
+
+				<p:menuitem value="#{msg['menu.facturas.sin_oc']}" url="#"
+					disabled="true"
+					style="background-color: #000000; font-weight:bold; color:#FFFFFF"
+					rendered="#{p:ifAnyGranted('ROLE_V_CFDI, ROLE_V_CBB')}" />
+				<p:menuitem value="#{msg['menu.facturas.con_cfdi']}"
+					url="/content/restricted/factura/CFDI.do"
+					rendered="#{p:ifAnyGranted('ROLE_V_CFDI')}" />
+				<p:menuitem value="#{msg['menu.facturas.sin_cfdi']}"
+					url="/content/restricted/factura/CBB.do"
+					rendered="#{p:ifAnyGranted('ROLE_V_CBB')}" />
+
+			</p:submenu>
+
+			<p:menuitem value="#{msg['menu.factura.consulta']}"
+				url="/content/restricted/factura/consultaFacturas.do"
+				rendered="#{p:ifAnyGranted('ROLE_GET_FACTURAS')}" />
+			<p:menuitem value="#{msg['menu.facturas.consignacion']}"
+				url="/content/restricted/factura/consignacion.do"
+				rendered="#{p:ifAnyGranted('ROLE_CONSIGNACION')}" />
+			<p:menuitem value="#{msg['menu.facturas.masivas']}"
+				url="/content/restricted/factura/addenda.do"
+				rendered="#{p:ifAnyGranted('ROLE_ADDENDA')}" />
+		</p:submenu>
+		<p:menuitem value="#{msg['menu.complementosPago']}"
+			icon="ui-icon-gripsmall-diagonal-se"
+			url="/content/restricted/factura/complementos.do"
+			rendered="#{p:ifAnyGranted('ROLE_COMPLEMENTO')}" />
+		<p:menuitem value="#{msg['menu.estatus_recepcion']}"
+			icon="ui-icon-suitcase"
+			url="/content/restricted/factura/consultaStatusRecep.do"
+			rendered="#{p:ifAnyGranted('ROLE_STAT_RECEPCION')}" />
+
+		<p:menuitem value="#{msg['menu.usuario.cambiar_password']}"
+			icon="ui-icon-person" url="/content/restricted/cuenta/cuenta.do" />
+
+		<f:facet name="options">
+			<p:menubar>
+				<p:submenu label="#{msg['menu.peticionesOferta']}"
+					icon="ui-icon-cart"
+					rendered="#{p:ifAnyGranted('ROLE_PETICIONES')}">
+					<p:menuitem value="#{msg['menu.peticionesOferta.envio']}"
+						url="/content/restricted/peticionOferta/peticionOferta.do"
+						rendered="#{p:ifAnyGranted('ROLE_PETICIONES')}" />
+					<p:menuitem value="#{msg['menu.peticionesOferta.estatus']}"
+						url="/content/restricted/peticionOferta/consultaPeticiones.do"
+						rendered="#{p:ifAnyGranted('ROLE_PETICIONES')}" />
+				</p:submenu>
+				<p:menuitem value="#{msg['accion.salir']}" icon="ui-icon-extlink"
+					url="#{request.contextPath}/j_spring_security_logout" />
+
+
+			</p:menubar>
+
+		</f:facet>
+	</p:menubar>
+
+	<p:accordionPanel rendered="#{avisosMB.checarAvisosProveedor() > 0}">
+		<p:tab title="#{msg['menu.avisos']}">
+			<h:panelGrid columns="2" cellpadding="10">
+				<h:outputText value="#{msg['avisos.recordatorio']}" />
+			</h:panelGrid>
+		</p:tab>
+	</p:accordionPanel>
+
+	
+</ui:composition>

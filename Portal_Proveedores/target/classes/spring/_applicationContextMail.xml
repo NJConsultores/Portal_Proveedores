@@ -1,0 +1,50 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-4.0.xsd ">
+ 
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="smtp.gmail.com" />
+        <property name="port" value="587" />
+        <property name="username" value="notificaciones.otus@gmail.com" />
+        <property name="password" value="3.3x3=Nueve" />
+
+ 
+        <property name="javaMailProperties">
+            <props>
+                <!--        	      <prop key="mail.smtp.auth">true</prop> -->
+                <prop key="mail.smtp.starttls.enable">true</prop>
+                <prop key="mail.smtp.ssl.trust">smtp.gmail.com</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- Bean para enviar eMail -->
+    <!-- 
+     <bean id="sendEmailUtil" class="com.infra.core.util.SendEmailUtil">
+            <property name="mailSender" ref="mailSender" />
+            <property name="simpleMailMessage" ref="customeMailMessage" />
+    </bean>-->
+
+    <bean id="customeMailMessage" class="org.springframework.mail.SimpleMailMessage">
+ 
+        <property name="from" value="notificaciones.otus@gmail.com" />
+        <property name="to" value="notificaciones.otus@yahoo.com.mx" />
+        <property name="subject" value="OtusSystem Normativa Laboral" />
+        <property name="text">
+            <value>
+		<![CDATA[
+			OtusSystem Normativa Laboral
+			
+			Se han encontrado incumplimientos a normativas laborales en el centro de trabajo %s de la empresa %s
+			Estos incumplimientos se han encontrado al realizar el diagnóstico %s.
+			
+			Para más información, verifique la sección Notificaciones en OtusSystem.			
+			
+		]]>
+            </value>
+        </property>
+    </bean>
+
+
+</beans>

@@ -1,0 +1,164 @@
+/**
+ * ZfeCsocArea.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeCsocArea  implements java.io.Serializable {
+    private java.lang.String mandt;
+
+    private java.lang.String bukrs;
+
+    private java.lang.String areid;
+
+    private java.lang.String areds;
+
+    public ZfeCsocArea() {
+    }
+
+    public ZfeCsocArea(
+           java.lang.String mandt,
+           java.lang.String bukrs,
+           java.lang.String areid,
+           java.lang.String areds) {
+           this.mandt = mandt;
+           this.bukrs = bukrs;
+           this.areid = areid;
+           this.areds = areds;
+    }
+
+
+    /**
+     * Gets the mandt value for this ZfeCsocArea.
+     * 
+     * @return mandt
+     */
+    public java.lang.String getMandt() {
+        return mandt;
+    }
+
+
+    /**
+     * Sets the mandt value for this ZfeCsocArea.
+     * 
+     * @param mandt
+     */
+    public void setMandt(java.lang.String mandt) {
+        this.mandt = mandt;
+    }
+
+
+    /**
+     * Gets the bukrs value for this ZfeCsocArea.
+     * 
+     * @return bukrs
+     */
+    public java.lang.String getBukrs() {
+        return bukrs;
+    }
+
+
+    /**
+     * Sets the bukrs value for this ZfeCsocArea.
+     * 
+     * @param bukrs
+     */
+    public void setBukrs(java.lang.String bukrs) {
+        this.bukrs = bukrs;
+    }
+
+
+    /**
+     * Gets the areid value for this ZfeCsocArea.
+     * 
+     * @return areid
+     */
+    public java.lang.String getAreid() {
+        return areid;
+    }
+
+
+    /**
+     * Sets the areid value for this ZfeCsocArea.
+     * 
+     * @param areid
+     */
+    public void setAreid(java.lang.String areid) {
+        this.areid = areid;
+    }
+
+
+    /**
+     * Gets the areds value for this ZfeCsocArea.
+     * 
+     * @return areds
+     */
+    public java.lang.String getAreds() {
+        return areds;
+    }
+
+
+    /**
+     * Sets the areds value for this ZfeCsocArea.
+     * 
+     * @param areds
+     */
+    public void setAreds(java.lang.String areds) {
+        this.areds = areds;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof ZfeCsocArea)) return false;
+        ZfeCsocArea other = (ZfeCsocArea) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = true && 
+            ((this.mandt==null && other.getMandt()==null) || 
+             (this.mandt!=null &&
+              this.mandt.equals(other.getMandt()))) &&
+            ((this.bukrs==null && other.getBukrs()==null) || 
+             (this.bukrs!=null &&
+              this.bukrs.equals(other.getBukrs()))) &&
+            ((this.areid==null && other.getAreid()==null) || 
+             (this.areid!=null &&
+              this.areid.equals(other.getAreid()))) &&
+            ((this.areds==null && other.getAreds()==null) || 
+             (this.areds!=null &&
+              this.areds.equals(other.getAreds())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = 1;
+        if (getMandt() != null) {
+            _hashCode += getMandt().hashCode();
+        }
+        if (getBukrs() != null) {
+            _hashCode += getBukrs().hashCode();
+        }
+        if (getAreid() != null) {
+            _hashCode += getAreid().hashCode();
+        }
+        if (getAreds() != null) {
+            _hashCode += getAreds().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+}

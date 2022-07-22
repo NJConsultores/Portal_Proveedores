@@ -1,0 +1,1034 @@
+/**
+ * ZfeCprovOpc.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.core.ws.login;
+
+public class ZfeCprovOpc  implements java.io.Serializable {
+    private java.lang.String mandt;
+
+    private java.lang.String lifnr;
+
+    private java.lang.String listfac;
+
+    private java.lang.String cfdiocc;
+
+    private java.lang.String cfdiocv;
+
+    private java.lang.String cfdiocp;
+
+    private java.lang.String cbbocc;
+
+    private java.lang.String cbbocv;
+
+    private java.lang.String cbbocp;
+
+    private java.lang.String cfdi;
+
+    private java.lang.String cbb;
+
+    private java.lang.String statrec;
+
+    private java.lang.String listaoc;
+
+    private java.lang.String bzccfdi;
+
+    private java.lang.String bzscfdi;
+
+    private java.lang.String consbuz;
+
+    private java.lang.String edocta;
+
+    private java.lang.String passchg;
+
+    private java.lang.String listdiv;
+
+    private java.lang.String avisos;
+
+    private org.apache.axis.types.UnsignedByte passven;
+
+    private java.lang.String consper;
+
+    private java.lang.String usocfdi;
+
+    private java.lang.String ncredit;
+
+    private java.lang.String ncsinoc;
+
+    private java.lang.String pdfotr;
+
+    private java.lang.String ciccfdi;
+
+    private java.lang.String ciscfdi;
+
+    private java.lang.String notoler;
+
+    private java.lang.String verimpt;
+
+    private java.lang.String multarc;
+
+    private java.lang.String validad;
+
+    private java.lang.String monses;
+
+    public ZfeCprovOpc() {
+    }
+
+    public ZfeCprovOpc(
+           java.lang.String mandt,
+           java.lang.String lifnr,
+           java.lang.String listfac,
+           java.lang.String cfdiocc,
+           java.lang.String cfdiocv,
+           java.lang.String cfdiocp,
+           java.lang.String cbbocc,
+           java.lang.String cbbocv,
+           java.lang.String cbbocp,
+           java.lang.String cfdi,
+           java.lang.String cbb,
+           java.lang.String statrec,
+           java.lang.String listaoc,
+           java.lang.String bzccfdi,
+           java.lang.String bzscfdi,
+           java.lang.String consbuz,
+           java.lang.String edocta,
+           java.lang.String passchg,
+           java.lang.String listdiv,
+           java.lang.String avisos,
+           org.apache.axis.types.UnsignedByte passven,
+           java.lang.String consper,
+           java.lang.String usocfdi,
+           java.lang.String ncredit,
+           java.lang.String ncsinoc,
+           java.lang.String pdfotr,
+           java.lang.String ciccfdi,
+           java.lang.String ciscfdi,
+           java.lang.String notoler,
+           java.lang.String verimpt,
+           java.lang.String multarc,
+           java.lang.String validad,
+           java.lang.String monses) {
+           this.mandt = mandt;
+           this.lifnr = lifnr;
+           this.listfac = listfac;
+           this.cfdiocc = cfdiocc;
+           this.cfdiocv = cfdiocv;
+           this.cfdiocp = cfdiocp;
+           this.cbbocc = cbbocc;
+           this.cbbocv = cbbocv;
+           this.cbbocp = cbbocp;
+           this.cfdi = cfdi;
+           this.cbb = cbb;
+           this.statrec = statrec;
+           this.listaoc = listaoc;
+           this.bzccfdi = bzccfdi;
+           this.bzscfdi = bzscfdi;
+           this.consbuz = consbuz;
+           this.edocta = edocta;
+           this.passchg = passchg;
+           this.listdiv = listdiv;
+           this.avisos = avisos;
+           this.passven = passven;
+           this.consper = consper;
+           this.usocfdi = usocfdi;
+           this.ncredit = ncredit;
+           this.ncsinoc = ncsinoc;
+           this.pdfotr = pdfotr;
+           this.ciccfdi = ciccfdi;
+           this.ciscfdi = ciscfdi;
+           this.notoler = notoler;
+           this.verimpt = verimpt;
+           this.multarc = multarc;
+           this.validad = validad;
+           this.monses = monses;
+    }
+
+
+    /**
+     * Gets the mandt value for this ZfeCprovOpc.
+     * 
+     * @return mandt
+     */
+    public java.lang.String getMandt() {
+        return mandt;
+    }
+
+
+    /**
+     * Sets the mandt value for this ZfeCprovOpc.
+     * 
+     * @param mandt
+     */
+    public void setMandt(java.lang.String mandt) {
+        this.mandt = mandt;
+    }
+
+
+    /**
+     * Gets the lifnr value for this ZfeCprovOpc.
+     * 
+     * @return lifnr
+     */
+    public java.lang.String getLifnr() {
+        return lifnr;
+    }
+
+
+    /**
+     * Sets the lifnr value for this ZfeCprovOpc.
+     * 
+     * @param lifnr
+     */
+    public void setLifnr(java.lang.String lifnr) {
+        this.lifnr = lifnr;
+    }
+
+
+    /**
+     * Gets the listfac value for this ZfeCprovOpc.
+     * 
+     * @return listfac
+     */
+    public java.lang.String getListfac() {
+        return listfac;
+    }
+
+
+    /**
+     * Sets the listfac value for this ZfeCprovOpc.
+     * 
+     * @param listfac
+     */
+    public void setListfac(java.lang.String listfac) {
+        this.listfac = listfac;
+    }
+
+
+    /**
+     * Gets the cfdiocc value for this ZfeCprovOpc.
+     * 
+     * @return cfdiocc
+     */
+    public java.lang.String getCfdiocc() {
+        return cfdiocc;
+    }
+
+
+    /**
+     * Sets the cfdiocc value for this ZfeCprovOpc.
+     * 
+     * @param cfdiocc
+     */
+    public void setCfdiocc(java.lang.String cfdiocc) {
+        this.cfdiocc = cfdiocc;
+    }
+
+
+    /**
+     * Gets the cfdiocv value for this ZfeCprovOpc.
+     * 
+     * @return cfdiocv
+     */
+    public java.lang.String getCfdiocv() {
+        return cfdiocv;
+    }
+
+
+    /**
+     * Sets the cfdiocv value for this ZfeCprovOpc.
+     * 
+     * @param cfdiocv
+     */
+    public void setCfdiocv(java.lang.String cfdiocv) {
+        this.cfdiocv = cfdiocv;
+    }
+
+
+    /**
+     * Gets the cfdiocp value for this ZfeCprovOpc.
+     * 
+     * @return cfdiocp
+     */
+    public java.lang.String getCfdiocp() {
+        return cfdiocp;
+    }
+
+
+    /**
+     * Sets the cfdiocp value for this ZfeCprovOpc.
+     * 
+     * @param cfdiocp
+     */
+    public void setCfdiocp(java.lang.String cfdiocp) {
+        this.cfdiocp = cfdiocp;
+    }
+
+
+    /**
+     * Gets the cbbocc value for this ZfeCprovOpc.
+     * 
+     * @return cbbocc
+     */
+    public java.lang.String getCbbocc() {
+        return cbbocc;
+    }
+
+
+    /**
+     * Sets the cbbocc value for this ZfeCprovOpc.
+     * 
+     * @param cbbocc
+     */
+    public void setCbbocc(java.lang.String cbbocc) {
+        this.cbbocc = cbbocc;
+    }
+
+
+    /**
+     * Gets the cbbocv value for this ZfeCprovOpc.
+     * 
+     * @return cbbocv
+     */
+    public java.lang.String getCbbocv() {
+        return cbbocv;
+    }
+
+
+    /**
+     * Sets the cbbocv value for this ZfeCprovOpc.
+     * 
+     * @param cbbocv
+     */
+    public void setCbbocv(java.lang.String cbbocv) {
+        this.cbbocv = cbbocv;
+    }
+
+
+    /**
+     * Gets the cbbocp value for this ZfeCprovOpc.
+     * 
+     * @return cbbocp
+     */
+    public java.lang.String getCbbocp() {
+        return cbbocp;
+    }
+
+
+    /**
+     * Sets the cbbocp value for this ZfeCprovOpc.
+     * 
+     * @param cbbocp
+     */
+    public void setCbbocp(java.lang.String cbbocp) {
+        this.cbbocp = cbbocp;
+    }
+
+
+    /**
+     * Gets the cfdi value for this ZfeCprovOpc.
+     * 
+     * @return cfdi
+     */
+    public java.lang.String getCfdi() {
+        return cfdi;
+    }
+
+
+    /**
+     * Sets the cfdi value for this ZfeCprovOpc.
+     * 
+     * @param cfdi
+     */
+    public void setCfdi(java.lang.String cfdi) {
+        this.cfdi = cfdi;
+    }
+
+
+    /**
+     * Gets the cbb value for this ZfeCprovOpc.
+     * 
+     * @return cbb
+     */
+    public java.lang.String getCbb() {
+        return cbb;
+    }
+
+
+    /**
+     * Sets the cbb value for this ZfeCprovOpc.
+     * 
+     * @param cbb
+     */
+    public void setCbb(java.lang.String cbb) {
+        this.cbb = cbb;
+    }
+
+
+    /**
+     * Gets the statrec value for this ZfeCprovOpc.
+     * 
+     * @return statrec
+     */
+    public java.lang.String getStatrec() {
+        return statrec;
+    }
+
+
+    /**
+     * Sets the statrec value for this ZfeCprovOpc.
+     * 
+     * @param statrec
+     */
+    public void setStatrec(java.lang.String statrec) {
+        this.statrec = statrec;
+    }
+
+
+    /**
+     * Gets the listaoc value for this ZfeCprovOpc.
+     * 
+     * @return listaoc
+     */
+    public java.lang.String getListaoc() {
+        return listaoc;
+    }
+
+
+    /**
+     * Sets the listaoc value for this ZfeCprovOpc.
+     * 
+     * @param listaoc
+     */
+    public void setListaoc(java.lang.String listaoc) {
+        this.listaoc = listaoc;
+    }
+
+
+    /**
+     * Gets the bzccfdi value for this ZfeCprovOpc.
+     * 
+     * @return bzccfdi
+     */
+    public java.lang.String getBzccfdi() {
+        return bzccfdi;
+    }
+
+
+    /**
+     * Sets the bzccfdi value for this ZfeCprovOpc.
+     * 
+     * @param bzccfdi
+     */
+    public void setBzccfdi(java.lang.String bzccfdi) {
+        this.bzccfdi = bzccfdi;
+    }
+
+
+    /**
+     * Gets the bzscfdi value for this ZfeCprovOpc.
+     * 
+     * @return bzscfdi
+     */
+    public java.lang.String getBzscfdi() {
+        return bzscfdi;
+    }
+
+
+    /**
+     * Sets the bzscfdi value for this ZfeCprovOpc.
+     * 
+     * @param bzscfdi
+     */
+    public void setBzscfdi(java.lang.String bzscfdi) {
+        this.bzscfdi = bzscfdi;
+    }
+
+
+    /**
+     * Gets the consbuz value for this ZfeCprovOpc.
+     * 
+     * @return consbuz
+     */
+    public java.lang.String getConsbuz() {
+        return consbuz;
+    }
+
+
+    /**
+     * Sets the consbuz value for this ZfeCprovOpc.
+     * 
+     * @param consbuz
+     */
+    public void setConsbuz(java.lang.String consbuz) {
+        this.consbuz = consbuz;
+    }
+
+
+    /**
+     * Gets the edocta value for this ZfeCprovOpc.
+     * 
+     * @return edocta
+     */
+    public java.lang.String getEdocta() {
+        return edocta;
+    }
+
+
+    /**
+     * Sets the edocta value for this ZfeCprovOpc.
+     * 
+     * @param edocta
+     */
+    public void setEdocta(java.lang.String edocta) {
+        this.edocta = edocta;
+    }
+
+
+    /**
+     * Gets the passchg value for this ZfeCprovOpc.
+     * 
+     * @return passchg
+     */
+    public java.lang.String getPasschg() {
+        return passchg;
+    }
+
+
+    /**
+     * Sets the passchg value for this ZfeCprovOpc.
+     * 
+     * @param passchg
+     */
+    public void setPasschg(java.lang.String passchg) {
+        this.passchg = passchg;
+    }
+
+
+    /**
+     * Gets the listdiv value for this ZfeCprovOpc.
+     * 
+     * @return listdiv
+     */
+    public java.lang.String getListdiv() {
+        return listdiv;
+    }
+
+
+    /**
+     * Sets the listdiv value for this ZfeCprovOpc.
+     * 
+     * @param listdiv
+     */
+    public void setListdiv(java.lang.String listdiv) {
+        this.listdiv = listdiv;
+    }
+
+
+    /**
+     * Gets the avisos value for this ZfeCprovOpc.
+     * 
+     * @return avisos
+     */
+    public java.lang.String getAvisos() {
+        return avisos;
+    }
+
+
+    /**
+     * Sets the avisos value for this ZfeCprovOpc.
+     * 
+     * @param avisos
+     */
+    public void setAvisos(java.lang.String avisos) {
+        this.avisos = avisos;
+    }
+
+
+    /**
+     * Gets the passven value for this ZfeCprovOpc.
+     * 
+     * @return passven
+     */
+    public org.apache.axis.types.UnsignedByte getPassven() {
+        return passven;
+    }
+
+
+    /**
+     * Sets the passven value for this ZfeCprovOpc.
+     * 
+     * @param passven
+     */
+    public void setPassven(org.apache.axis.types.UnsignedByte passven) {
+        this.passven = passven;
+    }
+
+
+    /**
+     * Gets the consper value for this ZfeCprovOpc.
+     * 
+     * @return consper
+     */
+    public java.lang.String getConsper() {
+        return consper;
+    }
+
+
+    /**
+     * Sets the consper value for this ZfeCprovOpc.
+     * 
+     * @param consper
+     */
+    public void setConsper(java.lang.String consper) {
+        this.consper = consper;
+    }
+
+
+    /**
+     * Gets the usocfdi value for this ZfeCprovOpc.
+     * 
+     * @return usocfdi
+     */
+    public java.lang.String getUsocfdi() {
+        return usocfdi;
+    }
+
+
+    /**
+     * Sets the usocfdi value for this ZfeCprovOpc.
+     * 
+     * @param usocfdi
+     */
+    public void setUsocfdi(java.lang.String usocfdi) {
+        this.usocfdi = usocfdi;
+    }
+
+
+    /**
+     * Gets the ncredit value for this ZfeCprovOpc.
+     * 
+     * @return ncredit
+     */
+    public java.lang.String getNcredit() {
+        return ncredit;
+    }
+
+
+    /**
+     * Sets the ncredit value for this ZfeCprovOpc.
+     * 
+     * @param ncredit
+     */
+    public void setNcredit(java.lang.String ncredit) {
+        this.ncredit = ncredit;
+    }
+
+
+    /**
+     * Gets the ncsinoc value for this ZfeCprovOpc.
+     * 
+     * @return ncsinoc
+     */
+    public java.lang.String getNcsinoc() {
+        return ncsinoc;
+    }
+
+
+    /**
+     * Sets the ncsinoc value for this ZfeCprovOpc.
+     * 
+     * @param ncsinoc
+     */
+    public void setNcsinoc(java.lang.String ncsinoc) {
+        this.ncsinoc = ncsinoc;
+    }
+
+
+    /**
+     * Gets the pdfotr value for this ZfeCprovOpc.
+     * 
+     * @return pdfotr
+     */
+    public java.lang.String getPdfotr() {
+        return pdfotr;
+    }
+
+
+    /**
+     * Sets the pdfotr value for this ZfeCprovOpc.
+     * 
+     * @param pdfotr
+     */
+    public void setPdfotr(java.lang.String pdfotr) {
+        this.pdfotr = pdfotr;
+    }
+
+
+    /**
+     * Gets the ciccfdi value for this ZfeCprovOpc.
+     * 
+     * @return ciccfdi
+     */
+    public java.lang.String getCiccfdi() {
+        return ciccfdi;
+    }
+
+
+    /**
+     * Sets the ciccfdi value for this ZfeCprovOpc.
+     * 
+     * @param ciccfdi
+     */
+    public void setCiccfdi(java.lang.String ciccfdi) {
+        this.ciccfdi = ciccfdi;
+    }
+
+
+    /**
+     * Gets the ciscfdi value for this ZfeCprovOpc.
+     * 
+     * @return ciscfdi
+     */
+    public java.lang.String getCiscfdi() {
+        return ciscfdi;
+    }
+
+
+    /**
+     * Sets the ciscfdi value for this ZfeCprovOpc.
+     * 
+     * @param ciscfdi
+     */
+    public void setCiscfdi(java.lang.String ciscfdi) {
+        this.ciscfdi = ciscfdi;
+    }
+
+
+    /**
+     * Gets the notoler value for this ZfeCprovOpc.
+     * 
+     * @return notoler
+     */
+    public java.lang.String getNotoler() {
+        return notoler;
+    }
+
+
+    /**
+     * Sets the notoler value for this ZfeCprovOpc.
+     * 
+     * @param notoler
+     */
+    public void setNotoler(java.lang.String notoler) {
+        this.notoler = notoler;
+    }
+
+
+    /**
+     * Gets the verimpt value for this ZfeCprovOpc.
+     * 
+     * @return verimpt
+     */
+    public java.lang.String getVerimpt() {
+        return verimpt;
+    }
+
+
+    /**
+     * Sets the verimpt value for this ZfeCprovOpc.
+     * 
+     * @param verimpt
+     */
+    public void setVerimpt(java.lang.String verimpt) {
+        this.verimpt = verimpt;
+    }
+
+
+    /**
+     * Gets the multarc value for this ZfeCprovOpc.
+     * 
+     * @return multarc
+     */
+    public java.lang.String getMultarc() {
+        return multarc;
+    }
+
+
+    /**
+     * Sets the multarc value for this ZfeCprovOpc.
+     * 
+     * @param multarc
+     */
+    public void setMultarc(java.lang.String multarc) {
+        this.multarc = multarc;
+    }
+
+
+    /**
+     * Gets the validad value for this ZfeCprovOpc.
+     * 
+     * @return validad
+     */
+    public java.lang.String getValidad() {
+        return validad;
+    }
+
+
+    /**
+     * Sets the validad value for this ZfeCprovOpc.
+     * 
+     * @param validad
+     */
+    public void setValidad(java.lang.String validad) {
+        this.validad = validad;
+    }
+
+
+    /**
+     * Gets the monses value for this ZfeCprovOpc.
+     * 
+     * @return monses
+     */
+    public java.lang.String getMonses() {
+        return monses;
+    }
+
+
+    /**
+     * Sets the monses value for this ZfeCprovOpc.
+     * 
+     * @param monses
+     */
+    public void setMonses(java.lang.String monses) {
+        this.monses = monses;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof ZfeCprovOpc)) return false;
+        ZfeCprovOpc other = (ZfeCprovOpc) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = true && 
+            ((this.mandt==null && other.getMandt()==null) || 
+             (this.mandt!=null &&
+              this.mandt.equals(other.getMandt()))) &&
+            ((this.lifnr==null && other.getLifnr()==null) || 
+             (this.lifnr!=null &&
+              this.lifnr.equals(other.getLifnr()))) &&
+            ((this.listfac==null && other.getListfac()==null) || 
+             (this.listfac!=null &&
+              this.listfac.equals(other.getListfac()))) &&
+            ((this.cfdiocc==null && other.getCfdiocc()==null) || 
+             (this.cfdiocc!=null &&
+              this.cfdiocc.equals(other.getCfdiocc()))) &&
+            ((this.cfdiocv==null && other.getCfdiocv()==null) || 
+             (this.cfdiocv!=null &&
+              this.cfdiocv.equals(other.getCfdiocv()))) &&
+            ((this.cfdiocp==null && other.getCfdiocp()==null) || 
+             (this.cfdiocp!=null &&
+              this.cfdiocp.equals(other.getCfdiocp()))) &&
+            ((this.cbbocc==null && other.getCbbocc()==null) || 
+             (this.cbbocc!=null &&
+              this.cbbocc.equals(other.getCbbocc()))) &&
+            ((this.cbbocv==null && other.getCbbocv()==null) || 
+             (this.cbbocv!=null &&
+              this.cbbocv.equals(other.getCbbocv()))) &&
+            ((this.cbbocp==null && other.getCbbocp()==null) || 
+             (this.cbbocp!=null &&
+              this.cbbocp.equals(other.getCbbocp()))) &&
+            ((this.cfdi==null && other.getCfdi()==null) || 
+             (this.cfdi!=null &&
+              this.cfdi.equals(other.getCfdi()))) &&
+            ((this.cbb==null && other.getCbb()==null) || 
+             (this.cbb!=null &&
+              this.cbb.equals(other.getCbb()))) &&
+            ((this.statrec==null && other.getStatrec()==null) || 
+             (this.statrec!=null &&
+              this.statrec.equals(other.getStatrec()))) &&
+            ((this.listaoc==null && other.getListaoc()==null) || 
+             (this.listaoc!=null &&
+              this.listaoc.equals(other.getListaoc()))) &&
+            ((this.bzccfdi==null && other.getBzccfdi()==null) || 
+             (this.bzccfdi!=null &&
+              this.bzccfdi.equals(other.getBzccfdi()))) &&
+            ((this.bzscfdi==null && other.getBzscfdi()==null) || 
+             (this.bzscfdi!=null &&
+              this.bzscfdi.equals(other.getBzscfdi()))) &&
+            ((this.consbuz==null && other.getConsbuz()==null) || 
+             (this.consbuz!=null &&
+              this.consbuz.equals(other.getConsbuz()))) &&
+            ((this.edocta==null && other.getEdocta()==null) || 
+             (this.edocta!=null &&
+              this.edocta.equals(other.getEdocta()))) &&
+            ((this.passchg==null && other.getPasschg()==null) || 
+             (this.passchg!=null &&
+              this.passchg.equals(other.getPasschg()))) &&
+            ((this.listdiv==null && other.getListdiv()==null) || 
+             (this.listdiv!=null &&
+              this.listdiv.equals(other.getListdiv()))) &&
+            ((this.avisos==null && other.getAvisos()==null) || 
+             (this.avisos!=null &&
+              this.avisos.equals(other.getAvisos()))) &&
+            ((this.passven==null && other.getPassven()==null) || 
+             (this.passven!=null &&
+              this.passven.equals(other.getPassven()))) &&
+            ((this.consper==null && other.getConsper()==null) || 
+             (this.consper!=null &&
+              this.consper.equals(other.getConsper()))) &&
+            ((this.usocfdi==null && other.getUsocfdi()==null) || 
+             (this.usocfdi!=null &&
+              this.usocfdi.equals(other.getUsocfdi()))) &&
+            ((this.ncredit==null && other.getNcredit()==null) || 
+             (this.ncredit!=null &&
+              this.ncredit.equals(other.getNcredit()))) &&
+            ((this.ncsinoc==null && other.getNcsinoc()==null) || 
+             (this.ncsinoc!=null &&
+              this.ncsinoc.equals(other.getNcsinoc()))) &&
+            ((this.pdfotr==null && other.getPdfotr()==null) || 
+             (this.pdfotr!=null &&
+              this.pdfotr.equals(other.getPdfotr()))) &&
+            ((this.ciccfdi==null && other.getCiccfdi()==null) || 
+             (this.ciccfdi!=null &&
+              this.ciccfdi.equals(other.getCiccfdi()))) &&
+            ((this.ciscfdi==null && other.getCiscfdi()==null) || 
+             (this.ciscfdi!=null &&
+              this.ciscfdi.equals(other.getCiscfdi()))) &&
+            ((this.notoler==null && other.getNotoler()==null) || 
+             (this.notoler!=null &&
+              this.notoler.equals(other.getNotoler()))) &&
+            ((this.verimpt==null && other.getVerimpt()==null) || 
+             (this.verimpt!=null &&
+              this.verimpt.equals(other.getVerimpt()))) &&
+            ((this.multarc==null && other.getMultarc()==null) || 
+             (this.multarc!=null &&
+              this.multarc.equals(other.getMultarc()))) &&
+            ((this.validad==null && other.getValidad()==null) || 
+             (this.validad!=null &&
+              this.validad.equals(other.getValidad()))) &&
+            ((this.monses==null && other.getMonses()==null) || 
+             (this.monses!=null &&
+              this.monses.equals(other.getMonses())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = 1;
+        if (getMandt() != null) {
+            _hashCode += getMandt().hashCode();
+        }
+        if (getLifnr() != null) {
+            _hashCode += getLifnr().hashCode();
+        }
+        if (getListfac() != null) {
+            _hashCode += getListfac().hashCode();
+        }
+        if (getCfdiocc() != null) {
+            _hashCode += getCfdiocc().hashCode();
+        }
+        if (getCfdiocv() != null) {
+            _hashCode += getCfdiocv().hashCode();
+        }
+        if (getCfdiocp() != null) {
+            _hashCode += getCfdiocp().hashCode();
+        }
+        if (getCbbocc() != null) {
+            _hashCode += getCbbocc().hashCode();
+        }
+        if (getCbbocv() != null) {
+            _hashCode += getCbbocv().hashCode();
+        }
+        if (getCbbocp() != null) {
+            _hashCode += getCbbocp().hashCode();
+        }
+        if (getCfdi() != null) {
+            _hashCode += getCfdi().hashCode();
+        }
+        if (getCbb() != null) {
+            _hashCode += getCbb().hashCode();
+        }
+        if (getStatrec() != null) {
+            _hashCode += getStatrec().hashCode();
+        }
+        if (getListaoc() != null) {
+            _hashCode += getListaoc().hashCode();
+        }
+        if (getBzccfdi() != null) {
+            _hashCode += getBzccfdi().hashCode();
+        }
+        if (getBzscfdi() != null) {
+            _hashCode += getBzscfdi().hashCode();
+        }
+        if (getConsbuz() != null) {
+            _hashCode += getConsbuz().hashCode();
+        }
+        if (getEdocta() != null) {
+            _hashCode += getEdocta().hashCode();
+        }
+        if (getPasschg() != null) {
+            _hashCode += getPasschg().hashCode();
+        }
+        if (getListdiv() != null) {
+            _hashCode += getListdiv().hashCode();
+        }
+        if (getAvisos() != null) {
+            _hashCode += getAvisos().hashCode();
+        }
+        if (getPassven() != null) {
+            _hashCode += getPassven().hashCode();
+        }
+        if (getConsper() != null) {
+            _hashCode += getConsper().hashCode();
+        }
+        if (getUsocfdi() != null) {
+            _hashCode += getUsocfdi().hashCode();
+        }
+        if (getNcredit() != null) {
+            _hashCode += getNcredit().hashCode();
+        }
+        if (getNcsinoc() != null) {
+            _hashCode += getNcsinoc().hashCode();
+        }
+        if (getPdfotr() != null) {
+            _hashCode += getPdfotr().hashCode();
+        }
+        if (getCiccfdi() != null) {
+            _hashCode += getCiccfdi().hashCode();
+        }
+        if (getCiscfdi() != null) {
+            _hashCode += getCiscfdi().hashCode();
+        }
+        if (getNotoler() != null) {
+            _hashCode += getNotoler().hashCode();
+        }
+        if (getVerimpt() != null) {
+            _hashCode += getVerimpt().hashCode();
+        }
+        if (getMultarc() != null) {
+            _hashCode += getMultarc().hashCode();
+        }
+        if (getValidad() != null) {
+            _hashCode += getValidad().hashCode();
+        }
+        if (getMonses() != null) {
+            _hashCode += getMonses().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+}

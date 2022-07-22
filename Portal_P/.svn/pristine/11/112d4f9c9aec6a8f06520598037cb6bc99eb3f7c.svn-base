@@ -1,0 +1,60 @@
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTStrecepHolder;
+
+public class ZFE_GET_STATUS_RECProxy implements ZFE_GET_STATUS_REC {
+	private String _endpoint = null;
+	private ZFE_GET_STATUS_REC zFE_GET_STATUS_REC = null;
+
+	public ZFE_GET_STATUS_RECProxy() {
+		_initZFE_GET_STATUS_RECProxy();
+	}
+
+	public ZFE_GET_STATUS_RECProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_GET_STATUS_RECProxy();
+	}
+
+	private void _initZFE_GET_STATUS_RECProxy() {
+		try {
+			zFE_GET_STATUS_REC = (new GET_STATUS_RECLocator()).getGET_STATUS_REC();
+			if (zFE_GET_STATUS_REC != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_GET_STATUS_REC)._setProperty("javax.xml.rpc.service.endpoint.address",
+							_endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_GET_STATUS_REC)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_GET_STATUS_REC != null)
+			((javax.xml.rpc.Stub) zFE_GET_STATUS_REC)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+
+	}
+
+	public ZFE_GET_STATUS_REC getZFE_GET_STATUS_REC() {
+		if (zFE_GET_STATUS_REC == null)
+			_initZFE_GET_STATUS_RECProxy();
+		return zFE_GET_STATUS_REC;
+	}
+
+	public void zfeGetStatusRec(java.lang.String EBukrs, java.lang.String EFechaFin, java.lang.String EFechaIni,
+			java.lang.String ELang, java.lang.String ELifnr, ZfeTStrecepHolder SStatus,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException {
+		if (zFE_GET_STATUS_REC == null)
+			_initZFE_GET_STATUS_RECProxy();
+		zFE_GET_STATUS_REC.zfeGetStatusRec(EBukrs, EFechaFin, EFechaIni, ELang, ELifnr, SStatus, SMsg, SStat);
+	}
+
+}

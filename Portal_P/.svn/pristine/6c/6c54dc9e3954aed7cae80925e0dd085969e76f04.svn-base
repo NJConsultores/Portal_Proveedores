@@ -1,0 +1,586 @@
+package com.infra.factura.business.validation;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import javax.xml.bind.ValidationEvent;
+
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXParseException;
+
+import com.infra.cliente.addenda.dto.FeAddendaDto;
+import com.infra.cliente.addenda.dto.FeAddendaPedimentosDto;
+import com.infra.core.util.CoreConstantes;
+import com.infra.core.util.ErrorValidacionUtil;
+import com.infra.core.util.SatUtil;
+import com.infra.factura.bigdata.sat.cfd.CFDv2;
+import com.infra.factura.bigdata.sat.cfd.CFDv2_2;
+import com.infra.factura.bigdata.sat.cfdi.CFDv3_2;
+import com.infra.factura.bigdata.sat.cfdi.CFDv3_3;
+import com.infra.factura.bigdata.sat.cfdi.TFDv1;
+import com.infra.factura.bigdata.sat.cfdi.TFDv1_1;
+import com.infra.factura.bigdata.sat.security.KeyLoader;
+import com.infra.factura.business.FeFacturaBusiness;
+import com.infra.factura.business.base.FeBaseBusiness;
+import com.infra.factura.business.cfdi.timbre.schema.TimbreFiscalDigital;
+import com.infra.factura.business.common.GenericCFD;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDOrigen;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDTipo;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDVersion;
+import com.infra.factura.dto.FeCertificadoPacDto;
+import com.infra.factura.dto.FeConsultaCfdiSatDto;
+import com.infra.factura.dto.FeErrorValidacionDto;
+import com.infra.factura.dto.FeFacturaAgenteAduanalDto;
+import com.infra.factura.dto.FeFacturaDto;
+import com.infra.factura.dto.FeRespuestaDto;
+import com.infra.factura.dto.FeResultadoValidaCFDDto;
+import com.infra.factura.exception.UnexpectedRuntimeException;
+import com.infra.factura.util.ConstantesGenerales;
+import com.infra.factura.util.FeConstantes.TipoProveedor;
+import com.infra.factura.ws.ConsultaCFDISAT;
+
+public class FeValidadorCFDAgenteAduanalBaseBusiness extends FeBaseBusiness {
+	protected static Logger logger = LoggerFactory.getLogger(FeValidadorCFDAgenteAduanalBaseBusiness.class);
+	protected static final String ERROR_INVALID_ENCODING_NAME = "Error on line 1: Invalid encoding name";
+
+//	@Autowired
+//	protected ErrorValidacionService errorValidacionService;
+//	@Autowired
+//	protected PropiedadesUtil propiedadesUtil;
+	@Autowired
+	protected ConsultaCFDISAT consultaCFDISAT;
+//	@Autowired
+//	protected CertificadoPacMapper certificadoPacDao;
+	@Autowired
+	private FeFacturaBusiness facturaBusiness;
+
+	protected List<FeErrorValidacionDto> errors = new ArrayList<FeErrorValidacionDto>();
+	protected com.infra.factura.business.cfdi.ii.schema.Comprobante comprobanteV3_2 = null;
+	protected com.infra.factura.business.cfdi.iii.schema.Comprobante comprobanteV3_3 = null;
+	protected FeResultadoValidaCFDDto feResultadoValidaCFDDto = new FeResultadoValidaCFDDto();
+	protected List<FeErrorValidacionDto> addendaErrors = new ArrayList<FeErrorValidacionDto>();
+	protected CFDOrigen origen;
+	protected Locale locale;
+	protected int errorCount = 0;
+	protected String rfcProveedor = "";
+	protected X509Certificate certificate;
+	protected boolean guardaFactura = true;
+	protected CFDVersion version;
+	protected int idProveedor = 0;
+	protected String noProveedorSAP = "";
+	protected TipoProveedor tipoProveedor = TipoProveedor.None;
+	protected String idUsuario = "";
+	protected boolean runningTestMode = false;
+	protected long idFactura = 0;
+	protected long idFacturaAduanal = 0;
+	protected int addendaErrorCount = 0;
+	protected boolean contieneAddenda = true;
+	protected FeAddendaPedimentosDto feAddendaDto;
+	protected FeAddendaDto feAddendaBocarDto;
+
+	public void registraError(String claveError, String... params) {
+		errorCount++;
+		FeErrorValidacionDto errorValidacion = new FeErrorValidacionDto();
+		String language = locale == null ? CoreConstantes.SUFIJO_ESP : locale.getLanguage();
+
+		try {
+			logger.debug("claveError::" + claveError);
+
+			if (language.equalsIgnoreCase(CoreConstantes.SUFIJO_ESP)) {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacion(claveError);
+			} else if (language.equalsIgnoreCase(CoreConstantes.SUFIJO_ING)) {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacionEn(claveError);
+			} else {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacion(claveError);
+			}
+		} catch (Exception e) {
+			logger.error("Error al recuperar el error de validación.", e);
+		}
+		errorValidacion.setParametros(params);
+		errors.add(errorValidacion);
+	}
+
+	public void reset() {
+		feResultadoValidaCFDDto = null;
+		errors = null;
+		addendaErrors = null;
+
+		feResultadoValidaCFDDto = new FeResultadoValidaCFDDto();
+		errors = new ArrayList<FeErrorValidacionDto>();
+		addendaErrors = new ArrayList<FeErrorValidacionDto>();
+		errorCount = 0;
+		addendaErrorCount = 0;
+		idFactura = 0;
+		idFacturaAduanal = 0;
+		tipoProveedor = TipoProveedor.None;
+	}
+
+	protected boolean isCFDv2(String xmlString) {
+		return !(xmlString.contains("<cfdi:") || xmlString.contains("</cfdi:"));
+	}
+
+	protected boolean esComprobanteAceptado(CFDVersion version) {
+		long startTime = System.currentTimeMillis();
+		boolean esAceptado = true;//estaba como false
+		TimbreFiscalDigital timbreFiscalDigital = null;
+		com.infra.factura.business.cfdi.timbre.i.schema.TimbreFiscalDigital timbreFiscalDigital1 = null;
+		FeFacturaDto facturaDto = new FeFacturaDto();
+		FeFacturaAgenteAduanalDto facturaAduanalDto = new FeFacturaAgenteAduanalDto();
+		CFDTipo tipo = CFDTipo.None;
+		String rfcEmisor = null;
+
+		switch (version) {
+		case CFDv3_2:
+			rfcEmisor = comprobanteV3_2.getEmisor().getRfc();
+			tipo = CFDTipo.valueOf(comprobanteV3_2.getTipoDeComprobante().toUpperCase());
+			try {
+				timbreFiscalDigital = TFDv1.getTimbreFiscalDigital(comprobanteV3_2);
+				if (timbreFiscalDigital != null) {
+					facturaDto.setUuid(timbreFiscalDigital.getUUID());
+				}
+			} catch (Exception e) {
+				logger.error("No se pudo obtener el TFD del comprobante", e);
+			}
+			break;
+		case CFDv3_3:
+			rfcEmisor = comprobanteV3_3.getEmisor().getRfc();
+			tipo = CFDTipo.valueOf(comprobanteV3_3.getTipoDeComprobante().toUpperCase());
+			try {
+				timbreFiscalDigital1 = TFDv1_1.getTimbreFiscalDigital(comprobanteV3_3);
+				if (timbreFiscalDigital1 != null) {
+					facturaDto.setUuid(timbreFiscalDigital1.getUUID());
+				}
+			} catch (Exception e) {
+				logger.error("No se pudo obtener el TFD del comprobante", e);
+			}
+			break;
+		default:
+			break;
+		}
+
+		if (tipo == CFDTipo.TRASLADO) {
+			registraError("validacion-083");
+			guardaFactura = false;
+			esAceptado = true;
+		} else if (tipo == CFDTipo.EGRESO) {
+			registraError("validacion-090");
+			guardaFactura = false;
+			esAceptado = true;
+		}
+
+		if (errorCount == 0) {
+//			List<?> listaFacturas = null;
+//			try {
+//				if (facturaDto.getUuid() == null || facturaDto.getUuid().isEmpty())
+//					throw new Exception("La factura no cuenta con Folio Fiscal.");
+//
+//				listaFacturas = facturaMapper.consultarFacturaPorUuid(facturaDto.getUuid());
+//			} catch (Exception e) {
+//				final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+//				unexpectedRuntimeException.logException();
+//				registraError("validacion-016", version.name(),
+//						unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+//								+ (e.getMessage() != null ? e.getMessage() : ""));
+//			}
+//
+//			if (listaFacturas != null && listaFacturas.size() >= 1) {
+//				facturaDto = (FeFacturaDto) listaFacturas.get(0);
+//				if (facturaDto.getEstatus().equals(CFDEstatus.EnRevision)
+//						|| facturaDto.getEstatus().equals(CFDEstatus.Pendiente)
+//						|| facturaDto.getEstatus().equals(CFDEstatus.Aceptado)
+//						|| facturaDto.getEstatus().equals(CFDEstatus.PorAutorizar)) {
+//					registraError("validacion-017", facturaDto.getUuid());
+//					guardaFactura = false;
+//					esAceptado = true;
+//				} else {
+//					List<FeFacturaAgenteAduanalDto> listaFacturasAduanales = null;
+//					try {
+//						facturaAduanalDto.setIdFacturaAduanal(facturaDto.getIdFactura());
+//						facturaAduanalDto.setNivel(Nivel_Aprobacion.SinNivel);
+//						facturaAduanalDto.setEstatus(CFDEstatusAgenteAduanal.None);
+//						listaFacturasAduanales = facturaAgenteAduanalMapper.consultarCuentas(facturaAduanalDto);
+//
+//						if (listaFacturasAduanales != null && listaFacturasAduanales.size() >= 1) {
+//							facturaAduanalDto = listaFacturasAduanales.get(0);
+//
+//							if (facturaAduanalDto.getEstatus() == CFDEstatusAgenteAduanal.Pendiente
+//									|| facturaAduanalDto.getEstatus() == CFDEstatusAgenteAduanal.Aprobado) {
+//								registraError("validacion-089", rfcEmisor, facturaDto.getUuid());
+//								guardaFactura = false;
+//								esAceptado = true;
+//							}
+//
+//							idFacturaAduanal = facturaAduanalDto.getIdFacturaAduanal();
+//						}
+//					} catch (Exception e) {
+//						final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+//						unexpectedRuntimeException.logException();
+//						registraError("validacion-016", version.name(),
+//								unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+//										+ (e.getMessage() != null ? e.getMessage() : ""));
+//					}
+//				}
+//
+//				idFactura = facturaDto.getIdFactura();
+//			}
+			logger.info("esComprobanteAceptado : " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s");
+		}
+
+		return esAceptado;
+	}
+
+	protected Date getFecha(CFDVersion version) {
+		Date fechaEmision = null;
+
+		switch (version) {
+		case CFDv3_2:
+			fechaEmision = comprobanteV3_2.getFecha();
+			break;
+		case CFDv3_3:
+			fechaEmision = comprobanteV3_3.getFecha();
+			break;
+		default:
+			break;
+		}
+
+		return fechaEmision;
+	}
+
+	protected int getAnoFactura(CFDVersion version) {
+		int anoFactura = 0;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
+
+		switch (version) {
+		case CFDv3_2:
+			anoFactura = Integer.parseInt(dateFormat.format(comprobanteV3_2.getFecha()));
+			break;
+		case CFDv3_3:
+			anoFactura = Integer.parseInt(dateFormat.format(comprobanteV3_3.getFecha()));
+			break;
+		default:
+			break;
+		}
+
+		return anoFactura;
+	}
+
+	public void registraErrorAddenda(String claveError, String... params) {
+		addendaErrorCount++;
+		FeErrorValidacionDto errorValidacion = new FeErrorValidacionDto();
+		String language = locale == null ? CoreConstantes.SUFIJO_ESP : locale.getLanguage();
+
+		try {
+			if (language.equalsIgnoreCase(CoreConstantes.SUFIJO_ESP)) {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacion(claveError);
+			} else if (language.equalsIgnoreCase(CoreConstantes.SUFIJO_ING)) {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacionEn(claveError);
+			} else {
+				errorValidacion = ErrorValidacionUtil.obtenerErrorValidacion(claveError);
+			}
+		} catch (Exception e) {
+			logger.error("Error al recuperar el error de validación.", e);
+		}
+		errorValidacion.setParametros(params);
+		addendaErrors.add(errorValidacion);
+	}
+
+	public class AddendaErrorHandler implements ErrorHandler {
+		public void warning(SAXParseException e) {
+			final String message = e.getMessage();
+			System.out.println("warningAddenda::: " + e);
+			registraErrorAddenda("validacion-045", message);
+		}
+
+		public void error(SAXParseException e) {
+			final String message = e.getMessage();
+			System.out.println("errorAddenda::: " + e);
+			registraErrorAddenda("validacion-045", message);
+		}
+
+		public void fatalError(SAXParseException e) {
+			final String message = e.getMessage();
+			System.out.println("fatalAddenda::: " + e);
+			registraErrorAddenda("validacion-045", message);
+		}
+	}
+
+	public boolean validaUuidSat(CFDVersion version) {
+		boolean existeCfdi = false;
+		String rfcEmisor = "";
+		String rfcReceptor = "";
+		String montoTotalFactura = "";
+		String uuid = "";
+		FeErrorValidacionDto errorValidacion = new FeErrorValidacionDto();
+
+		try {
+			switch (version) {
+			case CFDv3_2:
+				rfcEmisor = comprobanteV3_2.getEmisor().getRfc();
+				rfcReceptor = comprobanteV3_2.getReceptor().getRfc();
+				montoTotalFactura = comprobanteV3_2.getTotal();
+				try {
+					TimbreFiscalDigital timbreFiscalDigital = null;
+					timbreFiscalDigital = TFDv1.getTimbreFiscalDigital(comprobanteV3_2);
+					if (timbreFiscalDigital != null) {
+						uuid = timbreFiscalDigital.getUUID();
+					}
+				} catch (Exception e) {
+					logger.error("Ocurrió un error en la consulta del ws del SAT", e);
+					errorValidacion.setDescripcion("Ocurrió un error en la consulta del Servicio Web del SAT");
+					errors.add(errorValidacion);
+				}
+				break;
+			case CFDv3_3:
+				rfcEmisor = comprobanteV3_3.getEmisor().getRfc();
+				rfcReceptor = comprobanteV3_3.getReceptor().getRfc();
+				montoTotalFactura = comprobanteV3_3.getTotal();
+				try {
+					com.infra.factura.business.cfdi.timbre.i.schema.TimbreFiscalDigital timbreFiscalDigital = null;
+					timbreFiscalDigital = TFDv1_1.getTimbreFiscalDigital(comprobanteV3_3);
+					if (timbreFiscalDigital != null) {
+						uuid = timbreFiscalDigital.getUUID();
+					}
+				} catch (Exception e) {
+					logger.error("Ocurrió un error en la consulta del ws del SAT", e);
+					errorValidacion.setDescripcion("Ocurrió un error en la consulta del Servicio Web del SAT");
+					errors.add(errorValidacion);
+				}
+				break;
+			default:
+				logger.error("Ocurrió un error en la consulta del ws del SAT [no Version " + version.getVersionNumber()
+						+ "]");
+				errorValidacion.setDescripcion("Ocurrió un error en la consulta del Servicio Web del SAT");
+				errors.add(errorValidacion);
+				break;
+			}
+
+			FeConsultaCfdiSatDto consultaCfdiSatDto = consultaCFDISAT.consultaCFDI(rfcEmisor, rfcReceptor,
+					montoTotalFactura, uuid);
+			if (consultaCfdiSatDto != null) {
+				if (consultaCfdiSatDto.getEstado().equalsIgnoreCase("Vigente")) {
+					existeCfdi = true;
+				} else {
+					errorValidacion.setDescripcion("El estado del comprobante es " + consultaCfdiSatDto.getEstado());
+					errors.add(errorValidacion);
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Ocurrió un error en la consulta del ws del SAT", e);
+			errorValidacion.setDescripcion("Ocurrió un error en la consulta del Servicio Web del SAT");
+			errors.add(errorValidacion);
+		}
+
+		return existeCfdi;
+	}
+
+	public class CFDErrorHandler implements ErrorHandler {
+
+		public void handleEvent(ValidationEvent event) {
+			logger.info("\nEVENT");
+			logger.info("SEVERITY:  " + event.getSeverity());
+			logger.info("MESSAGE:  " + event.getMessage());
+			logger.info("LINKED EXCEPTION:  " + event.getLinkedException());
+			logger.info("LOCATOR");
+			logger.info("    LINE NUMBER:  " + event.getLocator().getLineNumber());
+			logger.info("    COLUMN NUMBER:  " + event.getLocator().getColumnNumber());
+			logger.info("    OFFSET:  " + event.getLocator().getOffset());
+			logger.info("    OBJECT:  " + event.getLocator().getObject());
+			logger.info("    NODE:  " + event.getLocator().getNode());
+			logger.info("    URL:  " + event.getLocator().getURL());
+		}
+
+		public void warning(SAXParseException e) {
+			System.out.println("warning::: " + e);
+			registraError("validacion-045", e.getMessage());
+		}
+
+		public void error(SAXParseException e) {
+			e.printStackTrace();
+			System.out.println("error::: " + e);
+			registraError("validacion-045", e.getMessage());
+		}
+
+		public void fatalError(SAXParseException e) {
+			System.out.println("fatalError::: " + e);
+			registraError("validacion-045", e.getMessage());
+		}
+
+		public void registraErrorValidacion(String claveError, String... params) {
+			registraError(claveError, params);
+		}
+	}
+
+	public void verificarSelloComprobante(GenericCFD cfd, CFDErrorHandler errorHandler) {
+		long startTime = System.currentTimeMillis();
+		String certificado = null;
+
+		switch (version) {
+		case CFDv3_2:
+			certificado = comprobanteV3_2.getCertificado();
+			break;
+		case CFDv3_3:
+			certificado = comprobanteV3_3.getCertificado();
+			break;
+		default:
+			break;
+		}
+
+		if (certificado != null && !certificado.equals("")) {
+			try {
+				feResultadoValidaCFDDto.setTieneCertificado(true);
+				if (!runningTestMode) {
+					cfd.verificar(errorHandler);
+				}
+			} catch (Exception e) {
+				final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+				unexpectedRuntimeException.logException();
+				registraError("validacion-027", version.name(),
+						unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+								+ (e.getMessage() != null ? e.getMessage() : ""));
+			}
+		} else {
+			if (null != certificate && !certificate.equals("")
+					&& (version == CFDVersion.CFDv2 || version == CFDVersion.CFDv2_2)) {
+				try {
+					if (version == CFDVersion.CFDv2) {
+						if (!runningTestMode) {
+							((CFDv2) cfd).verificar(certificate, errorHandler);
+						}
+					} else {
+						if (!runningTestMode) {
+							((CFDv2_2) cfd).verificar(certificate, errorHandler);
+						}
+					}
+				} catch (Exception e) {
+					final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+					unexpectedRuntimeException.logException();
+					registraError("validacion-027", version.name(),
+							unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+									+ (e.getMessage() != null ? e.getMessage() : ""));
+				}
+			} else {
+				feResultadoValidaCFDDto.setTieneCertificado(false);
+				registraError("validacion-028");
+			}
+		}
+		logger.info("verificarSelloComprobante : " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s");
+	}
+
+	public void verificarTimbrado(GenericCFD cfd, Object comprobante) {
+		long startTime = System.currentTimeMillis();
+		X509Certificate cert = obtenerCertificadoPAC(comprobante);
+		TFDv1 tfd = null;
+		int code = 0;
+		if (null != cert && !runningTestMode) {
+			try {
+				switch (version) {
+				case CFDv3_2:
+					tfd = new TFDv1((CFDv3_2) cfd, cert);
+					break;
+				case CFDv3_3:
+					TFDv1_1 tfd1 = new TFDv1_1((CFDv3_3) cfd, cert);
+					if (null != tfd1) {
+						code = tfd1.verificar();
+					}
+					break;
+				default:
+					break;
+				}
+				if (null != tfd) {
+					code = tfd.verificar();
+				}
+			} catch (Exception e) {
+				handleException(e);
+			}
+			if (code != 600) {
+				registraError("validacion-009");
+			}
+		}
+		logger.info("validarComprobante : " + ((System.currentTimeMillis() - startTime) / 1000.0) + "s");
+	}
+
+	private X509Certificate obtenerCertificadoPAC(Object comprobante) {
+		TimbreFiscalDigital timbreFiscalDigital = null;
+		String noCertificadoSAT = null;
+		X509Certificate cert = null;
+		try {
+			switch (version) {
+			case CFDv3_2:
+				timbreFiscalDigital = TFDv1.getTimbreFiscalDigital(
+						((com.infra.factura.business.cfdi.ii.schema.Comprobante) comprobante));
+				break;
+			case CFDv3_3:
+				com.infra.factura.business.cfdi.timbre.i.schema.TimbreFiscalDigital timbreFiscalDigital1 = null;
+				timbreFiscalDigital1 = TFDv1_1.getTimbreFiscalDigital(
+						((com.infra.factura.business.cfdi.iii.schema.Comprobante) comprobante));
+				if (timbreFiscalDigital1 != null) {
+					noCertificadoSAT = timbreFiscalDigital1.getNoCertificadoSAT();
+				}
+				break;
+			default:
+				break;
+			}
+			if (null != timbreFiscalDigital) {
+				noCertificadoSAT = timbreFiscalDigital.getNoCertificadoSAT();
+
+				FeCertificadoPacDto certTemp = new FeCertificadoPacDto();
+				certTemp.setNumeroCertificado(noCertificadoSAT);
+
+//				FeCertificadoPacDto certificadoPacDto = certificadoPacDao.obtenerCertificado(certTemp);
+				byte[] certificado = null;
+
+//				if (certificadoPacDto != null) {
+//					certificado = certificadoPacDto.getCertificado();
+//				}
+
+				if (null == certificado) {
+					logger.info("Se intenta descargar Certificado : " + noCertificadoSAT);
+					InputStream certificadoIO = SatUtil.descargarCertificado(noCertificadoSAT);
+					certificado = IOUtils.toByteArray(certificadoIO);
+
+					FeRespuestaDto respuesta = facturaBusiness.procesarCertificadoPac(noCertificadoSAT + ".cer",
+							certificado);
+
+					if (!respuesta.isError()) {
+						if (ConstantesGenerales.CONFIRMAR.equals(respuesta.getRespuesta())) {
+							logger.info("Se descargo Certificado y se guardo en la BD");
+						} else {
+							logger.info("Se descargo Certificado: " + respuesta.getDescripcion());
+						}
+					} else {
+						logger.info("Se descargo Certificado y no se guardo en BD: " + respuesta.getDescripcion());
+					}
+				}
+
+				if (null == certificado) {
+					registraError("validacion-010", noCertificadoSAT);
+				} else {
+					cert = KeyLoader.loadX509Certificate(new ByteArrayInputStream(certificado));
+					if (null == cert) {
+						registraError("validacion-010", noCertificadoSAT);
+					}
+				}
+			} else {
+				registraError("validacion-011");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+			unexpectedRuntimeException.logException();
+			registraError("validacion-012", unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+					+ (e.getMessage() != null ? e.getMessage() : ""));
+		}
+		return cert;
+	}
+
+}

@@ -1,0 +1,5 @@
+CorrelationId: 629a5b14-624a-45ec-b133-c2040a1ff531
+UTC DateTime: 06/02/2020 15:13:18
+
+The following file/folder has not been downloaded
+1. .svn/pristine

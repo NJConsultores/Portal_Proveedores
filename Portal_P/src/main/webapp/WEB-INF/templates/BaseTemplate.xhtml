@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<f:view contentType="text/html" locale="#{language.locale}">
+	<h:head>
+		<title>#{msg['app.title']}</title>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+		<meta http-equiv="Cache-Control"
+			content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+		<meta name="Author" content="Infra Group" />
+		<meta name="description" content="Portal de Proveedores" />
+
+		<link rel="Shortcut Icon"
+			href="#{request.contextPath}/resources/images/favicon.ico" />
+
+		<h:outputScript library="javascript" name="calendar-es.js" />
+		<h:outputScript library="javascript" name="ajax.js" />
+<!-- 		<h:outputStylesheet library="css" name="main.css" /> -->
+		<h:outputStylesheet library="css" name="images.css" />
+		<h:outputStylesheet library="css" name="mod.css" />
+
+
+		<f:facet name="first">
+			<h:outputStylesheet library="css" name="main.css" />
+		</f:facet>
+
+		<script type="text/javascript">
+			function start() {
+				PF('statusDialog').show();
+			}
+
+			function stop() {
+				PF('statusDialog').hide();
+			}
+		</script>
+	</h:head>
+	<h:body>
+		<f:facet name="last">
+			<h:outputStylesheet library="css" name="style.css" />
+		</f:facet>
+		<div style="width: 100%; z-index: -1">
+			<div id="i18n"
+				style="height: 30px !important; background-color: #283f69 !important; color: #fff !important;">
+				<div class="language-object"
+					style="margin-top: -1px; height: 30px; !important">
+					<h:form>
+						<p:dialog id="dlg_personalizado" widgetVar="wid_personalizado"
+							modal="true" draggable="false" closable="false" resizable="false"
+							width="30%" showHeader="false">
+							<h:form id="frm_personalizado">
+								<p:panelGrid styleClass="tbl_formulario" style="width: 100%;">
+									<p:row>
+										<p:column style="white-space: pre-wrap;">
+											<p:messages autoUpdate="true" showDetail="true"
+												showSummary="false" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column style="text-align: right;">
+											<p:commandButton value="Aceptar" icon="ui-icon-check"
+												ajax="false" onclick="PF('wid_exito').hide();"
+												action="#{baen.getUrlRedirect(url)}" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</h:form>
+						</p:dialog>
+						<p:dialog id="dlg_error" widgetVar="wid_error" modal="true"
+							draggable="false" closable="false" resizable="false" width="30%"
+							header="Hubo error en la transacci&oacute;n">
+							<h:form id="frm_error">
+								<p:panelGrid styleClass="tbl_formulario" style="width: 100%;">
+									<p:row>
+										<p:column>
+											<p:messages globalOnly="false" autoUpdate="true"
+												severity="info,error,warning" showSummary="false"
+												showDetail="true" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column style="text-align: right;">
+											<p:commandButton value="Aceptar" process="@this"
+												partialSubmit="true" update="@this"
+												onclick="PF('wid_error').hide();" type="" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</h:form>
+						</p:dialog>
+						<span title="Configurar cuenta"> <a
+							style="color: #fff !important;"
+							href="#{request.contextPath}/content/restricted/cuenta/cuenta.jsf">
+								#{cuentaMB.nombreCompleto} - #{cuentaMB.rfc}</a>
+						</span>
+						<span title="#{msg['app.idioma.english']}"
+							class="#{language.language eq 'en' ? 'Language selected' : 'Language'}">
+							&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <p:commandLink
+								style="color: #fff !important;" id="button_en_us"
+								actionListener="#{language.setEnglish}" ajax="false">
+								<p:outputLabel value="ENGLISH"
+									styleClass="#{language.language ne 'en' ? 'textoCursiva' : 'textoNegrita'}" />
+							</p:commandLink>
+						</span>
+						<span title="#{msg['app.idioma.espanol']}"
+							class="#{language.language eq 'es' ? 'Language selected' : 'Language'}">
+							&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <p:commandLink
+								style="color: #fff !important;" id="button_es_mx"
+								actionListener="#{language.setSpanish}" ajax="false">
+								<p:outputLabel value="ESPAÑOL"
+									styleClass="#{language.language ne 'es' ? 'textoCursiva' : 'textoNegrita'}" />
+							</p:commandLink> &nbsp;&nbsp;&nbsp;
+						</span>
+					</h:form>
+				</div>
+			</div>
+					<p:graphicImage
+							name="bannerEmpresa.png" library="images" height="140px"
+							width="100%" />
+							
+			<div style="height: 5px;" />
+			<!--<div style="height: 5px; background-color: #0082CA"/>-->
+			<ui:include src="partes/menuBar.xhtml" />
+			<div style="margin-top: 10px;">
+				<div style="margin-left: 0px">
+					<ui:insert name="content"></ui:insert>
+					<!-- 					<ui:include src="partes/getAvisos.xhtml" /> -->
+				</div>
+			</div>
+			<ui:include src="partes/footer.xhtml" />
+		</div>
+		<p:idleMonitor onidle="PF('dlgSession').show();" timeout="900000"></p:idleMonitor>
+		<!--  Cuadro de dialogo para cuando se termina la session -->
+		<p:dialog header="#{msg['session.timeout.titulo']}" modal="true"
+			height="50" widgetVar="dlgSession" closable="false">
+			<form action="#{request.contextPath}/j_spring_security_logout"
+				method="post">
+				<h:outputText value="#{msg['session.timeout.detalle']}" />
+				<br />
+				<button type="submit"
+					class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+					<span class="ui-button-text ui-c">#{msg['session.salir']}</span>
+				</button>
+			</form>
+		</p:dialog>
+
+		<p:confirmDialog global="true" showEffect="fade">
+			<p:commandButton value="#{msg['accion.si']}" type="button"
+				styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+			<p:commandButton value="#{msg['accion.no']}" type="button"
+				styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+		</p:confirmDialog>
+
+		<ui:include src="partes/StatusDialogSection.xhtml" />
+	</h:body>
+</f:view>
+</html>

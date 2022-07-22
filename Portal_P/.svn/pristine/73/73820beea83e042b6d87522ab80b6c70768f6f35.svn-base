@@ -1,0 +1,25 @@
+<xs:schema id="NewDataSet" xmlns="" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element msdata:IsDataSet="true" msdata:UseCurrentLocale="true" name="NewDataSet" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+		<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:choice maxOccurs="unbounded" minOccurs="0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+				<xs:element name="RcvControl" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:element minOccurs="0" name="Patente" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+							<xs:element minOccurs="0" name="Aduana" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+							<xs:element minOccurs="0" name="Archivo" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+							<xs:element minOccurs="0" name="Clave" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="{0}" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+					<xs:complexType xmlns:xs="http://www.w3.org/2001/XMLSchema">
+						<xs:sequence xmlns:xs="http://www.w3.org/2001/XMLSchema">
+							<xs:element minOccurs="0" name="Linea" type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:choice>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

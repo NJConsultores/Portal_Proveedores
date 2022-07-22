@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="Recepcion">
+		<xs:annotation>
+			<xs:documentation>Elemento que contiene el XML y los documentos de
+				soporte (2 archivos PDF) de una factura recibida o el XML de un
+				comprobante impreso con CBB.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:choice>
+				<xs:group ref="cfd" />
+				<xs:group ref="cfi" />
+			</xs:choice>
+			<xs:attribute name="fecha" use="required" type="xs:dateTime" />
+			<xs:attribute name="tipo" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="CBB" />
+						<xs:enumeration value="CFD" />
+						<xs:enumeration value="CFDI" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="factura">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:base64Binary">
+					<xs:attribute name="numero" use="required" type="xs:NMTOKEN" />
+					<xs:attribute name="sapBox" use="required" type="xs:NMTOKEN" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="PdfGenerado" type="archivo" />
+	<xs:element name="PfdRecibido" type="archivo" />
+	<xs:element name="cbb">
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:base64Binary">
+					<xs:attribute name="numero" use="required" type="xs:NMTOKEN" />
+					<xs:attribute name="sapBox" use="required" type="xs:NMTOKEN" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:group name="cfi">
+		<xs:sequence>
+			<xs:element ref="cbb" />
+		</xs:sequence>
+	</xs:group>
+	<xs:group name="cfd">
+		<xs:sequence>
+			<xs:element ref="factura" />
+			<xs:element ref="PdfGenerado" />
+			<xs:element ref="PfdRecibido" />
+			<xs:element ref="cbb" />
+		</xs:sequence>
+	</xs:group>
+	<xs:complexType name="archivo">
+		<xs:sequence>
+			<xs:element ref="archivo" />
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="archivo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="contenido" />
+			</xs:sequence>
+			<xs:attribute name="nombre" use="required" type="xs:NMTOKEN" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="contenido" type="xs:base64Binary" />
+</xs:schema>

@@ -1,0 +1,1683 @@
+package com.infra.factura.exposition;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+
+import org.apache.commons.io.IOUtils;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.codec.Base64;
+import org.springframework.stereotype.Controller;
+
+import com.infra.cliente.model.Orden;
+import com.infra.cliente.service.ws.WSFactura;
+import com.infra.cliente.service.ws.WSService;
+import com.infra.cliente.service.ws.WSStatusRecepcion;
+import com.infra.cliente.ws.ZfeCmonSol;
+import com.infra.cliente.ws.ZfeCsocArea;
+import com.infra.cliente.ws.ZfeCsocAreaR;
+import com.infra.cliente.ws.ZfeSEdocta;
+import com.infra.cliente.ws.ZfeSListFact;
+import com.infra.cliente.ws.ZfeSListaIi;
+import com.infra.cliente.ws.ZfeSListaTpr;
+import com.infra.cliente.ws.ZfeSPolist;
+import com.infra.cliente.ws.ZfeSPorec;
+import com.infra.cliente.ws.ZfeTPorec;
+import com.infra.cliente.ws.holders.ZfeTPorecHolder;
+import com.infra.core.exposition.InternacionalizacionMB;
+import com.infra.core.util.CoreConstantes;
+import com.infra.core.util.LocaleUtil;
+import com.infra.core.util.SessionUtil;
+import com.infra.core.util.ValidatorUtil;
+import com.infra.core.ws.exception.WSException;
+import com.infra.core.ws.login.ZfeSListaSoc;
+import com.infra.factura.dto.FeErrorValidacionDto;
+import com.infra.factura.dto.FeResultadoValidaCFDDto;
+import com.infra.factura.exception.EnvioFacturaException;
+import com.infra.factura.service.FacturaService;
+import com.infra.factura.util.FeConstantes;
+import com.infra.factura.util.FechaUtil;
+import com.infra.factura.util.NumeroUtil;
+import com.infra.util.AbstractControlador;
+
+/**
+ *
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+@Controller
+@Scope("session")
+public class EnviarFacturaMB extends AbstractControlador {
+
+	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LoggerFactory.getLogger(EnviarFacturaMB.class);
+	@Autowired
+	private WSService wsService;
+	@Autowired
+	private WSFactura wsFactura;
+	@Autowired
+	private WSStatusRecepcion wsStatusRecepcion;
+	@Autowired
+	private InternacionalizacionMB internacionalizacionMB;
+	@Autowired
+	private FacturaService facturaService;
+
+	/**
+	 * Para Recepcion de Facturas General
+	 */
+	private UploadedFile pdf;
+	private UploadedFile xml;
+	private UploadedFile pdfSellado;
+	private String folio;
+	private Date fechaFactura;
+	private BigDecimal montoFactura;
+	private ZfeSListaSoc sociedad;
+	private List<ZfeSListaSoc> sociedades;
+	private List<Orden> ordenes;
+	private List<Orden> ordenesSeleccionadas;
+	// se usa para cuando se estan haciendo mostrando el modal de busqueda de
+	// ordenes, solo si le da agregar esta lista sustituira a la de ordenes
+	// seleccionadas
+	private List<Orden> ordenesSeleccionadasTmp;
+
+	/**
+	 * Para consulta de facturas
+	 */
+	private List<ZfeSListFact> facturas;
+	private String estatusFactura;
+
+	/**
+	 * Para estado de cuenta
+	 */
+	private List<ZfeSEdocta> estados;
+
+	/**
+	 * Para Filtro de OC
+	 */
+	private String ordenesAFiltrar;
+	private String ocAgregar;
+	private Date fechaDesde;
+	private Date fechaHasta;
+	private Date fechaMaxima;
+	private ZfeSListaTpr tipoRecepcion;
+	private List<ZfeSListaTpr> listaTiposRecepcion;
+	private List<ZfeSListaIi> impuestos;
+	private ZfeSListaIi impuesto;
+	private List<ZfeCmonSol> monedas;
+	private List<ZfeCsocArea> areas;
+	private List<ZfeCsocAreaR> responsables;
+
+	/*
+	 * Para la CFDI sin OC
+	 */
+	private String factura;
+	private String concepto;
+	private ZfeCsocArea area;
+	private ZfeCsocAreaR responsable;
+
+	/*
+	 * Para la CFDI sin OC
+	 */
+	private Double subtotal;
+	private float iva;
+	private ZfeCmonSol moneda;
+	private BigDecimal sumaImportes;
+	private BigDecimal sumaImportesSeleccionadas;
+
+	/**
+	 * Para la CBB con y sin OC
+	 */
+	private boolean notaCredito;
+
+	/**
+	 * Metodo para limpiar la informacion cuando entra a pantalla enviarFactura
+	 */
+	public void reset() {
+		if (tienePermiso("ROLE_V_CFDI_OC")) {
+			if (!FacesContext.getCurrentInstance().isPostback()) {
+				sociedad = null;
+				loadSociedades();
+				loadTiposRecepcion();
+				ocAgregar = null;
+				xml = null;
+				pdf = null;
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+				pdfSellado = null;
+				tipoRecepcion = null;
+				fechaHasta = new Date();
+				fechaDesde = FechaUtil.sumarMesesFecha(fechaHasta, -4);
+				ordenesAFiltrar = null;
+				ordenes = new ArrayList();
+				folio = null;
+				fechaFactura = null;
+				montoFactura = null;
+				ordenesSeleccionadas = null;
+			}
+		}
+	}
+
+	/**
+	 * Metodo para limpiar la informacion cuando entra a pantalla enviarFactura
+	 * CFDI sin OC
+	 */
+	public void resetCFDI() {
+		if (tienePermiso("ROLE_V_CFDI")) {
+			if (!FacesContext.getCurrentInstance().isPostback()) {
+				area = null;
+				responsable = null;
+				sociedad = null;
+				loadSociedades();
+				xml = null;
+				pdf = null;
+				pdfSellado = null;
+				factura = null;
+				concepto = null;
+				folio = null;
+				fechaFactura = null;
+				montoFactura = null;
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+			}
+		}
+	}
+
+	/**
+	 * Metodo para limpiar la informacion cuando entra a pantalla enviarFactura
+	 * CBB sin OC
+	 */
+	public void resetCBB() {
+		if (tienePermiso("ROLE_V_CBB")) {
+			if (!FacesContext.getCurrentInstance().isPostback()) {
+				sociedad = null;
+				area = null;
+				responsable = null;
+				loadSociedades();
+				loadMonedas();
+				loadImpuestos();
+				impuesto = null;
+				pdf = null;
+				pdfSellado = null;
+				concepto = null;
+				factura = null;
+				iva = 0;
+				subtotal = new Double("0");
+				moneda = null;
+				folio = null;
+				fechaFactura = null;
+				montoFactura = null;
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+			}
+		}
+	}
+
+	/**
+	 * Metodo para limpiar la informacion cuando entra a pantalla enviarFactura
+	 * CBB con OC
+	 */
+	public void resetCBBOC() {
+		if (tienePermiso("ROLE_V_CBB_OC")) {
+			if (!FacesContext.getCurrentInstance().isPostback()) {
+				sociedad = null;
+				loadSociedades();
+				loadMonedas();
+				ocAgregar = null;
+				loadTiposRecepcion();
+				loadImpuestos();
+				impuesto = null;
+				xml = null;
+				pdf = null;
+				pdfSellado = null;
+				tipoRecepcion = null;
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+				fechaHasta = new Date();
+				fechaDesde = FechaUtil.sumarMesesFecha(fechaHasta, -4);
+				factura = null;
+				fechaFactura = null;
+				pdf = null;
+				pdfSellado = null;
+				area = null;
+				responsable = null;
+				ordenes = new ArrayList();
+				iva = 0;
+				subtotal = new Double("0");
+				moneda = null;
+				folio = null;
+				fechaFactura = null;
+				montoFactura = null;
+				ordenesSeleccionadas = null;
+			}
+		}
+	}
+
+	/**
+	 * Metodo para limpiar la informacion cuando entra a pantalla enviarFactura
+	 */
+	public void reset(boolean limpiar) {
+		if (tienePermiso("ROLE_V_CFDI_OC")) {
+			if (limpiar) {
+				sociedad = null;
+				loadSociedades();
+				loadTiposRecepcion();
+				ocAgregar = null;
+				xml = null;
+				pdf = null;
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+				pdfSellado = null;
+				tipoRecepcion = null;
+				fechaHasta = new Date();
+				fechaDesde = FechaUtil.sumarMesesFecha(fechaHasta, -4);
+				ordenesAFiltrar = null;
+				ordenes = new ArrayList();
+				folio = null;
+				fechaFactura = null;
+				montoFactura = null;
+				ordenesSeleccionadas = null;
+			}
+		}
+	}
+
+	/**
+	 * Metodo para limpiar la informacion cuando entra a pantalla enviarFactura
+	 * CFDI sin OC
+	 */
+	public void resetCFDI(boolean limpiar) {
+		if (tienePermiso("ROLE_V_CFDI")) {
+			if (limpiar) {
+				area = null;
+				responsable = null;
+				sociedad = null;
+				loadSociedades();
+				xml = null;
+				pdf = null;
+				pdfSellado = null;
+				factura = null;
+				concepto = null;
+				folio = null;
+				fechaFactura = null;
+				montoFactura = null;
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+			}
+		}
+	}
+
+	/**
+	 * Metodo para limpiar la informacion cuando entra a pantalla enviarFactura
+	 * CBB sin OC
+	 */
+	public void resetCBB(boolean limpiar) {
+		if (tienePermiso("ROLE_V_CBB")) {
+			if (limpiar) {
+				sociedad = null;
+				area = null;
+				responsable = null;
+				loadSociedades();
+				loadMonedas();
+				loadImpuestos();
+				impuesto = null;
+				pdf = null;
+				pdfSellado = null;
+				concepto = null;
+				factura = null;
+				iva = 0;
+				subtotal = new Double("0");
+				moneda = null;
+				folio = null;
+				fechaFactura = null;
+				montoFactura = null;
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+			}
+		}
+	}
+
+	/**
+	 * Metodo para limpiar la informacion cuando entra a pantalla enviarFactura
+	 * CBB con OC
+	 */
+	public void resetCBBOC(boolean limpiar) {
+		if (tienePermiso("ROLE_V_CBB_OC")) {
+			if (limpiar) {
+				sociedad = null;
+				loadSociedades();
+				loadMonedas();
+				ocAgregar = null;
+				loadTiposRecepcion();
+				loadImpuestos();
+				impuesto = null;
+				xml = null;
+				pdf = null;
+				pdfSellado = null;
+				tipoRecepcion = null;
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+				fechaHasta = new Date();
+				fechaDesde = FechaUtil.sumarMesesFecha(fechaHasta, -4);
+				factura = null;
+				fechaFactura = null;
+				pdf = null;
+				pdfSellado = null;
+				area = null;
+				responsable = null;
+				ordenes = new ArrayList();
+				iva = 0;
+				subtotal = new Double("0");
+				moneda = null;
+				folio = null;
+				fechaFactura = null;
+				montoFactura = null;
+				ordenesSeleccionadas = null;
+			}
+		}
+	}
+
+	public void resetModalOC() {
+		tipoRecepcion = null;
+		ordenes = new ArrayList<>();
+		sumaImportes = new BigDecimal(0);
+		ocAgregar = "";
+		fechaHasta = new Date();
+		fechaDesde = FechaUtil.sumarMesesFecha(fechaHasta, -4);
+	}
+
+	public void cancelar() {
+		tipoRecepcion = null;
+		ordenes = new ArrayList<>();
+		sumaImportes = new BigDecimal(0);
+		sumaImportesSeleccionadas = new BigDecimal(0);
+		ocAgregar = "";
+		fechaHasta = new Date();
+		fechaDesde = FechaUtil.sumarMesesFecha(fechaHasta, -4);
+		ordenesSeleccionadas = new ArrayList<>();
+	}
+
+	public void resetValidar() {
+		if (tienePermiso("ROLE_VALIDA_XML")) {
+			xml = null;
+			pdf = null;
+		}
+	}
+
+	public void calcularTotales() {
+		sumaImportes = new BigDecimal(0);
+		for (Orden orden : ordenes) {
+			if (orden.isSeleccionada()) {
+				sumaImportes = sumaImportes.add(orden.getOrden().getNetwr());
+			}
+		}
+	}
+
+	public void calcularTotalesSeleccionadas() {
+		sumaImportesSeleccionadas = new BigDecimal(0);
+		for (Orden orden : ordenesSeleccionadas) {
+			if (orden.isSeleccionada()) {
+				sumaImportesSeleccionadas = sumaImportesSeleccionadas.add(orden.getOrden().getNetwr());
+			}
+		}
+	}
+
+	public void loadEscenarios() {
+	}
+
+	public void manejadorXml(FileUploadEvent event) {
+		this.setXml(event.getFile());
+	}
+
+	public void buscarOrdenes() {
+		if (null == tipoRecepcion || tipoRecepcion.getTipo().isEmpty()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("orden.tipoDocumento.error"));
+		} else {
+			try {
+				ordenes = new ArrayList<>();
+				Map<String, Object> respuesta = wsService.getOrdenes(getLanguage(), SessionUtil.getUsuarioActual(),
+						sociedad.getBukrs(), fechaDesde, fechaHasta, tipoRecepcion.getTipo(), ocAgregar);
+				if ("1".equals((String) respuesta.get("estatus"))) {
+					transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+				} else {
+					List<ZfeSPolist> tmp = (List<ZfeSPolist>) respuesta.get("lista");
+					for (ZfeSPolist orden : tmp) {
+						ordenes.add(new Orden(orden, false));
+					}
+				}
+			} catch (WSException e) {
+				transaccionErronea("Error de WS", e.getMessage());
+			}
+		}
+	}
+
+	public void validarCadenaOrdenes() {
+		boolean isValido = false;
+		if (null != ocAgregar && !ocAgregar.isEmpty()) {
+			final String PATTERN = "^[0-9]+([,][0-9]*)*$";
+			Pattern pattern;
+			Matcher matcher;
+			pattern = Pattern.compile(PATTERN);
+			matcher = pattern.matcher(ocAgregar);
+			isValido = matcher.matches();
+			if (!isValido) {
+				// FacesMessage message = null;
+				// message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+				// "ERROR",
+				// "Solo se aceptan numeros separados por comas, sin
+				// espacios.");
+				// RequestContext.getCurrentInstance().showMessageInDialog(message);
+				transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("orden.ordenes.entrada"));
+			}
+		}
+	}
+
+	public String getLanguage() {
+		return ("es".equals(internacionalizacionMB.getLanguage()) ? "S" : "E");
+	}
+
+	private void loadSociedades() {
+		try {
+			logger.info("Cargando sociedades del proveedor");
+			sociedades = new ArrayList<>();
+			Map<String, Object> respuesta = wsService.getSociedades(getLanguage(), SessionUtil.getUsuarioActual());
+			if ("1".equals((String) respuesta.get("estatus"))) {
+				transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+			} else {
+				sociedades = (List<ZfeSListaSoc>) respuesta.get("lista");
+				if (!ValidatorUtil.isEmpty(sociedades)) {
+					if (sociedades.size() == 1) {
+						sociedad = sociedades.get(0);
+						loadAreas();
+					} else {
+						sociedad = null;
+						logger.info("El usuario tiene mas de un sociedad");
+					}
+				} else {
+					sociedad = null;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error al cargar las sociedades", e);
+		}
+	}
+
+	public void resetConsulta() {
+		if (tienePermiso("ROLE_GET_FACTURAS")) {
+			if (!FacesContext.getCurrentInstance().isPostback()) {
+				sociedad = null;
+				loadSociedades();
+				fechaHasta = new Date();
+				sumaImportes = new BigDecimal(0);
+				sumaImportesSeleccionadas = new BigDecimal(0);
+				fechaDesde = FechaUtil.sumarDiasFecha(fechaHasta, -SessionUtil.getNumeroDiasEdoCta());
+				fechaMaxima = FechaUtil.sumarDiasFecha(fechaHasta, -SessionUtil.getNumeroDiasEdoCta());
+				facturas = null;
+				estatusFactura = "T";
+			}
+		}
+	}
+
+	public void resetEdoCta() {
+		if (tienePermiso("ROLE_GET_EDO_CTA")) {
+			if (!FacesContext.getCurrentInstance().isPostback()) {
+				sociedad = null;
+				loadSociedades();
+				fechaHasta = new Date();
+				fechaDesde = FechaUtil.sumarDiasFecha(fechaHasta, -SessionUtil.getNumeroDiasEdoCta());
+				fechaMaxima = FechaUtil.sumarDiasFecha(fechaHasta, -SessionUtil.getNumeroDiasEdoCta());
+				estados = null;
+				estatusFactura = "T";
+			}
+		}
+	}
+
+	public void consultarFacturas() {
+		if (null == sociedad || sociedad.getBukrs().isEmpty()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.sociedad"));
+		} else {
+			facturas = new ArrayList<>();
+			Map<String, Object> respuesta = wsFactura.getFacturas(fechaDesde, fechaHasta, getLanguage(),
+					SessionUtil.getUsuarioActual(), sociedad.getBukrs(), estatusFactura);
+			if ("1".equals((String) respuesta.get("estatus"))) {
+				transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+			} else {
+				facturas = (List<ZfeSListFact>) respuesta.get("lista");
+			}
+		}
+	}
+
+	public void consultarEstadosCuenta() {
+		if (null == sociedad || sociedad.getBukrs().isEmpty()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.sociedad"));
+		} else {
+			estados = new ArrayList<>();
+			Map<String, Object> respuesta = wsFactura.getEdoCta(fechaDesde, fechaHasta, getLanguage(),
+					SessionUtil.getUsuarioActual(), sociedad.getBukrs(), estatusFactura);
+			if ("1".equals((String) respuesta.get("estatus"))) {
+				transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+			} else {
+				estados = (List<ZfeSEdocta>) respuesta.get("lista");
+			}
+		}
+	}
+
+	public void loadImpuestos() {
+		if (null != sociedad) {
+			impuestos = new ArrayList<>();
+			Map<String, Object> respuesta = wsService.getImpuestos(getLanguage(), sociedad.getBukrs());
+			if ("1".equals((String) respuesta.get("estatus"))) {
+				transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+			} else {
+				impuestos = (List<ZfeSListaIi>) respuesta.get("lista");
+				if (!ValidatorUtil.isEmpty(impuestos)) {
+					if (impuestos.size() == 1) {
+						impuesto = impuestos.get(0);
+					} else {
+						impuesto = null;
+						logger.info("El usuario tiene mas de un impuesto");
+					}
+				} else {
+					impuesto = null;
+				}
+			}
+		}
+	}
+
+	public void loadMonedas() {
+		monedas = new ArrayList<>();
+		Map<String, Object> respuesta = wsService.getMonedas(getLanguage());
+		if ("1".equals((String) respuesta.get("estatus"))) {
+			transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+		} else {
+			monedas = (List<ZfeCmonSol>) respuesta.get("lista");
+		}
+	}
+
+	private void loadTiposRecepcion() {
+		try {
+			listaTiposRecepcion = new ArrayList<>();
+			logger.info("Cargando tipos de recepciones");
+			Map<String, Object> respuesta = wsService.getTiposRecepcion(getLanguage(), SessionUtil.getUsuarioActual());
+			if ("1".equals((String) respuesta.get("estatus"))) {
+				transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+			} else {
+				listaTiposRecepcion = (List<ZfeSListaTpr>) respuesta.get("lista");
+				if (!ValidatorUtil.isEmpty(listaTiposRecepcion)) {
+					if (listaTiposRecepcion.size() == 1) {
+						tipoRecepcion = listaTiposRecepcion.get(0);
+					} else {
+						tipoRecepcion = null;
+						logger.info("El usuario tiene mas de un tipo de recepcion");
+					}
+				} else {
+					tipoRecepcion = null;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error al cargar los tipos de recepcion", e);
+		}
+	}
+
+	public void loadAreas() {
+		if (null != sociedad) {
+			Map<String, Object> respuesta = wsService.getAreas(getLanguage(), sociedad.getBukrs());
+			if ("1".equals((String) respuesta.get("estatus"))) {
+				transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+			} else {
+				loadImpuestos();
+				areas = (List<ZfeCsocArea>) respuesta.get("lista");
+				if (!ValidatorUtil.isEmpty(areas)) {
+					if (areas.size() == 1) {
+						area = areas.get(0);
+						loadResponsables();
+					} else {
+						area = null;
+						responsables = new ArrayList();
+						logger.info("La sociedad tiene mas de un area");
+					}
+				} else {
+					area = null;
+					responsable = null;
+					areas = null;
+					responsables = null;
+				}
+			}
+		} else {
+			area = null;
+			responsable = null;
+			areas = null;
+			responsables = null;
+		}
+	}
+
+	public void loadResponsables() {
+		try {
+			logger.info("Cargando responsables");
+			responsables = new ArrayList<>();
+			Map<String, Object> respuesta = wsService.getResponsables(getLanguage(), sociedad.getBukrs(),
+					area.getAreid());
+			if ("1".equals((String) respuesta.get("estatus"))) {
+				transaccionErronea("Error: ", (String) respuesta.get("mensaje"));
+			} else {
+				responsables = (List<ZfeCsocAreaR>) respuesta.get("lista");
+				if (!ValidatorUtil.isEmpty(responsables)) {
+					if (responsables.size() == 1) {
+						responsable = responsables.get(0);
+					} else {
+						responsable = null;
+						logger.info("El area tiene mas de un responsable");
+					}
+				} else {
+					responsable = null;
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error al cargar los responsables", e);
+		}
+	}
+
+	private boolean getDebeAgregarPDFAdicional() {
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+		return authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_PDF_ADICIONAL"));
+	}
+
+	private boolean tienePermiso(String permiso) {
+		SecurityContext context = SecurityContextHolder.getContext();
+		Authentication authentication = context.getAuthentication();
+		boolean tienePermiso = authentication.getAuthorities().contains(new SimpleGrantedAuthority(permiso));
+		if (!tienePermiso) {
+			throw new AccessDeniedException(CoreConstantes.ACCION_NO_PERMITIDA);
+		}
+		return tienePermiso;
+	}
+
+	public String validarFactura() {
+		long startTime = System.currentTimeMillis();
+		try {
+			logger.info("Cargar factura " + new SimpleDateFormat("dd/MM/yyy HH:mm:ss").format(new Date()));
+			logger.debug("Cargar factura");
+			logger.debug("XML Size: " + xml.getSize());
+			logger.debug("PDF Size: " + pdf.getSize());
+			boolean errorTipoArchivo = false;
+			StringBuilder stErrorTipo = new StringBuilder();
+			FeResultadoValidaCFDDto resultado = null;
+			StringBuilder msg = null;
+			byte[] dataXML = IOUtils.toByteArray(xml.getInputstream());
+			byte[] dataPDF = IOUtils.toByteArray(pdf.getInputstream());
+			if (dataXML.length > 0) {
+				if (xml.getSize() > FeConstantes.TAMANIO_MAXIMO_ARCHIVOS_1300KB) {
+					errorTipoArchivo = true;
+					stErrorTipo.append(LocaleUtil.getResourceBundle().getString("msg.tam.archivo"));
+				}
+			} else {
+				if (xml.getSize() > FeConstantes.TAMANIO_MAXIMO_ARCHIVOS_1300KB) {
+					errorTipoArchivo = true;
+					stErrorTipo.append(LocaleUtil.getResourceBundle().getString("msg.tam.archivo"));
+				}
+			}
+			if (!xml.getFileName().toLowerCase().endsWith(".xml")) {
+				errorTipoArchivo = true;
+				stErrorTipo.append(LocaleUtil.getResourceBundle().getString("msg.archivo.tipo.xml")
+						.replaceAll("\\{0\\}", xml.getFileName()));
+			}
+			if (dataPDF.length > 0) {
+				if (pdf.getSize() > FeConstantes.TAMANIO_MAXIMO_ARCHIVOS_1300KB) {
+					errorTipoArchivo = true;
+					stErrorTipo.append(LocaleUtil.getResourceBundle().getString("msg.tam.archivo"));
+				}
+			} else {
+				if (pdf.getSize() > FeConstantes.TAMANIO_MAXIMO_ARCHIVOS_1300KB) {
+					errorTipoArchivo = true;
+					stErrorTipo.append(LocaleUtil.getResourceBundle().getString("msg.tam.archivo"));
+				}
+			}
+			if (!pdf.getFileName().toLowerCase().endsWith(".pdf")) {
+				errorTipoArchivo = true;
+				stErrorTipo.append(LocaleUtil.getResourceBundle().getString("msg.archivo.segundo.pdf")
+						.replaceAll("\\{0\\}", pdf.getFileName()));
+			}
+			if (!errorTipoArchivo) {
+				resultado = facturaService.validarFactura(xml.getFileName(), dataXML);
+				System.out.println("ya regreso resultado");
+				if (!resultado.isValido() || !resultado.isAceptada()) {
+					msg = new StringBuilder();
+					if (!resultado.isValido()) {
+						msg.append(LocaleUtil.getResourceBundle().getString("msg.comprobante.no.valido"));
+					}
+					if (!resultado.isAceptada()) {
+						System.out.println("resultado no aceptado");
+						msg.append(LocaleUtil.getResourceBundle().getString("msg.comprobante.no.aceptado"));
+					}
+					List<FeErrorValidacionDto> errores = resultado.getErrores();
+					for (FeErrorValidacionDto e : errores) {
+						msg.append(e.toString()).append("<br/>");
+					}
+					transaccionErronea(LocaleUtil.getResourceBundle().getString("msg.comprobante.incorrecto"),
+							msg.toString());
+				} else {
+					if (resultado.isRechazadoSAP()) {
+						msg = new StringBuilder();
+						msg.append(resultado.getMensajeSAP().replaceAll("\\|", "<br>"));
+						logger.info("Comprobante rechazado por SAP");
+						transaccionErronea(LocaleUtil.getResourceBundle().getString("msg.comprobante.incorrecto"),
+								LocaleUtil.getResourceBundle().getString("msg.comprobante.aprobado.rechazado")
+										+ msg.toString());
+					} else if (resultado.isPendienteSAP()) {
+						logger.info("Comprobante en revision");
+						transaccionErronea(LocaleUtil.getResourceBundle().getString("msg.comprobante.rev"),
+								LocaleUtil.getResourceBundle().getString("msg.comprobante.aprobado.contabilidad"));
+						logger.info("Comprobante sin entrada de mercancia");
+						transaccionErronea(LocaleUtil.getResourceBundle().getString("msg.comprobante.rev"),
+								LocaleUtil.getResourceBundle().getString("msg.comprobante.aprobado.almacen"));
+					} else {
+						logger.info("Comprobante correcto");
+						transaccionCompletada(false, SEVERITY_FACES_CORRECTO,
+								LocaleUtil.getResourceBundle().getString("msg.comprobante.correcto"),
+								LocaleUtil.getResourceBundle().getString("msg.comprobante.aprobado"));
+						// guardar status de recepcion
+						wsStatusRecepcion.guardarStatusRecepcion(getLanguage(), SessionUtil.getUsuarioActual(),
+								xml.getInputstream(), pdf.getInputstream(),
+								LocaleUtil.getResourceBundle().getString("msg.comprobante.aprobado"), "S");
+					}
+				}
+			} else {
+				transaccionErronea(LocaleUtil.getResourceBundle().getString("msg.Error.formato.archivos"),
+						stErrorTipo.toString());
+			}
+			dataXML = null;
+		} catch (EnvioFacturaException ex) {
+			logger.error("Error al cargar el comprobante");
+			StringBuilder msg = new StringBuilder();
+			FeResultadoValidaCFDDto resultado = ex.getResultado();
+			if (resultado != null) {
+				if (!resultado.isValido()) {
+					msg.append(LocaleUtil.getResourceBundle().getString("msg.comprobante.no.valido"));
+				}
+				if (!resultado.isAceptada()) {
+					msg.append(LocaleUtil.getResourceBundle().getString("msg.comprobante.no.aceptado"));
+				}
+				List<FeErrorValidacionDto> errores = resultado.getErrores();
+				for (FeErrorValidacionDto e : errores) {
+					msg.append(e.toString()).append("<br/>");
+				}
+			}
+			transaccionErronea(LocaleUtil.getResourceBundle().getString("error.envio.factura"), msg.toString());
+		} catch (RuntimeException ex) {
+			logger.error("Atrapando runtimeException");
+			transaccionErronea(LocaleUtil.getResourceBundle().getString("error.envio.factura"), ex.getMessage());
+		} catch (Exception e) {
+			logger.error("Error al cargar el comprobante", e);
+			transaccionErronea("ERROR", LocaleUtil.getResourceBundle().getString("error.proceso.comprobante"));
+		} finally {
+			logger.info(
+					"cargarFactura(" + xml.getFileName() + ") : " + ((System.currentTimeMillis() - startTime) / 1000.0)
+							+ "s " + new SimpleDateFormat("dd/MM/yyy HH:mm:ss").format(new Date()));
+		}
+		return null;
+	}
+
+	public boolean validarXML() {
+		boolean isValido = false;
+		long startTime = System.currentTimeMillis();
+		StringBuilder msg = null;
+		msg = new StringBuilder();
+		try {
+			logger.info("Validar XML " + new SimpleDateFormat("dd/MM/yyyHH:mm:ss").format(new Date()));
+			logger.debug("XML Size: " + xml.getSize());
+			boolean errorTipoArchivo = false;
+			// StringBuilder stErrorTipo = new StringBuilder();
+			FeResultadoValidaCFDDto resultado = null;
+			byte[] dataXML = IOUtils.toByteArray(xml.getInputstream());
+			if (dataXML.length > 0) {
+				if (xml.getSize() > FeConstantes.TAMANIO_MAXIMO_ARCHIVOS_1300KB) {
+					errorTipoArchivo = true;
+					isValido = false;
+					//
+					msg.append(LocaleUtil.getResourceBundle().getString("msg.tam.archivo"));
+				}
+			} else {
+				if (xml.getSize() > FeConstantes.TAMANIO_MAXIMO_ARCHIVOS_1300KB) {
+					errorTipoArchivo = true;
+					isValido = false;
+					//
+					msg.append(LocaleUtil.getResourceBundle().getString("msg.tam.archivo"));
+				}
+			}
+			if (!xml.getFileName().toLowerCase().endsWith(".xml")) {
+				errorTipoArchivo = true;
+				isValido = false;
+				 msg.append(LocaleUtil.getResourceBundle().getString("msg.archivo.tipo.xml")
+				 .replaceAll("\\{0\\}", xml.getFileName()));
+			}
+			if (!errorTipoArchivo) {
+				resultado = facturaService.validarFactura(xml.getFileName(), dataXML);
+				if (!resultado.isValido() || !resultado.isAceptada()) {
+					msg = new StringBuilder();
+					if (!resultado.isValido()) {
+						isValido = false;
+						//
+						msg.append(LocaleUtil.getResourceBundle().getString("msg.comprobante.no.valido"));
+					}
+					if (!resultado.isAceptada()) {
+						System.out.println("resultado no aceptado");
+						isValido = false;
+						//
+						msg.append(LocaleUtil.getResourceBundle().getString("msg.comprobante.no.aceptado"));
+					}
+					List<FeErrorValidacionDto> errores = resultado.getErrores();
+					for (FeErrorValidacionDto e : errores) {
+						 msg.append(e.toString()).append("<br/>");
+					}
+					isValido = false;
+				} else {
+					if (resultado.isRechazadoSAP()) {
+						msg = new StringBuilder();
+						msg.append(resultado.getMensajeSAP().replaceAll("\\|", "<br>"));
+						logger.info("Comprobante rechazado por SAP");
+						isValido = false;
+					} else if (resultado.isPendienteSAP()) {
+						logger.info("Comprobante en revision");
+						isValido = false;
+						logger.info("Comprobante sin entrada de mercancia");
+					} else {
+						logger.info("Comprobante correcto");
+						isValido = true;
+						wsStatusRecepcion.guardarStatusRecepcion(getLanguage(), SessionUtil.getUsuarioActual(),
+								xml.getInputstream(), pdf.getInputstream(),
+								LocaleUtil.getResourceBundle().getString("msg.comprobante.aprobado"), "S");
+					}
+				}
+			} else {
+				isValido = false;
+			}
+			dataXML = null;
+		} catch (EnvioFacturaException ex) {
+			isValido = false;
+			logger.error("Error al valida XML el comprobante");
+			// TODO aqui guardar el mensaje de error
+			// StringBuilder msg = new StringBuilder();
+
+			FeResultadoValidaCFDDto resultado = ex.getResultado();
+			if (resultado != null) {
+				if (!resultado.isValido()) {
+					msg.append(LocaleUtil.getResourceBundle().getString("msg.comprobante.no.valido"));
+				}
+				if (!resultado.isAceptada()) {
+					msg.append(LocaleUtil.getResourceBundle().getString("msg.comprobante.no.aceptado"));
+				}
+				List<FeErrorValidacionDto> errores = resultado.getErrores();
+				for (FeErrorValidacionDto e : errores) {
+					msg.append(e.toString()).append("<br/>");
+				}
+			}
+			if (!isValido) {
+				transaccionErronea("Error", ex.getResultado().getErrores().get(0).getDescripcion());
+			}
+		} catch (Exception e) {
+			isValido = false;
+			logger.error("Error al cargar el comprobante", e);
+		} finally {
+			logger.info(
+					"cargarFactura(" + xml.getFileName() + ") : " + ((System.currentTimeMillis() - startTime) / 1000.0)
+							+ "s " + new SimpleDateFormat("dd/MM/yyy HH:mm:ss").format(new Date()));
+		}
+		if(!isValido){
+			transaccionErronea(LocaleUtil.getResourceBundle().getString("msg.comprobante.incorrecto"),
+					LocaleUtil.getResourceBundle().getString("msg.comprobante.aprobado.rechazado")
+							+ msg.toString());
+		}
+		
+		return isValido;
+		// return true;
+	}
+
+	public void seleccionarTodas() {
+		for (Orden orden : ordenes) {
+			orden.setSeleccionada(true);
+		}
+		calcularTotales();
+	}
+
+	public void deseleccionarTodas() {
+		for (Orden orden : ordenes) {
+			orden.setSeleccionada(false);
+		}
+		calcularTotales();
+	}
+
+	public void chequear(Orden orden) {
+		orden.setSeleccionada(!orden.isSeleccionada());
+		calcularTotales();
+	}
+
+	public void cambiarNotaCredito() {
+		notaCredito = !notaCredito;
+	}
+
+	public void chequearSeleccionada(Orden orden) {
+		orden.setSeleccionada(!orden.isSeleccionada());
+		calcularTotalesSeleccionadas();
+	}
+
+	public void agregarOrdenes() {
+		ordenesSeleccionadas = new ArrayList();
+		for (Orden orden : ordenes) {
+			if (orden.isSeleccionada() && !ordenesSeleccionadas.contains(orden))
+				ordenesSeleccionadas.add(orden);
+		}
+		if (!tieneOCSeleccionadas()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.ordenes"));
+		}
+		calcularTotalesSeleccionadas();
+	}
+
+	public void enviarCBB() {
+		// validar que los campos hayan sido llenados
+		try {
+			if (isOK_CBB()) {
+				Map<String, String> respuesta = wsFactura.guardarCBB(getLanguage(), SessionUtil.getUsuarioActual(),
+						SessionUtil.getRFCUsuarioActual(), sociedad.getBukrs(), area.getAreid(), responsable.getGerid(),
+						fechaFactura, factura, concepto,
+						new BigDecimal(NumeroUtil.formatoNumero(new BigDecimal(subtotal))), impuesto.getTasa(),
+						moneda.getWaers(), pdf.getInputstream(),
+						(null != pdfSellado ? pdfSellado.getInputstream() : null),
+						(notaCredito ? new BigDecimal("1") : new BigDecimal("0")));
+
+				if ("0".equals(respuesta.get("estatus"))) {
+					transaccionCompletada(false, SEVERITY_FACES_CORRECTO, "OK", respuesta.get("mensaje"));
+					resetCBB(true);
+				} else {
+					transaccionErronea("Error: ", respuesta.get("mensaje"));
+				}
+			}
+		} catch (IOException e) {
+			transaccionErronea("Error: ", e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isOK_CBB() throws IOException {
+		if (null == pdf || pdf.getFileName().isEmpty() || null == pdf.getInputstream()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.pdf"));
+			return false;
+		}
+		if (!pdf.getFileName().toLowerCase().endsWith(".pdf")) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.segundo.pdf")
+					.replaceAll("\\{0\\}", pdf.getFileName()));
+			return false;
+		}
+		if (null != pdfSellado && !pdfSellado.getFileName().isEmpty() && null != pdfSellado.getInputstream()) {
+			if (!pdfSellado.getFileName().toLowerCase().endsWith(".pdf")) {
+				transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.tercer.pdf")
+						.replaceAll("\\{0\\}", pdfSellado.getFileName()));
+				return false;
+			}
+		}
+		// // solo si tiene el permiso, debe cargarlo
+		// if (getDebeAgregarPDFAdicional()) {
+		// if (null == pdfSellado || pdfSellado.getFileName().isEmpty() || null
+		// == pdfSellado.getInputstream()) {
+		// transaccionErronea("Error",
+		// LocaleUtil.getResourceBundle().getString("error.pdfAdicional"));
+		// return false;
+		// }
+		// }
+		if (null == sociedad || null == sociedad.getBukrs()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.sociedad"));
+			return false;
+		}
+		if (null == area || null == area.getAreid()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.area"));
+			return false;
+		}
+		if (null == responsable || null == responsable.getGerid()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.responsable"));
+			return false;
+		}
+		if (null == fechaFactura) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.fechaFactura"));
+			return false;
+		}
+		if (null == concepto || concepto.isEmpty()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.concepto"));
+			return false;
+		}
+		if (0 == subtotal || subtotal < 0) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.subtotal"));
+			return false;
+		}
+		if (null == impuesto || null == impuesto.getTasa()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.impuesto"));
+			return false;
+		}
+		if (null == moneda || null == moneda.getWaers()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.moneda"));
+			return false;
+		}
+		return true;
+	}
+
+	public boolean isOK_CBB_OC() throws IOException {
+		if (null == sociedad || null == sociedad.getBukrs()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.sociedad"));
+			return false;
+		}
+		if (null == pdf || pdf.getFileName().isEmpty() || null == pdf.getInputstream()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.pdf"));
+			return false;
+		}
+		if (!pdf.getFileName().toLowerCase().endsWith(".pdf")) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.segundo.pdf")
+					.replaceAll("\\{0\\}", pdf.getFileName()));
+			return false;
+		}
+		// // solo si tiene el permiso, debe cargarlo
+		// if (getDebeAgregarPDFAdicional()) {
+		// if (null == pdfSellado || pdfSellado.getFileName().isEmpty() || null
+		// == pdfSellado.getInputstream()) {
+		// transaccionErronea("Error",
+		// LocaleUtil.getResourceBundle().getString("error.pdfAdicional"));
+		// return false;
+		// }
+		// }
+		if (null != pdfSellado && !pdfSellado.getFileName().isEmpty() && null != pdfSellado.getInputstream()) {
+			if (!pdfSellado.getFileName().toLowerCase().endsWith(".pdf")) {
+				transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.tercer.pdf")
+						.replaceAll("\\{0\\}", pdfSellado.getFileName()));
+				return false;
+			}
+		}
+		if (null == factura || factura.isEmpty()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.factura"));
+			return false;
+		}
+		if (null == moneda || null == moneda.getWaers()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.moneda"));
+			return false;
+		}
+		if (null == fechaFactura) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.fechaFactura"));
+			return false;
+		}
+		if (null == impuesto || null == impuesto.getTasa()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.impuesto"));
+			return false;
+		}
+		if (null == ordenesSeleccionadas || !tieneOCSeleccionadas()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.ordenes"));
+			return false;
+		}
+		return true;
+	}
+
+	private boolean tieneOCSeleccionadas() {
+		for (Orden orden : ordenesSeleccionadas) {
+			if (orden.isSeleccionada()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isOK_CFDI() throws IOException {
+		if (null == sociedad || null == sociedad.getBukrs()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.sociedad"));
+			return false;
+		}
+		if (null == area || null == area.getAreid()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.area"));
+			return false;
+		}
+		if (null == responsable || null == responsable.getGerid()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.responsable"));
+			return false;
+		}
+		if (null == factura || factura.isEmpty()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.factura"));
+			return false;
+		}
+		if (null == concepto || concepto.isEmpty()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.concepto"));
+			return false;
+		}
+		if (null == pdf || pdf.getFileName().isEmpty() || null == pdf.getInputstream()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.pdf"));
+			return false;
+		}
+		if (!pdf.getFileName().toLowerCase().endsWith(".pdf")) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.segundo.pdf")
+					.replaceAll("\\{0\\}", pdf.getFileName()));
+			return false;
+		}
+		if (null == xml || xml.getFileName().isEmpty() || null == xml.getInputstream()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.xml"));
+			return false;
+		} else if (!xml.getFileName().toLowerCase().endsWith(".xml")) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.tipo.xml")
+					.replaceAll("\\{0\\}", xml.getFileName()));
+			return false;
+		} else {
+			boolean isXMLValido = validarXML();
+			if (!isXMLValido) {
+				return false;
+			}
+		}
+		if (null != pdfSellado && !pdfSellado.getFileName().isEmpty() && null != pdfSellado.getInputstream()) {
+			if (!pdfSellado.getFileName().toLowerCase().endsWith(".pdf")) {
+				transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.tercer.pdf")
+						.replaceAll("\\{0\\}", pdfSellado.getFileName()));
+				return false;
+			}
+		}
+		// solo si tiene el permiso, debe cargarlo
+		if (getDebeAgregarPDFAdicional()) {
+			if (null == pdfSellado || pdfSellado.getFileName().isEmpty() || null == pdfSellado.getInputstream()) {
+				transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.pdfAdicional"));
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean isOK_CFDI_OC() throws IOException {
+		if (null == sociedad || null == sociedad.getBukrs()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.sociedad"));
+			return false;
+		}
+		if (null == pdf || pdf.getFileName().isEmpty() || null == pdf.getInputstream()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.pdf"));
+			return false;
+		}
+		if (!pdf.getFileName().toLowerCase().endsWith(".pdf")) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.segundo.pdf")
+					.replaceAll("\\{0\\}", pdf.getFileName()));
+			return false;
+		}
+		if (null == xml || xml.getFileName().isEmpty() || null == xml.getInputstream()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.xml"));
+			return false;
+		} else if (!xml.getFileName().toLowerCase().endsWith(".xml")) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.tipo.xml")
+					.replaceAll("\\{0\\}", xml.getFileName()));
+			return false;
+		} else {
+			boolean isXMLValido = validarXML();
+			if (!isXMLValido) {
+				return false;
+			}
+		}
+		if (null != pdfSellado && !pdfSellado.getFileName().isEmpty() && null != pdfSellado.getInputstream()) {
+			if (!pdfSellado.getFileName().toLowerCase().endsWith(".pdf")) {
+				transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("msg.archivo.tercer.pdf")
+						.replaceAll("\\{0\\}", pdfSellado.getFileName()));
+				return false;
+			}
+		}
+		// solo si tiene el permiso, debe cargarlo
+		if (getDebeAgregarPDFAdicional()) {
+			if (null == pdfSellado || pdfSellado.getFileName().isEmpty() || null == pdfSellado.getInputstream()) {
+				transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.pdfAdicional"));
+				return false;
+			}
+		}
+		if (null == ordenesSeleccionadas || !tieneOCSeleccionadas()) {
+			transaccionErronea("Error", LocaleUtil.getResourceBundle().getString("error.ordenes"));
+			return false;
+		}
+		return true;
+	}
+
+	public String arreglarParaIn() {
+		int cuantas = 0;
+		for (Orden orden : ordenesSeleccionadas) {
+			if (orden.isSeleccionada())
+				cuantas++;
+		}
+		String rtrn = "";
+		int numeroValor = 1;
+		for (Orden orden : ordenesSeleccionadas) {
+			if (orden.isSeleccionada()) {
+				rtrn += ("".equals(rtrn) ? orden.getOrden().getEbeln() + (numeroValor == cuantas ? "" : ",")
+						: orden.getOrden().getEbeln() + (numeroValor == cuantas ? "" : ","));
+				numeroValor++;
+			}
+		}
+		return rtrn;
+	}
+
+	public void enviarCBBOC() {
+		try {
+			if (isOK_CBB_OC()) {
+				Map<String, String> respuesta = wsFactura.guardarCBBOC(getLanguage(), SessionUtil.getUsuarioActual(),
+						SessionUtil.getRFCUsuarioActual(), sociedad.getBukrs(), pdf.getInputstream(),
+						(null != pdfSellado ? pdfSellado.getInputstream() : null), factura, moneda.getWaers(),
+						fechaFactura, new BigDecimal(NumeroUtil.formatoNumero(impuesto.getTasa())), arreglarParaIn(),
+						procesarOC(), (notaCredito ? new BigDecimal("1") : new BigDecimal("0")));
+				if ("0".equals(respuesta.get("estatus"))) {
+					transaccionCompletada(false, SEVERITY_FACES_CORRECTO, "OK", respuesta.get("mensaje"));
+					resetCBBOC(true);
+				} else {
+					transaccionErronea("Error: ", respuesta.get("mensaje"));
+				}
+			}
+		} catch (IOException e) {
+			transaccionErronea("Error: ", e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public void enviarCFDI() {
+		try {
+			if (isOK_CFDI()) {
+				Map<String, String> respuesta = wsFactura.guardarCFDI(getLanguage(), SessionUtil.getUsuarioActual(),
+						SessionUtil.getRFCUsuarioActual(), sociedad.getBukrs(), area.getAreid(), responsable.getGerid(),
+						factura, concepto, xml.getInputstream(), pdf.getInputstream(),
+						(null != pdfSellado ? pdfSellado.getInputstream() : null));
+				if ("0".equals(respuesta.get("estatus"))) {
+					transaccionCompletada(false, SEVERITY_FACES_CORRECTO, "OK", respuesta.get("mensaje"));
+					resetCFDI(true);
+				} else {
+					transaccionErronea("Error: ", respuesta.get("mensaje"));
+				}
+			}
+		} catch (IOException e) {
+			transaccionErronea("Error: ", e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public void enviarCFDIOC() {
+		try {
+			if (isOK_CFDI_OC()) {
+				Map<String, String> respuesta = wsFactura.guardarCFDIOC(getLanguage(), SessionUtil.getUsuarioActual(),
+						SessionUtil.getRFCUsuarioActual(), sociedad.getBukrs(), arreglarParaIn(), xml.getInputstream(),
+						pdf.getInputstream(), (null != pdfSellado ? pdfSellado.getInputstream() : null), procesarOC());
+				if ("0".equals(respuesta.get("estatus"))) {
+					transaccionCompletada(false, SEVERITY_FACES_CORRECTO, "OK", respuesta.get("mensaje"));
+					reset(true);
+				} else {
+					transaccionErronea("Error: ", respuesta.get("mensaje"));
+				}
+			}
+		} catch (IOException e) {
+			transaccionErronea("Error: ", e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	private ZfeTPorecHolder procesarOC() {
+		if (null != ordenesSeleccionadas && !ordenesSeleccionadas.isEmpty()) {
+			int posicion = 0;
+			ZfeSPorec[] array = new ZfeSPorec[ordenesSeleccionadas.size()];
+			ZfeTPorecHolder holder = new ZfeTPorecHolder();
+			ZfeTPorec value = new ZfeTPorec();
+			ZfeSPorec item = null;
+			for (Orden orden : ordenesSeleccionadas) {
+				if (orden.isSeleccionada()) {
+					item = new ZfeSPorec();
+					item.setEbeln(orden.getOrden().getEbeln());
+					item.setEbelp(orden.getOrden().getEbelp());
+					item.setMblnr(orden.getOrden().getMblnr());
+					item.setXblnr(orden.getOrden().getXblnr());
+					item.setMenge(orden.getOrden().getMenge());
+					item.setWrbtr(orden.getOrden().getNetwr());
+					item.setMblpo(orden.getOrden().getBuzei());
+					item.setMjahr(orden.getOrden().getMjahr());
+					array[posicion++] = item;
+				}
+			}
+			value.setItem(array);
+			holder.value = value;
+			return holder;
+		}
+		return null;
+	}
+
+	public StreamedContent descargarPDF(ZfeSEdocta obj) {
+		byte[] bytes = Base64.decode(obj.getPdf().getBytes());
+		InputStream inputStream = new ByteArrayInputStream(bytes);
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		return new DefaultStreamedContent(inputStream,
+				externalContext.getMimeType(SessionUtil.getRFCUsuarioActual() + "_" + obj.getXblnr() + ".pdf"),
+				SessionUtil.getRFCUsuarioActual() + "_" + obj.getXblnr() + ".pdf");
+	}
+
+	public StreamedContent descargarPDFSoporte(ZfeSEdocta obj) {
+		byte[] bytes = Base64.decode(obj.getSoporte().getBytes());
+		InputStream inputStream = new ByteArrayInputStream(bytes);
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		return new DefaultStreamedContent(inputStream,
+				externalContext
+						.getMimeType(SessionUtil.getRFCUsuarioActual() + "_" + obj.getXblnr() + "_Soporte" + ".pdf"),
+				SessionUtil.getRFCUsuarioActual() + "_" + obj.getXblnr() + "_Soporte" + ".pdf");
+	}
+
+	public StreamedContent descargarxML(ZfeSEdocta obj) {
+
+		byte[] bytes = Base64.decode(obj.getXml().getBytes());
+		InputStream inputStream = new ByteArrayInputStream(bytes);
+		ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+		return new DefaultStreamedContent(inputStream,
+				externalContext.getMimeType(SessionUtil.getRFCUsuarioActual() + "_" + obj.getXblnr() + ".xml"),
+				SessionUtil.getRFCUsuarioActual() + "_" + obj.getXblnr() + ".xml");
+	}
+
+	public UploadedFile getXml() {
+		return xml;
+	}
+
+	public void setXml(UploadedFile xml) {
+		this.xml = xml;
+	}
+
+	public UploadedFile getPdf() {
+		return pdf;
+	}
+
+	public void setPdf(UploadedFile pdf) {
+		this.pdf = pdf;
+	}
+
+	public UploadedFile getPdfSellado() {
+		return pdfSellado;
+	}
+
+	public void setPdfSellado(UploadedFile pdfSellado) {
+		this.pdfSellado = pdfSellado;
+	}
+
+	public String getFolio() {
+		return folio;
+	}
+
+	public void setFolio(String folio) {
+		this.folio = folio;
+	}
+
+	public Date getFechaFactura() {
+		return fechaFactura;
+	}
+
+	public void setFechaFactura(Date fechaFactura) {
+		this.fechaFactura = fechaFactura;
+	}
+
+	public BigDecimal getMontoFactura() {
+		return montoFactura;
+	}
+
+	public void setMontoFactura(BigDecimal montoFactura) {
+		this.montoFactura = montoFactura;
+	}
+
+	public InternacionalizacionMB getInternacionalizacionMB() {
+		return internacionalizacionMB;
+	}
+
+	public void setInternacionalizacionMB(InternacionalizacionMB internacionalizacionMB) {
+		this.internacionalizacionMB = internacionalizacionMB;
+	}
+
+	public List<ZfeSListaTpr> getListaTiposRecepcion() {
+		return listaTiposRecepcion;
+	}
+
+	public void setListaTiposRecepcion(List<ZfeSListaTpr> listaTiposRecepcion) {
+		this.listaTiposRecepcion = listaTiposRecepcion;
+	}
+
+	public ZfeSListaSoc getSociedad() {
+		return sociedad;
+	}
+
+	public void setSociedad(ZfeSListaSoc sociedad) {
+		this.sociedad = sociedad;
+	}
+
+	public List<ZfeSListaSoc> getSociedades() {
+		return sociedades;
+	}
+
+	public void setSociedades(List<ZfeSListaSoc> sociedades) {
+		this.sociedades = sociedades;
+	}
+
+	public List<Orden> getOrdenes() {
+		return ordenes;
+	}
+
+	public void setOrdenes(List<Orden> ordenes) {
+		this.ordenes = ordenes;
+	}
+
+	public String getOrdenesAFiltrar() {
+		return ordenesAFiltrar;
+	}
+
+	public void setOrdenesAFiltrar(String ordenesAFiltrar) {
+		this.ordenesAFiltrar = ordenesAFiltrar;
+	}
+
+	public Date getFechaDesde() {
+		return fechaDesde;
+	}
+
+	public void setFechaDesde(Date fechaDesde) {
+		this.fechaDesde = fechaDesde;
+	}
+
+	public Date getFechaHasta() {
+		return fechaHasta;
+	}
+
+	public void setFechaHasta(Date fechaHasta) {
+		this.fechaHasta = fechaHasta;
+	}
+
+	public ZfeSListaTpr getTipoRecepcion() {
+		return tipoRecepcion;
+	}
+
+	public void setTipoRecepcion(ZfeSListaTpr tipoRecepcion) {
+		this.tipoRecepcion = tipoRecepcion;
+	}
+
+	public List<Orden> getOrdenesSeleccionadas() {
+		return ordenesSeleccionadas;
+	}
+
+	public void setOrdenesSeleccionadas(List<Orden> ordenesSeleccionadas) {
+		this.ordenesSeleccionadas = ordenesSeleccionadas;
+	}
+
+	public List<Orden> getOrdenesSeleccionadasTmp() {
+		return ordenesSeleccionadasTmp;
+	}
+
+	public void setOrdenesSeleccionadasTmp(List<Orden> ordenesSeleccionadasTmp) {
+		this.ordenesSeleccionadasTmp = ordenesSeleccionadasTmp;
+	}
+
+	public String getOcAgregar() {
+		return ocAgregar;
+	}
+
+	public void setOcAgregar(String ocAgregar) {
+		this.ocAgregar = ocAgregar;
+	}
+
+	public List<ZfeSListaIi> getImpuestos() {
+		return impuestos;
+	}
+
+	public void setImpuestos(List<ZfeSListaIi> impuestos) {
+		this.impuestos = impuestos;
+	}
+
+	public List<ZfeCmonSol> getMonedas() {
+		return monedas;
+	}
+
+	public void setMonedas(List<ZfeCmonSol> monedas) {
+		this.monedas = monedas;
+	}
+
+	public List<ZfeCsocArea> getAreas() {
+		return areas;
+	}
+
+	public void setAreas(List<ZfeCsocArea> areas) {
+		this.areas = areas;
+	}
+
+	public List<ZfeCsocAreaR> getResponsables() {
+		return responsables;
+	}
+
+	public void setResponsables(List<ZfeCsocAreaR> responsables) {
+		this.responsables = responsables;
+	}
+
+	public String getFactura() {
+		return factura;
+	}
+
+	public void setFactura(String factura) {
+		this.factura = factura;
+	}
+
+	public String getConcepto() {
+		return concepto;
+	}
+
+	public void setConcepto(String concepto) {
+		this.concepto = concepto;
+	}
+
+	public ZfeCsocArea getArea() {
+		return area;
+	}
+
+	public void setArea(ZfeCsocArea area) {
+		this.area = area;
+	}
+
+	public ZfeCsocAreaR getResponsable() {
+		return responsable;
+	}
+
+	public void setResponsable(ZfeCsocAreaR responsable) {
+		this.responsable = responsable;
+	}
+
+	public Double getSubtotal() {
+		return subtotal;
+	}
+
+	public void setSubtotal(Double subtotal) {
+		this.subtotal = subtotal;
+	}
+
+	public float getIva() {
+		return iva;
+	}
+
+	public void setIva(float iva) {
+		this.iva = iva;
+	}
+
+	public ZfeCmonSol getMoneda() {
+		return moneda;
+	}
+
+	public void setMoneda(ZfeCmonSol moneda) {
+		this.moneda = moneda;
+	}
+
+	public BigDecimal getSumaImportes() {
+		return sumaImportes;
+	}
+
+	public void setSumaImportes(BigDecimal sumaImportes) {
+		this.sumaImportes = sumaImportes;
+	}
+
+	public ZfeSListaIi getImpuesto() {
+		return impuesto;
+	}
+
+	public void setImpuesto(ZfeSListaIi impuesto) {
+		this.impuesto = impuesto;
+	}
+
+	public List<ZfeSListFact> getFacturas() {
+		return facturas;
+	}
+
+	public void setFacturas(List<ZfeSListFact> facturas) {
+		this.facturas = facturas;
+	}
+
+	public String getEstatusFactura() {
+		return estatusFactura;
+	}
+
+	public void setEstatusFactura(String estatusFactura) {
+		this.estatusFactura = estatusFactura;
+	}
+
+	public BigDecimal getSumaImportesSeleccionadas() {
+		return sumaImportesSeleccionadas;
+	}
+
+	public void setSumaImportesSeleccionadas(BigDecimal sumaImportesSeleccionadas) {
+		this.sumaImportesSeleccionadas = sumaImportesSeleccionadas;
+	}
+
+	public List<ZfeSEdocta> getEstados() {
+		return estados;
+	}
+
+	public void setEstados(List<ZfeSEdocta> estados) {
+		this.estados = estados;
+	}
+
+	public Date getFechaMaxima() {
+		return fechaMaxima;
+	}
+
+	public void setFechaMaxima(Date fechaMaxima) {
+		this.fechaMaxima = fechaMaxima;
+	}
+
+	public boolean isNotaCredito() {
+		return notaCredito;
+	}
+
+	public void setNotaCredito(boolean notaCredito) {
+		this.notaCredito = notaCredito;
+	}
+
+}

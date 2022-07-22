@@ -1,0 +1,70 @@
+package com.infra.cliente.addenda.dto;
+
+import java.math.BigDecimal;
+
+public class FePagoTercerosDto {
+	private BigDecimal importe;
+	private BigDecimal tasa;
+	private String claveConcepto;
+	private String uuid;
+	private String rfc;
+	private String folio;
+	private String nombre;
+	private String concepto;
+	private BigDecimal iva;
+	
+	public BigDecimal getImporte() {
+		return importe;
+	}
+	public void setImporte(BigDecimal importe) {
+		this.importe = importe;
+	}
+	public BigDecimal getTasa() {
+		return tasa;
+	}
+	public void setTasa(BigDecimal tasa) {
+		this.tasa = tasa;
+	}
+	public String getClaveConcepto() {
+		return claveConcepto;
+	}
+	public void setClaveConcepto(String claveConcepto) {
+		this.claveConcepto = claveConcepto;
+	}
+	public String getUuid() {
+		return uuid;
+	}
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+	public String getRfc() {
+		return rfc;
+	}
+	public void setRfc(String rfc) {
+		this.rfc = rfc;
+	}
+	public String getFolio() {
+		return folio;
+	}
+	public void setFolio(String folio) {
+		this.folio = folio;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	public String getConcepto() {
+		return concepto;
+	}
+	public void setConcepto(String concepto) {
+		this.concepto = concepto;
+	}
+	public BigDecimal getIva() {
+		return iva;
+	}
+	public void setIva(BigDecimal iva) {
+		this.iva = iva;
+	}
+}

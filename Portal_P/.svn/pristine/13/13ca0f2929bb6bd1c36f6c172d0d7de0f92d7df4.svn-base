@@ -1,0 +1,130 @@
+package com.infra.cliente.addenda.dto;
+
+import com.infra.cliente.addenda.common.APK;
+import com.infra.cliente.addenda.pedimentos.ObjectFactory;
+import com.infra.cliente.addenda.pedimentos.Pedimentos;
+import com.infra.cliente.addenda.pedimentos.Pedimentos.Pedimento;
+
+public class FeAddendaPedimentosDto {
+	private String pedimento;
+	private String cuentaContableConceptos;
+	private String aduana;
+	private String patente;
+	private String planta;
+	
+	private boolean empty = false;
+	private boolean addendaCliente = true;
+	private boolean validCliente = true;
+	private boolean insufficientInformation = false;
+	
+	public String getPedimento() {
+		return pedimento;
+	}
+	public void setPedimento(String pedimento) {
+		this.pedimento = pedimento;
+	}
+	public String getCuentaContableConceptos() {
+		return cuentaContableConceptos;
+	}
+	public void setCuentaContableConceptos(String cuentaContableConceptos) {
+		this.cuentaContableConceptos = cuentaContableConceptos;
+	}
+	public String getAduana() {
+		return aduana;
+	}
+	public void setAduana(String aduana) {
+		this.aduana = aduana;
+	}
+	public String getPatente() {
+		return patente;
+	}
+	public void setPatente(String patente) {
+		this.patente = patente;
+	}
+	public String getPlanta() {
+		return planta;
+	}
+	public void setPlanta(String planta) {
+		this.planta = planta;
+	}
+	public boolean isEmpty() {
+		return empty;
+	}
+	public void setEmpty(boolean empty) {
+		this.empty = empty;
+	}
+	public boolean isAddendaCliente() {
+		return addendaCliente;
+	}
+	public void setAddendaCliente(boolean addendaCliente) {
+		this.addendaCliente = addendaCliente;
+	}
+	public boolean isValidCliente() {
+		return validCliente;
+	}
+	public void setValidCliente(boolean validCliente) {
+		this.validCliente = validCliente;
+	}
+	public boolean isInsufficientInformation() {
+		return insufficientInformation;
+	}
+	public void setInsufficientInformation(boolean insufficientInformation) {
+		this.insufficientInformation = insufficientInformation;
+	}
+	
+	public FeAddendaPedimentosDto(){
+		
+	}
+	
+	public FeAddendaPedimentosDto(String xmlAddenda){
+		Pedimentos addenda = null;
+		Pedimento pedimento = null;
+		
+		try {
+			if(xmlAddenda != null && !xmlAddenda.trim().isEmpty()){
+				addenda = APK.newAddenda(xmlAddenda.trim());
+				pedimento = addenda.getPedimento();
+				
+				if(pedimento != null){
+					this.pedimento = pedimento.getPedimento();
+					this.cuentaContableConceptos = pedimento.getCuentaContableConceptos();
+					this.aduana = pedimento.getAduana();
+					this.patente = pedimento.getPatente();
+				}
+			}else{
+				empty = true;
+				addendaCliente = false;
+				validCliente = false;
+				insufficientInformation = true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			
+			empty = false;
+			addendaCliente = false;
+			validCliente = false;
+			insufficientInformation = true;
+		}finally{
+			addenda = null;
+			pedimento = null;
+		}
+	}
+
+	public Pedimentos getAddendaCliente() {
+		return (Pedimentos) getAddendaForXML();
+	}
+	
+	public Object getAddendaForXML() {
+		ObjectFactory factory = new ObjectFactory();
+		Pedimentos addenda = factory.createPedimentos();
+		Pedimento pedimento = factory.createPedimentosPedimento();
+
+		pedimento.setPedimento(this.pedimento);
+		pedimento.setCuentaContableConceptos(this.cuentaContableConceptos);
+		pedimento.setAduana(this.aduana);
+		pedimento.setPatente(this.patente);
+		addenda.setPedimento(pedimento);
+		
+		return addenda;
+	}
+}

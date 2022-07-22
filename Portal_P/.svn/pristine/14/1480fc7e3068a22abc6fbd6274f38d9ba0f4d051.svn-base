@@ -1,0 +1,61 @@
+package com.infra.vis.util;
+
+
+public class CoinUtil {
+
+    public static final String SPACE = " ";
+    
+    public static final String USD = "USD";
+    public static final String MXN = "MXN";
+    
+    public static final String DMXN = "PESOS MEXICANOS";
+    public static final String DUSD = "DOLARES AMERICANOS";
+    
+    public static String detMoneda(final String moneda) {
+        final StringBuilder cadena = new StringBuilder();
+        
+        if(null == moneda){
+            return VisorMapConst.PESOS;
+        }
+        
+        switch (moneda.toUpperCase()) {
+            case USD:
+            cadena.append(CoinUtil.DUSD);
+            break;
+            
+            case MXN:
+                cadena.append(CoinUtil.DMXN);
+                break;
+            
+            default:
+                cadena.append(VisorMapConst.PESOS);
+            break;
+        }
+        
+        return cadena.toString();
+    }
+    
+    public static String detMonedaAb(final String moneda) {
+        final StringBuilder cadena = new StringBuilder();
+        
+        if(null == moneda){
+            return VisorMapConst.MONNAC;
+        }
+        
+        switch (moneda.toUpperCase()) {
+            case USD:
+            cadena.append(CoinUtil.USD);
+            break;
+            
+            case MXN:
+                cadena.append(CoinUtil.MXN);
+                break;
+            
+            default:
+                cadena.append(VisorMapConst.MONNAC);
+            break;
+        }
+        
+        return cadena.toString();
+    }
+}

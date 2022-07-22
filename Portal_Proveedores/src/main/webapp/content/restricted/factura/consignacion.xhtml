@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{consignacionMB.reset()}"
+			update="frm_con_oc" />
+		<p:panel header="#{msg['panel.factura.consignacion']}">
+			<h:form enctype="multipart/form-data" id="frm_con_oc">
+				<p:messages id="msgOperacion" showDetail="true" escape="false"
+					closable="true" />
+				<h:panelGrid columns="6">
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad"
+						value="#{consignacionMB.sociedad}" styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{consignacionMB.sociedades}" var="soc"
+							itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+					</p:selectOneMenu>
+
+					<h:outputLabel value="#{msg['fecha.inicial']}" />
+					<p:calendar value="#{consignacionMB.fechaDesde}"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.inicial']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+					<h:outputLabel value="#{msg['fecha.final']}" />
+					<p:calendar value="#{consignacionMB.fechaHasta}"
+						mindate="#{consignacionMB.fechaDesde}" pattern="dd/MM/yyyy"
+						requiredMessage="#{msg['fecha.final']}" required="true"
+						showOn="both" readonlyInput="true">
+					</p:calendar>
+
+					<h:outputText value="#{msg['factura.envio.factura']}"
+						styleClass="obligatorio" />
+					<p:fileUpload value="#{consignacionMB.xml}" mode="simple" />
+					<h:outputText value="#{msg['factura.envio.factura.pdf']}"
+						styleClass="obligatorio" />
+					<p:fileUpload value="#{consignacionMB.pdf}" mode="simple" />
+					<p:commandButton value="#{msg['accion.buscar']}"
+						actionListener="#{consignacionMB.buscarMateriales()}"
+						update="@form" onerror="PF('statusDialog').hide()"
+						onstart="PF('statusDialog').show()"
+						onsuccess="PF('statusDialog').hide()" />
+					<br />
+					<br />
+				</h:panelGrid>
+
+				<p:dataTable value="#{consignacionMB.materiales}" id="tbl_ord_sel"
+					var="ord" emptyMessage="" paginator="true"
+					paginatorPosition="bottom" rows="10" style="width: 100%">
+					<p:column headerText="#{msg['factura.consulta.sociedad']}">
+						<p:outputLabel value=" #{ord.toma.BUKRS}" />
+					</p:column>
+					<p:column headerText="#{msg['proveedor.cuenta']}">
+						<p:outputLabel value="#{ord.toma.LIFNR}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.noDoc']}">
+						<p:outputLabel value="#{ord.toma.EBELN}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.posicion']}">
+						<p:outputLabel value="#{ord.toma.EBELP}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.factura.fecha_contabilizacion']}">
+						<p:outputLabel value="#{ord.toma.BUDAT}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.ejercicio']}">
+						<p:outputLabel value="#{ord.toma.GJAHR}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.material']}">
+						<p:outputLabel value="#{ord.toma.MATNR}" />
+					</p:column>
+					<p:column headerText="#{msg['peticiones.cantidad']}">
+						<p:outputLabel value="#{ord.toma.MENGE}" />
+					</p:column>
+					<p:column headerText="#{msg['peticiones.unidad']}">
+						<p:outputLabel value="#{ord.toma.MEINS}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.importe_moneda_local']}">
+						<h:outputText value="#{ord.toma.DMBTR}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['pago.factura.moneda']}">
+						<p:outputLabel value="#{ord.toma.WAERS}" />
+					</p:column>
+					<p:column headerText="#{msg['factura.pago.documento']}">
+						<p:outputLabel value="#{ord.toma.BELNR}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.seleccionar']}">
+						<p:selectBooleanCheckbox value="#{ord.seleccionada}"
+							valueChangeListener="#{consignacionMB.chequear(ord)}">
+							<p:ajax update="tbl_ord_sel" onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide();" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+				</p:dataTable>
+				<p:commandButton value="#{msg['accion.cargar']}"
+					action="#{consignacionMB.enviarConsignacion()}" ajax="false"
+					update="@form" onclick="PF('statusDialog').show();"
+					oncomplete="PF('statusDialog').hide();" />
+			</h:form>
+		</p:panel>
+	</ui:define>
+</ui:composition>

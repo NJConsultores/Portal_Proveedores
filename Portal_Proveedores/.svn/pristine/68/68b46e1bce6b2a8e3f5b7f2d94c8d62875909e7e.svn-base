@@ -1,0 +1,114 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{enviarFacturaMB.reset()}"
+			update="frm_con_oc" />
+		<p:panel header="#{msg['panel.factura.CFDI_OC']}">
+			<h:form enctype="multipart/form-data" id="frm_con_oc">
+				<p:messages id="msgOperacion" showDetail="true" escape="false"
+					closable="true" />
+				<h:outputText value="#{msg['factura.oc.docPrimero']}"
+					style="font-weight: bold; color: #0088CC" />
+				<h:panelGrid columns="2">
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad"
+						value="#{enviarFacturaMB.sociedad}"
+						styleClass="selectStatic obligatorio"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{enviarFacturaMB.sociedades}" var="soc"
+							itemLabel="#{soc.bukrs} / #{soc.butxt}" itemValue="#{soc}" />
+						<p:ajax partialSubmit="true"
+							listener="#{enviarFacturaMB.loadImpuestos()}" process="@this"
+							update=":dlg_oc" />
+					</p:selectOneMenu>
+					<h:outputText value="#{msg['factura.envio.factura']}"
+						styleClass="obligatorio" />
+					<p:fileUpload value="#{enviarFacturaMB.xml}" mode="simple" />
+					<h:outputText value="#{msg['factura.envio.factura.pdf']}"
+						styleClass="obligatorio" />
+					<p:fileUpload value="#{enviarFacturaMB.pdf}" mode="simple" />
+					<h:outputText value="#{msg['factura.envio.factura.otros']}"
+						rendered="#{p:ifAnyGranted('ROLE_PDF_ADICIONAL')}" />
+					<p:fileUpload value="#{enviarFacturaMB.pdfSellado}" mode="simple"
+						rendered="#{p:ifAnyGranted('ROLE_PDF_ADICIONAL')}" />
+					<p:commandButton value="#{msg['factura.ordenes.seleccionar']}"
+						oncomplete="PF('agregarOrdenesModal').show()" />
+					<br />
+					<br />
+				</h:panelGrid>
+				<p:dataTable value="#{enviarFacturaMB.ordenesSeleccionadas}"
+					id="tbl_ord_sel" var="ord" emptyMessage="" paginator="true"
+					paginatorPosition="bottom" rows="10" style="width: 100%">
+					<p:column headerText="#{msg['orden.orden']}">
+						<p:outputLabel value=" #{ord.orden.ebeln}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.posicion']}">
+						<p:outputLabel value="#{ord.orden.ebelp}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.noDoc']}">
+						<p:outputLabel value="#{ord.orden.mblnr}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.referencia']}">
+						<p:outputLabel value="#{ord.orden.xblnr}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.fecha']}">
+						<p:outputLabel value="#{ord.orden.budat}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.material']}">
+						<p:outputLabel value="#{ord.orden.matnr}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.un']}">
+						<p:outputLabel value="#{ord.orden.meins}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.descripcion']}">
+						<p:outputLabel value="#{ord.orden.txz01}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.ctd_aut']}">
+						<p:outputLabel value="#{ord.orden.menge}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.ctd_rec']}">
+						<p:outputLabel value="#{ord.orden.zmenge}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.pu']}">
+						<p:outputLabel value="#{ord.orden.punit}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.importe']}">
+						<p:outputLabel value="#{ord.orden.netwr}" />
+					</p:column>
+					<p:column headerText="#{msg['factura.moneda']}">
+						<p:outputLabel value="#{ord.orden.waers}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.seleccionar']}">
+						<p:selectBooleanCheckbox value="#{ord.seleccionada}"
+							valueChangeListener="#{enviarFacturaMB.chequearSeleccionada(ord)}">
+							<p:ajax update="tbl_ord_sel" onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide();" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column footerText="Subtotal: " style="text-align:right"
+								colspan="11" />
+							<p:column
+								footerText="#{enviarFacturaMB.sumaImportesSeleccionadas}" />
+							<p:column colspan="2" />
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+				<p:commandButton value="#{msg['accion.cargar']}"
+					action="#{enviarFacturaMB.enviarCFDIOC()}" ajax="false"
+					update="@form" onclick="PF('statusDialog').show();"
+					oncomplete="PF('statusDialog').hide();" />
+			</h:form>
+		</p:panel>
+		<ui:include src="modalOC.xhtml" />
+	</ui:define>
+</ui:composition>

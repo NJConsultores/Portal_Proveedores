@@ -1,0 +1,123 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+
+	<ui:define name="content">
+		<f:event type="preRenderView"
+			listener="#{enviarFacturaMB.resetConsultaOC()}" />
+		<p:panel header="#{msg['menu.listadoOC']}" styleClass="cfdp-panels"
+			style="min-height: 380px;">
+			<p:messages id="msgOperacion" globalOnly="false" closable="true"
+				showDetail="true" />
+			<h:form id="formConsulta">
+				<h:panelGrid columns="6">
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad"
+						value="#{enviarFacturaMB.sociedad}" styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{enviarFacturaMB.sociedades}" var="soc"
+							itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputLabel value="#{msg['fecha.inicial']}" />
+					<p:calendar value="#{enviarFacturaMB.fechaDesde}"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.inicial']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+					<h:outputLabel value="#{msg['fecha.final']}" />
+					<p:calendar value="#{enviarFacturaMB.fechaHasta}"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.final']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+				</h:panelGrid>
+				<p:commandButton value="#{msg['accion.buscar']}"
+					actionListener="#{enviarFacturaMB.consultarOC()}"
+					update="@form :msgOperacion" onerror="PF('statusDialog').hide()"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide()" />
+				<div
+					style="font-weight: bold; font-size: 13px; float: right; margin-right: 10px; margin-top: 5px; color: #000;">
+					<h:commandLink onclick="PrimeFaces.monitorDownload(start, stop);">
+						<p:graphicImage name="/images/csv.jpg" value="/images/csv.jpg"
+							width="30" alt="#{msg['msg.exportar.csv']}" />
+						<p:dataExporter type="xls" target="tablaOC" fileName="reporteOC"
+							encoding="ISO-8859-1" />
+					</h:commandLink>
+				</div>
+
+				<p:dataTable emptyMessage="" rows="20" paginator="true"
+					value="#{enviarFacturaMB.listaOC}" var="f" id="tablaOC" lazy="true"
+					paginatorPosition="bottom" widgetVar="resultadoWidget">
+					<p:ajax event="page" onstart="PF('statusDialog').show()"
+						oncomplete="PF('statusDialog').hide()"
+						onerror="PF('statusDialog').hide()" />
+					<f:facet name="header">
+						<h:outputText value="#{msg['pedidos.lista']}" />
+					</f:facet>
+					<p:column headerText="#{msg['pedidos.det.orden_compra']}">
+						<h:outputText value="#{f.EBELN}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.posicion']}">
+						<h:outputText value="#{f.EBELP}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.pedido_siscom']}">
+						<h:outputText value="#{f.SYSCOM}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.material']}">
+						<h:outputText value="#{f.MATNR}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.desc_material']}">
+						<h:outputText value="#{f.MAKTX}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.cantidad']}">
+						<h:outputText value="#{f.MENGE}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.monto']}">
+						<h:outputText value="#{f.WRBTR}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.moneda']}">
+						<h:outputText value="#{f.WAERS}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.fecha_crea']}">
+						<h:outputText value="#{f.ERDAT}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.fecha_prev_entrega']}">
+						<h:outputText value="#{f.FENTR}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.comprador']}">
+						<h:outputText value="#{f.COMPR}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.oferta']}">
+						<h:outputText value="#{f.OFERT}" />
+					</p:column>
+					<p:column headerText="#{msg['pedidos.det.dias_atraso']}">
+						<h:outputText value="#{f.ATRAS}" />
+					</p:column>
+					<p:column headerText="#{msg['pdf.titulo']}">
+						<center>
+							<p:commandLink id="downloadLinkPdf" ajax="false"
+								onclick="PrimeFaces.monitorDownload(start, stop)"
+								rendered="#{f.PDF ne null and f.PDF ne ''}"
+								actionListener="#{enviarFacturaMB.armarDescargaParaNotificar(f)}">
+								<p:fileDownload value="#{enviarFacturaMB.archivoDescarga}" />
+								<p:graphicImage value="/resources/images/pdf-32.png" width="24" />
+							</p:commandLink>
+						</center>
+					</p:column>
+				</p:dataTable>
+
+			</h:form>
+		</p:panel>
+
+	</ui:define>
+</ui:composition>

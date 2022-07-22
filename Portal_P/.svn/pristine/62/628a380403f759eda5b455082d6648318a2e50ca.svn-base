@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+<!--     <tx:annotation-driven transaction-manager="transactionManager" /> -->
+
+  <!--Usando jndi--> 
+ 
+<!-- 	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">   -->
+<!--         <property name="jndiName" value="jdbc/sfe_infra"></property>      -->
+<!--         <property name="lookupOnStartup" value="true"></property>   -->
+<!--         <property name="cache" value="true"></property>   -->
+<!--         <property name="proxyInterface" value="javax.sql.DataSource"></property>   -->
+<!--     </bean> -->
+
+<!--     <bean id="b001" class="org.mybatis.spring.mapper.MapperScannerConfigurer"> -->
+<!--         <property name="basePackage" value="com.infra.core.persistence, com.infra.factura.persistence, com.infra.cliente.persistence" /> -->
+<!--     </bean> -->
+    
+<!--     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
+<!--         <property name="dataSource" ref="dataSource" /> -->
+<!--     </bean> -->
+    
+    <!-- Soporte a vendor database -->
+    
+<!--     <bean id="vendorProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">   -->
+<!--         <property name="properties">   -->
+<!--             <props>   -->
+<!--                 <prop key="SQL Server">sqlserver</prop>   -->
+<!--                 <prop key="Oracle">oracle</prop>   -->
+<!--                 <prop key="PostgreSQL">postgresql</prop> -->
+<!--                 <prop key="MySQL">mysql</prop>   -->
+<!--             </props>   -->
+<!--         </property> -->
+<!--     </bean> -->
+<!--     <bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">  -->
+<!--         <property name="properties" ref="vendorProperties"/> -->
+<!--     </bean> -->
+
+
+<!--     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"> -->
+<!--         <property name="dataSource" ref="dataSource" /> -->
+<!--                <property name="configLocation"  value="classpath:mybatis-configuration.xml" /> -->
+<!--         <property name="mapperLocations" value="classpath:myBatis/**/*.xml" /> -->
+<!--         <property name="typeAliasesPackage" value="com.infra.core.model,com.infra.cliente.model" /> -->
+<!--         <property name="databaseIdProvider" ref="databaseIdProvider" /> -->
+<!--     </bean> -->
+
+    
+</beans>

@@ -1,0 +1,20 @@
+package com.infra.cliente.addenda.v2;
+
+public class Date extends java.util.Date {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private String fecha;
+
+	public String getFecha() {
+		return fecha;
+	}
+
+	public void setFecha(String fecha) {
+		this.fecha = fecha;
+	}
+	
+}

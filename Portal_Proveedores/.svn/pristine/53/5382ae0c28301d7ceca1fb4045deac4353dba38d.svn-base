@@ -1,0 +1,1152 @@
+package com.infra.cliente.addenda.dto;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.infra.cliente.addenda.Addenda.Bocar.Pedimento;
+import com.infra.cliente.addenda.TipoOperacion;
+import com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda.Bocar.Terceros.Pago;
+import com.infra.factura.business.common.GenericCFD;
+import com.infra.factura.business.validation.util.FeConstantesValidacion;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDTipo_Cliente;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDVersion;
+
+
+public class FeAddendaDto {
+	private CFDTipo_Cliente tipoCliente = CFDTipo_Cliente.None;
+	private CFDVersion version = CFDVersion.None;
+
+	//Addenda CLIENTE
+	//Encabezado
+	private String estatusEntMerc;
+	private String moneda = null;
+	private String sociedadSap = null;
+	private BigDecimal total = null;
+	private BigDecimal tipoCambio = null;
+	private String numeroFactura = null;
+	//COC
+	private List<String> documentosMaterial = null;
+	private String numeroReferencia = null;
+	private String numeroPedido = null;
+	
+	//SOC
+	private String referencia = null;
+	private List<FePartidasDto> partidas = null;
+	
+	//Agente Aduanal
+	private String pedimento = null;
+	private String aduana = null;
+	private String patente = null;
+	private String planta = null;
+	private String tipoOperacion = null;
+	private List<FePagoTercerosDto> terceros = null;
+	private List<Pago> pago = null;
+	
+	//Ambos
+	private String textoCabecera = null;
+	private String claveImpuesto = null;
+	
+	private boolean empty = false;
+	private boolean addendaCliente = true;
+	private boolean validCliente = true;
+	private boolean insufficientInformation = false;
+	
+	//RFC's para entrada de mercancia
+	private String rfcEmisor;
+	private String rfcReceptor;
+	
+
+	public FeAddendaDto() {
+	}
+
+	public FeAddendaDto(CFDVersion version, GenericCFD cfd, String xmlString) {
+		if (cfd != null) {
+
+			switch (version) {
+			
+			case CFDv3:
+				this.version = CFDVersion.CFDv3;
+				com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda addendaV3 = ((com.infra.factura.business.cfdi.ii.schema.Comprobante) cfd
+						.getDocument()).getAddenda();
+				
+				if (addendaV3 != null) {
+					
+					if(addendaV3.getBocar() != null){
+					
+						com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda.Bocar addendaCliente = addendaV3.getBocar();
+						
+						tipoCliente = CFDTipo_Cliente.values()[addendaCliente.getTipo()];
+						
+						if(addendaCliente.getMoneda() != null && !addendaCliente.getMoneda().equals("")){
+							moneda = addendaCliente.getMoneda().value();
+						}
+						
+						total = new BigDecimal(addendaCliente.getTotal());
+						
+						if(addendaCliente.getTipoCambio() != null && addendaCliente.getTipoCambio() > 0){
+							tipoCambio = new BigDecimal(addendaCliente.getTipoCambio());
+						}
+						
+						if(addendaCliente.getTextoCabecera() != null && !addendaCliente.getTextoCabecera().equals("")){
+							textoCabecera = addendaCliente.getTextoCabecera();
+						}
+						
+						if(addendaCliente.getClaveImpuesto() != null && !addendaCliente.getClaveImpuesto().equals("")){
+							claveImpuesto = addendaCliente.getClaveImpuesto();
+						}
+							
+						if(tipoCliente.equals(CFDTipo_Cliente.COC)){
+							
+							rfcEmisor = ((com.infra.factura.business.cfdi.ii.schema.Comprobante)cfd.getDocument()).getEmisor().getRfc();
+							rfcReceptor = ((com.infra.factura.business.cfdi.ii.schema.Comprobante)cfd.getDocument()).getReceptor().getRfc();
+							
+							numeroReferencia = addendaCliente.getNumeroReferencia();
+							numeroFactura = addendaCliente.getNumeroFactura();
+							numeroPedido = addendaCliente.getNumeroPedido();
+							
+							if(addendaCliente.getDocumentosMaterial() != null){
+								documentosMaterial = addendaCliente.getDocumentosMaterial().getDocumentoMaterial();
+							}
+							
+							
+						}else if(tipoCliente.equals(CFDTipo_Cliente.SOC)){
+							
+							referencia = addendaCliente.getReferencia();
+							
+							if(addendaCliente.getPartidas() != null && addendaCliente.getPartidas().getPartida() != null && !addendaCliente.getPartidas().getPartida().isEmpty()){
+								
+								partidas = new ArrayList<FePartidasDto>();
+								
+								for(Iterator<com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda.Bocar.Partidas.Partida> it = addendaCliente.getPartidas().getPartida().iterator(); it.hasNext();){
+									
+									com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda.Bocar.Partidas.Partida partidaAddenda = it.next();
+									FePartidasDto partidaDto = new FePartidasDto();
+									
+//									partidaDto.setAsignacion(partidaAddenda.getAsignacion());
+									
+									if(partidaAddenda.getCeco() != null && !partidaAddenda.getCeco().equals("")){
+										partidaDto.setCeco(partidaAddenda.getCeco());
+									}
+									
+//									partidaDto.setClaveContabilidad(partidaAddenda.getClaveContabilidad());
+									partidaDto.setClaveImpuesto(partidaAddenda.getClaveImpuesto());
+									partidaDto.setCuentaContable(partidaAddenda.getCuentaContable());
+									partidaDto.setImportePartida(new BigDecimal(partidaAddenda.getImportePartida()));
+									
+//									if(partidaAddenda.getOrdenInterna() != null && !partidaAddenda.getOrdenInterna().equals("")){
+//										partidaDto.setOrdenInterna(partidaAddenda.getOrdenInterna());
+//									}
+									
+//									partidaDto.setTextoPartida(partidaAddenda.getTextoPartida());
+									
+									partidas.add(partidaDto);
+									
+								}
+								
+							}
+							
+						}else if(tipoCliente.equals(CFDTipo_Cliente.AAN)){
+							numeroFactura = addendaCliente.getNumeroFactura();
+							numeroReferencia = addendaCliente.getNumeroReferencia();
+							
+							if(addendaCliente.getPedimento() != null){
+								patente = addendaCliente.getPedimento().getPatente();
+								aduana = addendaCliente.getPedimento().getAduana();
+								pedimento = addendaCliente.getPedimento().getPedimento();
+								planta = addendaCliente.getPedimento().getPlanta();
+								tipoOperacion = addendaCliente.getPedimento().getTipoOperacion().name();
+								
+								if(addendaCliente.getTerceros() != null && addendaCliente.getTerceros().getPago() != null && addendaCliente.getTerceros().getPago().size() > 0){
+									FePagoTercerosDto pagoTercero = null;
+									terceros = new ArrayList<FePagoTercerosDto>();
+									
+									for(Pago pago:addendaCliente.getTerceros().getPago()){
+										pagoTercero = new FePagoTercerosDto();
+										
+										pagoTercero.setImporte(pago.getImporte());
+										pagoTercero.setTasa(pago.getTasa());
+										pagoTercero.setClaveConcepto(pago.getClaveConcepto());
+										pagoTercero.setUuid(pago.getUuid());
+										pagoTercero.setRfc(pago.getRfc());
+										pagoTercero.setFolio(pago.getFolio());
+										pagoTercero.setNombre(pago.getNombre());
+										pagoTercero.setConcepto(pago.getConcepto());
+										pagoTercero.setIva(pago.getIva());
+										
+										terceros.add(pagoTercero);
+									}
+								}
+							}
+						}
+					}else{
+						final Pattern pattern = Pattern.compile(FeConstantesValidacion.CFD_ADDENDA_START_TAG + "(.+?)" + FeConstantesValidacion.CFD_ADDENDA_END_TAG);
+						final Matcher matcher = pattern.matcher(xmlString);
+						if(matcher.find()){
+							String addendaStr = matcher.group(1);
+							if(addendaStr != null && !addendaStr.equals("")){
+								empty = false;
+							}else{
+								empty = true;
+							}
+						}else{
+							empty = true;
+						}
+						addendaCliente = false;
+						validCliente = false;
+					}
+					
+				}else{	// Sin Addenda
+					empty = true;
+					addendaCliente = false;
+					validCliente = false;
+				}
+				
+				break;
+
+			case CFDv3_3:
+				this.version = CFDVersion.CFDv3_3;
+				com.infra.factura.business.cfdi.iii.schema.Comprobante.Addenda addendaV3_3 = ((com.infra.factura.business.cfdi.iii.schema.Comprobante) cfd
+						.getDocument()).getAddenda();
+				
+				if (addendaV3_3 != null) {
+					
+					if(addendaV3_3.getBocar() != null){
+					
+						com.infra.factura.business.cfdi.iii.schema.Comprobante.Addenda.Bocar addendaCliente = addendaV3_3.getBocar();
+						
+						tipoCliente = CFDTipo_Cliente.values()[addendaCliente.getTipo()];
+						
+						if(addendaCliente.getMoneda() != null && !addendaCliente.getMoneda().equals("")){
+							moneda = addendaCliente.getMoneda().value();
+						}
+						
+						total = new BigDecimal(addendaCliente.getTotal());
+						
+						if(addendaCliente.getTipoCambio() != null && addendaCliente.getTipoCambio() > 0){
+							tipoCambio = new BigDecimal(addendaCliente.getTipoCambio());
+						}
+						
+						if(addendaCliente.getTextoCabecera() != null && !addendaCliente.getTextoCabecera().equals("")){
+							textoCabecera = addendaCliente.getTextoCabecera();
+						}
+						
+						if(addendaCliente.getClaveImpuesto() != null && !addendaCliente.getClaveImpuesto().equals("")){
+							claveImpuesto = addendaCliente.getClaveImpuesto();
+						}
+						
+						if(tipoCliente.equals(CFDTipo_Cliente.COC)){
+							
+							rfcEmisor = ((com.infra.factura.business.cfdi.iii.schema.Comprobante)cfd.getDocument()).getEmisor().getRfc();
+							rfcReceptor = ((com.infra.factura.business.cfdi.iii.schema.Comprobante)cfd.getDocument()).getReceptor().getRfc();
+							
+							numeroReferencia = addendaCliente.getNumeroReferencia();
+							numeroFactura = addendaCliente.getNumeroFactura();
+							numeroPedido = addendaCliente.getNumeroPedido();
+							
+							if(addendaCliente.getDocumentosMaterial() != null){
+								documentosMaterial = addendaCliente.getDocumentosMaterial().getDocumentoMaterial();
+							}
+							
+							
+						}else if(tipoCliente.equals(CFDTipo_Cliente.SOC)){
+							
+							referencia = addendaCliente.getReferencia();
+							
+							if(addendaCliente.getPartidas() != null && addendaCliente.getPartidas().getPartida() != null && !addendaCliente.getPartidas().getPartida().isEmpty()){
+								
+								partidas = new ArrayList<FePartidasDto>();
+								
+								for(Iterator<com.infra.factura.business.cfdi.iii.schema.Comprobante.Addenda.Bocar.Partidas.Partida> it = addendaCliente.getPartidas().getPartida().iterator(); it.hasNext();){
+									
+									com.infra.factura.business.cfdi.iii.schema.Comprobante.Addenda.Bocar.Partidas.Partida partidaAddenda = it.next();
+									FePartidasDto partidaDto = new FePartidasDto();
+									
+//									partidaDto.setAsignacion(partidaAddenda.getAsignacion());
+									
+									if(partidaAddenda.getCeco() != null && !partidaAddenda.getCeco().equals("")){
+										partidaDto.setCeco(partidaAddenda.getCeco());
+									}
+									
+//									partidaDto.setClaveContabilidad(partidaAddenda.getClaveContabilidad());
+									partidaDto.setClaveImpuesto(partidaAddenda.getClaveImpuesto());
+									partidaDto.setCuentaContable(partidaAddenda.getCuentaContable());
+									partidaDto.setImportePartida(new BigDecimal(partidaAddenda.getImportePartida()));
+									
+//									if(partidaAddenda.getOrdenInterna() != null && !partidaAddenda.getOrdenInterna().equals("")){
+//										partidaDto.setOrdenInterna(partidaAddenda.getOrdenInterna());
+//									}
+									
+//									partidaDto.setTextoPartida(partidaAddenda.getTextoPartida());
+									
+									partidas.add(partidaDto);
+									
+								}
+							}
+						}else if(tipoCliente.equals(CFDTipo_Cliente.AAN)){
+							numeroFactura = addendaCliente.getNumeroFactura();
+							numeroReferencia = addendaCliente.getNumeroReferencia();
+							
+							if(addendaCliente.getPedimento() != null){
+								pedimento = addendaCliente.getPedimento().getPedimento();
+								patente = addendaCliente.getPedimento().getPatente();
+								aduana = addendaCliente.getPedimento().getAduana();
+								planta = addendaCliente.getPedimento().getPlanta();
+								tipoOperacion = addendaCliente.getPedimento().getTipoOperacion().name();
+								
+								if(addendaCliente.getTerceros() != null && addendaCliente.getTerceros().getPago() != null && addendaCliente.getTerceros().getPago().size() > 0){
+									FePagoTercerosDto pagoTercero = null;
+									terceros = new ArrayList<FePagoTercerosDto>();
+									
+									for(com.infra.factura.business.cfdi.iii.schema.Comprobante.Addenda.Bocar.Terceros.Pago pago:addendaCliente.getTerceros().getPago()){
+										pagoTercero = new FePagoTercerosDto();
+										
+										pagoTercero.setImporte(pago.getImporte());
+										pagoTercero.setTasa(pago.getTasa());
+										pagoTercero.setClaveConcepto(pago.getClaveConcepto());
+										pagoTercero.setUuid(pago.getUuid());
+										pagoTercero.setRfc(pago.getRfc());
+										pagoTercero.setFolio(pago.getFolio());
+										pagoTercero.setNombre(pago.getNombre());
+										pagoTercero.setConcepto(pago.getConcepto());
+										pagoTercero.setIva(pago.getIva());
+										
+										terceros.add(pagoTercero);
+									}
+								}
+							}
+						}
+					}else{
+						final Pattern pattern = Pattern.compile(FeConstantesValidacion.CFD_ADDENDA_START_TAG + "(.+?)" + FeConstantesValidacion.CFD_ADDENDA_END_TAG);
+						final Matcher matcher = pattern.matcher(xmlString);
+						if(matcher.find()){
+							String addendaStr = matcher.group(1);
+							if(addendaStr != null && !addendaStr.equals("")){
+								empty = false;
+							}else{
+								empty = true;
+							}
+						}else{
+							empty = true;
+						}
+						addendaCliente = false;
+						validCliente = false;
+					}
+					
+				}else{	// Sin Addenda
+					empty = true;
+					addendaCliente = false;
+					validCliente = false;
+				}
+				
+				break;
+				
+			case CFDv3_2:
+				this.version = CFDVersion.CFDv3_2;
+				com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda addendaV3_2 = ((com.infra.factura.business.cfdi.ii.schema.Comprobante) cfd
+						.getDocument()).getAddenda();
+				
+				if (addendaV3_2 != null) {
+					
+					if(addendaV3_2.getBocar() != null){
+					
+						com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda.Bocar addendaCliente = addendaV3_2.getBocar();
+						
+						tipoCliente = CFDTipo_Cliente.values()[addendaCliente.getTipo()];
+						
+						if(addendaCliente.getMoneda() != null && !addendaCliente.getMoneda().equals("")){
+							moneda = addendaCliente.getMoneda().value();
+						}
+						
+						total = new BigDecimal(addendaCliente.getTotal());
+						
+						if(addendaCliente.getTipoCambio() != null && addendaCliente.getTipoCambio() > 0){
+							tipoCambio = new BigDecimal(addendaCliente.getTipoCambio());
+						}
+						
+						if(addendaCliente.getTextoCabecera() != null && !addendaCliente.getTextoCabecera().equals("")){
+							textoCabecera = addendaCliente.getTextoCabecera();
+						}
+						
+						if(addendaCliente.getClaveImpuesto() != null && !addendaCliente.getClaveImpuesto().equals("")){
+							claveImpuesto = addendaCliente.getClaveImpuesto();
+						}
+						
+						if(tipoCliente.equals(CFDTipo_Cliente.COC)){
+							
+							rfcEmisor = ((com.infra.factura.business.cfdi.ii.schema.Comprobante)cfd.getDocument()).getEmisor().getRfc();
+							rfcReceptor = ((com.infra.factura.business.cfdi.ii.schema.Comprobante)cfd.getDocument()).getReceptor().getRfc();
+							
+							numeroReferencia = addendaCliente.getNumeroReferencia();
+							numeroFactura = addendaCliente.getNumeroFactura();
+							numeroPedido = addendaCliente.getNumeroPedido();
+							
+							if(addendaCliente.getDocumentosMaterial() != null){
+								documentosMaterial = addendaCliente.getDocumentosMaterial().getDocumentoMaterial();
+							}
+							
+							
+						}else if(tipoCliente.equals(CFDTipo_Cliente.SOC)){
+							
+							referencia = addendaCliente.getReferencia();
+							
+							if(addendaCliente.getPartidas() != null && addendaCliente.getPartidas().getPartida() != null && !addendaCliente.getPartidas().getPartida().isEmpty()){
+								
+								partidas = new ArrayList<FePartidasDto>();
+								
+								for(Iterator<com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda.Bocar.Partidas.Partida> it = addendaCliente.getPartidas().getPartida().iterator(); it.hasNext();){
+									
+									com.infra.factura.business.cfdi.ii.schema.Comprobante.Addenda.Bocar.Partidas.Partida partidaAddenda = it.next();
+									FePartidasDto partidaDto = new FePartidasDto();
+									
+//									partidaDto.setAsignacion(partidaAddenda.getAsignacion());
+									
+									if(partidaAddenda.getCeco() != null && !partidaAddenda.getCeco().equals("")){
+										partidaDto.setCeco(partidaAddenda.getCeco());
+									}
+									
+//									partidaDto.setClaveContabilidad(partidaAddenda.getClaveContabilidad());
+									partidaDto.setClaveImpuesto(partidaAddenda.getClaveImpuesto());
+									partidaDto.setCuentaContable(partidaAddenda.getCuentaContable());
+									partidaDto.setImportePartida(new BigDecimal(partidaAddenda.getImportePartida()));
+									
+//									if(partidaAddenda.getOrdenInterna() != null && !partidaAddenda.getOrdenInterna().equals("")){
+//										partidaDto.setOrdenInterna(partidaAddenda.getOrdenInterna());
+//									}
+									
+//									partidaDto.setTextoPartida(partidaAddenda.getTextoPartida());
+									
+									partidas.add(partidaDto);
+									
+								}
+							}
+						}else if(tipoCliente.equals(CFDTipo_Cliente.AAN)){
+							numeroFactura = addendaCliente.getNumeroFactura();
+							numeroReferencia = addendaCliente.getNumeroReferencia();
+							
+							if(addendaCliente.getPedimento() != null){
+								pedimento = addendaCliente.getPedimento().getPedimento();
+								patente = addendaCliente.getPedimento().getPatente();
+								aduana = addendaCliente.getPedimento().getAduana();
+								planta = addendaCliente.getPedimento().getPlanta();
+								tipoOperacion = addendaCliente.getPedimento().getTipoOperacion().name();
+								
+								if(addendaCliente.getTerceros() != null && addendaCliente.getTerceros().getPago() != null && addendaCliente.getTerceros().getPago().size() > 0){
+									FePagoTercerosDto pagoTercero = null;
+									terceros = new ArrayList<FePagoTercerosDto>();
+									
+									for(Pago pago:addendaCliente.getTerceros().getPago()){
+										pagoTercero = new FePagoTercerosDto();
+										
+										pagoTercero.setImporte(pago.getImporte());
+										pagoTercero.setTasa(pago.getTasa());
+										pagoTercero.setClaveConcepto(pago.getClaveConcepto());
+										pagoTercero.setUuid(pago.getUuid());
+										pagoTercero.setRfc(pago.getRfc());
+										pagoTercero.setFolio(pago.getFolio());
+										pagoTercero.setNombre(pago.getNombre());
+										pagoTercero.setConcepto(pago.getConcepto());
+										pagoTercero.setIva(pago.getIva());
+										
+										terceros.add(pagoTercero);
+									}
+								}
+							}
+						}
+					}else{
+						final Pattern pattern = Pattern.compile(FeConstantesValidacion.CFD_ADDENDA_START_TAG + "(.+?)" + FeConstantesValidacion.CFD_ADDENDA_END_TAG);
+						final Matcher matcher = pattern.matcher(xmlString);
+						if(matcher.find()){
+							String addendaStr = matcher.group(1);
+							if(addendaStr != null && !addendaStr.equals("")){
+								empty = false;
+							}else{
+								empty = true;
+							}
+						}else{
+							empty = true;
+						}
+						addendaCliente = false;
+						validCliente = false;
+					}
+					
+				}else{	// Sin Addenda
+					empty = true;
+					addendaCliente = false;
+					validCliente = false;
+				}
+				
+				break;
+				
+			default:
+				empty = true;
+				addendaCliente = false;
+				validCliente = false;
+				break;
+			}
+		}
+
+	}
+
+	public Object getAddendaCliente(){
+		Object addenda = null;
+		
+		com.infra.cliente.addenda.v2.ObjectFactory cfdV2ObjectFactory = new com.infra.cliente.addenda.v2.ObjectFactory();
+		final com.infra.cliente.addenda.v2.Addenda addendaV2 = cfdV2ObjectFactory.createAddenda();
+		final com.infra.cliente.addenda.v2.Addenda.Bocar addendaCliente = cfdV2ObjectFactory.createAddendaBocar();
+		
+		addendaCliente.setTipo(tipoCliente.ordinal());
+		
+		if(moneda != null && !moneda.equals("")){
+			System.out.println("Contine dato moneda!! "+moneda);
+			addendaCliente.setMoneda(com.infra.cliente.addenda.v2.IdMoneda.valueOf(moneda));
+		}else{
+			System.out.println("No contiene dato moneda!!!!");
+		}
+		
+		if(tipoCambio != null && tipoCambio.floatValue() > 0){
+			addendaCliente.setTipoCambio(tipoCambio.floatValue());
+		}
+		
+		addendaCliente.setTotal(total.setScale(2, BigDecimal.ROUND_CEILING).toString());
+		
+		if(textoCabecera != null && !textoCabecera.trim().isEmpty()){
+			addendaCliente.setTextoCabecera(textoCabecera);
+		}
+		
+		if(claveImpuesto != null && !claveImpuesto.trim().isEmpty()){
+			addendaCliente.setClaveImpuesto(claveImpuesto);
+		}
+		
+		switch (getTipoCliente()) {
+			case COC:
+				addendaCliente.setNumeroReferencia(numeroReferencia);
+				addendaCliente.setNumeroFactura(numeroFactura);
+				addendaCliente.setNumeroPedido(numeroPedido);
+				
+				if(documentosMaterial != null && !documentosMaterial.isEmpty()){
+					final com.infra.cliente.addenda.v2.Addenda.Bocar.DocumentosMaterial dm = cfdV2ObjectFactory.createAddendaBocarDocumentosMaterial();
+					dm.getDocumentoMaterial().addAll(documentosMaterial);
+					addendaCliente.setDocumentosMaterial(dm);;
+				}
+				
+				addendaV2.setBocar(addendaCliente);
+				
+				break;
+			
+			case SOC:
+				
+				addendaCliente.setReferencia(referencia);
+				
+				if(partidas != null && !partidas.isEmpty()){
+					final com.infra.cliente.addenda.v2.Addenda.Bocar.Partidas part = cfdV2ObjectFactory.createAddendaBocarPartidas();
+					
+					for(Iterator<FePartidasDto> it = partidas.iterator(); it.hasNext();){
+						FePartidasDto parDto = it.next();
+						
+						com.infra.cliente.addenda.v2.Addenda.Bocar.Partidas.Partida partAdd = new com.infra.cliente.addenda.v2.Addenda.Bocar.Partidas.Partida();
+						
+//						partAdd.setAsignacion(parDto.getAsignacion());
+						
+						if(parDto.getCeco() != null && !parDto.getCeco().equals("")){
+							partAdd.setCeco(parDto.getCeco());
+						}
+						
+//						partAdd.setClaveContabilidad(parDto.getClaveContabilidad());
+						partAdd.setClaveImpuesto(parDto.getClaveImpuesto());
+						partAdd.setCuentaContable(parDto.getCuentaContable());
+						partAdd.setImportePartida(parDto.getImportePartida().floatValue());
+						
+//						if(parDto.getOrdenInterna() != null && !parDto.getOrdenInterna().equals("")){
+//							partAdd.setOrdenInterna(parDto.getOrdenInterna());
+//						}
+//						
+//						partAdd.setTextoPartida(parDto.getTextoPartida());
+						
+						part.getPartida().add(partAdd);
+						
+					}
+					
+					addendaCliente.setPartidas(part);
+					
+				}
+				
+				addendaV2.setBocar(addendaCliente);
+				
+				break;
+				
+			case AAN:
+				addendaCliente.setNumeroReferencia(numeroReferencia);
+				addendaCliente.setNumeroFactura(numeroFactura);
+				
+				if(patente != null && !patente.trim().isEmpty()){
+					com.infra.cliente.addenda.v2.Addenda.Bocar.Pedimento pedimento = cfdV2ObjectFactory.createAddendaBocarPedimento();
+					
+					pedimento.setPedimento(this.pedimento);
+					pedimento.setAduana(aduana);
+					pedimento.setPatente(patente);
+					pedimento .setPlanta(planta);
+					pedimento.setTipoOperacion(com.infra.cliente.addenda.v2.TipoOperacion.valueOf(tipoOperacion));
+					
+					addendaCliente.setPedimento(pedimento);
+				}
+				
+				if(terceros != null && !terceros.isEmpty()){
+					final com.infra.cliente.addenda.v2.Addenda.Bocar.Terceros ter = cfdV2ObjectFactory.createAddendaBocarTerceros();
+					
+					for(Iterator<FePagoTercerosDto> it = terceros.iterator(); it.hasNext();){
+						FePagoTercerosDto tercero = it.next();
+						
+						com.infra.cliente.addenda.v2.Addenda.Bocar.Terceros.Pago pago = cfdV2ObjectFactory.createAddendaBocarTercerosPago();
+						
+						pago.setImporte(tercero.getImporte());
+						pago.setTasa(tercero.getTasa());
+						pago.setClaveConcepto(tercero.getClaveConcepto());
+						pago.setUuid(tercero.getUuid());
+						pago.setRfc(tercero.getRfc());
+						pago.setNombre(tercero.getNombre());
+						pago.setConcepto(tercero.getConcepto());
+						pago.setIva(tercero.getIva());
+						
+						if(tercero.getFolio() != null && !tercero.getFolio().trim().isEmpty()){
+							pago.setFolio(tercero.getFolio());
+						}
+						
+						ter.getPago().add(pago);
+					}
+					
+					addendaCliente.setTerceros(ter);
+				}
+				
+				addendaV2.setBocar(addendaCliente);
+				
+				break;
+				
+				default:
+					break;
+			}
+		
+		addenda = addendaV2;
+	
+		return addenda;
+		
+	}
+	
+	public Object getAddendaForXML() {
+		Object addenda = null;
+		
+		switch (version) {
+		
+		case CFDv3_2:
+		case CFDv3_3:
+		case CFDv3:
+			com.infra.cliente.addenda.ObjectFactory cfdV3ObjectFactory = new com.infra.cliente.addenda.ObjectFactory();
+			final com.infra.cliente.addenda.Addenda addendaV3 = cfdV3ObjectFactory.createAddenda();
+			final com.infra.cliente.addenda.Addenda.Bocar addendaClienteV3 = cfdV3ObjectFactory.createAddendaBocar();
+			
+			addendaClienteV3.setTipo(tipoCliente.ordinal());
+			
+			if(moneda != null && !moneda.equals("")){
+				addendaClienteV3.setMoneda(com.infra.cliente.addenda.IdMoneda.valueOf(moneda));
+			}
+			
+			if(tipoCambio != null && tipoCambio.floatValue() > 0){
+				addendaClienteV3.setTipoCambio(tipoCambio.floatValue());
+			}
+			
+			addendaClienteV3.setTotal(total.setScale(2, BigDecimal.ROUND_CEILING).toString());
+			
+			if(textoCabecera != null && !textoCabecera.trim().isEmpty()){
+				addendaClienteV3.setTextoCabecera(textoCabecera);
+			}
+			
+			if(claveImpuesto != null && !claveImpuesto.trim().isEmpty()){
+				addendaClienteV3.setClaveImpuesto(claveImpuesto);
+			}
+			
+			switch (getTipoCliente()) {
+				case COC:
+					addendaClienteV3.setNumeroReferencia(numeroReferencia);
+					addendaClienteV3.setNumeroFactura(numeroFactura);
+					addendaClienteV3.setNumeroPedido(numeroPedido);
+					
+					if(documentosMaterial != null && !documentosMaterial.isEmpty()){
+						final com.infra.cliente.addenda.Addenda.Bocar.DocumentosMaterial dm = cfdV3ObjectFactory.createAddendaBocarDocumentosMaterial();
+						dm.getDocumentoMaterial().addAll(documentosMaterial);
+						addendaClienteV3.setDocumentosMaterial(dm);
+					}
+					
+					addendaV3.setBocar(addendaClienteV3);
+					break;
+				case SOC:
+					addendaClienteV3.setReferencia(referencia);
+					
+					if(partidas != null && !partidas.isEmpty()){
+						final com.infra.cliente.addenda.Addenda.Bocar.Partidas part = cfdV3ObjectFactory.createAddendaBocarPartidas();
+						
+						for(Iterator<FePartidasDto> it = partidas.iterator(); it.hasNext();){
+							FePartidasDto parDto = it.next();
+							
+							com.infra.cliente.addenda.Addenda.Bocar.Partidas.Partida partAdd = new com.infra.cliente.addenda.Addenda.Bocar.Partidas.Partida();
+							
+							if(parDto.getCeco() != null && !parDto.getCeco().equals("")){
+								partAdd.setCeco(parDto.getCeco());
+							}
+							
+							partAdd.setClaveImpuesto(parDto.getClaveImpuesto());
+							partAdd.setCuentaContable(parDto.getCuentaContable());
+							partAdd.setImportePartida(parDto.getImportePartida().floatValue());
+							
+							part.getPartida().add(partAdd);
+						}
+						
+						addendaClienteV3.setPartidas(part);
+					}
+					
+					addendaV3.setBocar(addendaClienteV3);
+					break;
+				case AAN:
+					addendaClienteV3.setNumeroReferencia(numeroReferencia);
+					addendaClienteV3.setNumeroFactura(numeroFactura);
+					
+					if(patente != null && !patente.trim().isEmpty()){
+						Pedimento pedimento = cfdV3ObjectFactory.createAddendaBocarPedimento();
+						
+						pedimento.setPedimento(this.pedimento);
+						pedimento.setAduana(aduana);
+						pedimento.setPatente(patente);
+						pedimento .setPlanta(planta);
+						pedimento.setTipoOperacion(TipoOperacion.valueOf(tipoOperacion));
+						
+						addendaClienteV3.setPedimento(pedimento);
+					}
+					
+					if(terceros != null && !terceros.isEmpty()){
+						final com.infra.cliente.addenda.Addenda.Bocar.Terceros ter = cfdV3ObjectFactory.createAddendaBocarTerceros();
+						
+						for(Iterator<FePagoTercerosDto> it = terceros.iterator(); it.hasNext();){
+							FePagoTercerosDto tercero = it.next();
+							
+							com.infra.cliente.addenda.Addenda.Bocar.Terceros.Pago pago = cfdV3ObjectFactory.createAddendaBocarTercerosPago();
+							
+							pago.setImporte(tercero.getImporte());
+							pago.setTasa(tercero.getTasa());
+							pago.setClaveConcepto(tercero.getClaveConcepto());
+							pago.setUuid(tercero.getUuid());
+							pago.setRfc(tercero.getRfc());
+							pago.setNombre(tercero.getNombre());
+							pago.setConcepto(tercero.getConcepto());
+							pago.setIva(tercero.getIva());
+							
+							if(tercero.getFolio() != null && !tercero.getFolio().trim().isEmpty()){
+								pago.setFolio(tercero.getFolio());
+							}
+							
+							ter.getPago().add(pago);
+						}
+						
+						addendaClienteV3.setTerceros(ter);
+					}
+					
+					addendaV3.setBocar(addendaClienteV3);
+					
+					break;
+				default:
+					break;
+				}
+			
+			addenda = addendaV3;
+			break;
+			
+		default:
+			break;
+			
+		}
+
+		return addenda;
+	}
+	
+	public Object getAddendaV2ForXML() {
+		Object addenda = null;
+		
+		switch (version) {
+		
+		case CFDv3_2:
+		case CFDv3_3:
+		case CFDv3:
+			com.infra.cliente.addenda.v2.ObjectFactory cfdV3ObjectFactory = new com.infra.cliente.addenda.v2.ObjectFactory();
+			final com.infra.cliente.addenda.v2.Addenda addendaV3 = cfdV3ObjectFactory.createAddenda();
+			final com.infra.cliente.addenda.v2.Addenda.Bocar addendaClienteV3 = cfdV3ObjectFactory.createAddendaBocar();
+			
+			addendaClienteV3.setTipo(tipoCliente.ordinal());
+			
+			if(moneda != null && !moneda.equals("")){
+				addendaClienteV3.setMoneda(com.infra.cliente.addenda.v2.IdMoneda.valueOf(moneda));
+			}
+			
+			if(tipoCambio != null && tipoCambio.floatValue() > 0){
+				addendaClienteV3.setTipoCambio(tipoCambio.floatValue());
+			}
+			
+			addendaClienteV3.setTotal(total.setScale(2, BigDecimal.ROUND_CEILING).toString());
+			
+			if(textoCabecera != null && !textoCabecera.trim().isEmpty()){
+				addendaClienteV3.setTextoCabecera(textoCabecera);
+			}
+			
+			if(claveImpuesto != null && !claveImpuesto.trim().isEmpty()){
+				addendaClienteV3.setClaveImpuesto(claveImpuesto);
+			}
+			
+			switch (getTipoCliente()) {
+				case COC:
+					addendaClienteV3.setNumeroReferencia(numeroReferencia);
+					addendaClienteV3.setNumeroFactura(numeroFactura);
+					addendaClienteV3.setNumeroPedido(numeroPedido);
+					
+					if(documentosMaterial != null && !documentosMaterial.isEmpty()){
+						final com.infra.cliente.addenda.v2.Addenda.Bocar.DocumentosMaterial dm = cfdV3ObjectFactory.createAddendaBocarDocumentosMaterial();
+						dm.getDocumentoMaterial().addAll(documentosMaterial);
+						addendaClienteV3.setDocumentosMaterial(dm);
+					}
+					
+					addendaV3.setBocar(addendaClienteV3);
+					break;
+				case SOC:
+					addendaClienteV3.setReferencia(referencia);
+					
+					if(partidas != null && !partidas.isEmpty()){
+						final com.infra.cliente.addenda.v2.Addenda.Bocar.Partidas part = cfdV3ObjectFactory.createAddendaBocarPartidas();
+						
+						for(Iterator<FePartidasDto> it = partidas.iterator(); it.hasNext();){
+							FePartidasDto parDto = it.next();
+							
+							com.infra.cliente.addenda.v2.Addenda.Bocar.Partidas.Partida partAdd = new com.infra.cliente.addenda.v2.Addenda.Bocar.Partidas.Partida();
+							
+							if(parDto.getCeco() != null && !parDto.getCeco().equals("")){
+								partAdd.setCeco(parDto.getCeco());
+							}
+							
+							partAdd.setClaveImpuesto(parDto.getClaveImpuesto());
+							partAdd.setCuentaContable(parDto.getCuentaContable());
+							partAdd.setImportePartida(parDto.getImportePartida().floatValue());
+							
+							part.getPartida().add(partAdd);
+						}
+						
+						addendaClienteV3.setPartidas(part);
+					}
+					
+					addendaV3.setBocar(addendaClienteV3);
+					break;
+				case AAN:
+					addendaClienteV3.setNumeroReferencia(numeroReferencia);
+					addendaClienteV3.setNumeroFactura(numeroFactura);
+					
+					if(patente != null && !patente.trim().isEmpty()){
+						com.infra.cliente.addenda.v2.Addenda.Bocar.Pedimento pedimento = cfdV3ObjectFactory.createAddendaBocarPedimento();
+						
+						pedimento.setPedimento(this.pedimento);
+						pedimento.setAduana(aduana);
+						pedimento.setPatente(patente);
+						pedimento .setPlanta(planta);
+						pedimento.setTipoOperacion(com.infra.cliente.addenda.v2.TipoOperacion.valueOf(tipoOperacion));
+						
+						addendaClienteV3.setPedimento(pedimento);
+					}
+					
+					if(terceros != null && !terceros.isEmpty()){
+						final com.infra.cliente.addenda.v2.Addenda.Bocar.Terceros ter = cfdV3ObjectFactory.createAddendaBocarTerceros();
+						
+						for(Iterator<FePagoTercerosDto> it = terceros.iterator(); it.hasNext();){
+							FePagoTercerosDto tercero = it.next();
+							
+							com.infra.cliente.addenda.v2.Addenda.Bocar.Terceros.Pago pago = cfdV3ObjectFactory.createAddendaBocarTercerosPago();
+							
+							pago.setImporte(tercero.getImporte());
+							pago.setTasa(tercero.getTasa());
+							pago.setClaveConcepto(tercero.getClaveConcepto());
+							pago.setUuid(tercero.getUuid());
+							pago.setRfc(tercero.getRfc());
+							pago.setNombre(tercero.getNombre());
+							pago.setConcepto(tercero.getConcepto());
+							pago.setIva(tercero.getIva());
+							
+							if(tercero.getFolio() != null && !tercero.getFolio().trim().isEmpty()){
+								pago.setFolio(tercero.getFolio());
+							}
+							
+							ter.getPago().add(pago);
+						}
+						
+						addendaClienteV3.setTerceros(ter);
+					}
+					
+					addendaV3.setBocar(addendaClienteV3);
+					
+					break;
+				default:
+					break;
+				}
+			
+			addenda = addendaV3;
+			break;
+			
+		default:
+			break;
+			
+		}
+
+		return addenda;
+	}
+	
+	public String getDocumentosMaterialString(){
+		if(documentosMaterial != null && documentosMaterial.size() > 0){
+			
+			StringBuffer dm = new StringBuffer();
+			
+			for(Iterator<String> it = documentosMaterial.iterator(); it.hasNext();){
+				
+				if(it.hasNext()){
+					dm.append(it.next());
+					dm.append(",");
+				}else{
+					dm.append(it.next());
+				}
+				
+			}
+			
+			return dm.toString();
+			
+		}else{
+			return null;
+		}
+	}
+	
+	public String getRfcEmisor() {
+		return rfcEmisor;
+	}
+
+	public void setRfcEmisor(String rfcEmisor) {
+		this.rfcEmisor = rfcEmisor;
+	}
+
+	public String getRfcReceptor() {
+		return rfcReceptor;
+	}
+
+	public void setRfcReceptor(String rfcReceptor) {
+		this.rfcReceptor = rfcReceptor;
+	}
+
+	public CFDVersion getVersion() {
+		return version;
+	}
+
+	public void setVersion(CFDVersion version) {
+		this.version = version;
+	}
+
+	public CFDTipo_Cliente getTipoCliente() {
+		return tipoCliente;
+	}
+
+	public void setTipoCliente(CFDTipo_Cliente tipoCliente) {
+		this.tipoCliente = tipoCliente;
+	}
+
+	public boolean isEmpty() {
+		return empty;
+	}
+
+	public void setEmpty(boolean empty) {
+		this.empty = empty;
+	}
+
+	public boolean isValidCliente() {
+		return validCliente;
+	}
+
+	public void setValidCliente(boolean validCliente) {
+		this.validCliente = validCliente;
+	}
+
+	public boolean isInsufficientInformation() {
+		return insufficientInformation;
+	}
+
+	public void setInsufficientInformation(boolean insufficientInformation) {
+		this.insufficientInformation = insufficientInformation;
+	}
+
+	public boolean isAddendaCliente() {
+		return addendaCliente;
+	}
+
+	public void setAddendaCliente(boolean addendaCliente) {
+		this.addendaCliente = addendaCliente;
+	}
+
+	public String getMoneda() {
+		return moneda;
+	}
+
+	public void setMoneda(String moneda) {
+		this.moneda = moneda;
+	}
+
+	public BigDecimal getTotal() {
+		return total;
+	}
+
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+
+	public BigDecimal getTipoCambio() {
+		return tipoCambio;
+	}
+
+	public void setTipoCambio(BigDecimal tipoCambio) {
+		this.tipoCambio = tipoCambio;
+	}
+
+	public List<String> getDocumentosMaterial() {
+		return documentosMaterial;
+	}
+
+	public void setDocumentosMaterial(List<String> documentosMaterial) {
+		this.documentosMaterial = documentosMaterial;
+	}
+
+	public String getReferencia() {
+		return referencia;
+	}
+
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
+	}
+
+	public String getTextoCabecera() {
+		return textoCabecera;
+	}
+
+	public void setTextoCabecera(String textoCabecera) {
+		this.textoCabecera = textoCabecera;
+	}
+
+	public List<FePartidasDto> getPartidas() {
+		return partidas;
+	}
+
+	public void setPartidas(List<FePartidasDto> partidas) {
+		this.partidas = partidas;
+	}
+
+	public String getSociedadSap() {
+		return sociedadSap;
+	}
+
+	public void setSociedadSap(String sociedadSap) {
+		this.sociedadSap = sociedadSap;
+	}
+
+	public String getEstatusEntMerc() {
+		return estatusEntMerc;
+	}
+
+	public void setEstatusEntMerc(String estatusEntMerc) {
+		this.estatusEntMerc = estatusEntMerc;
+	}
+
+	public String getNumeroReferencia() {
+		return numeroReferencia;
+	}
+
+	public void setNumeroReferencia(String numeroReferencia) {
+		this.numeroReferencia = numeroReferencia;
+	}
+
+	public String getNumeroFactura() {
+		return numeroFactura;
+	}
+
+	public void setNumeroFactura(String numeroFactura) {
+		this.numeroFactura = numeroFactura;
+	}
+
+	public String getNumeroPedido() {
+		return numeroPedido;
+	}
+
+	public void setNumeroPedido(String numeroPedido) {
+		this.numeroPedido = numeroPedido;
+	}
+
+	public String getClaveImpuesto() {
+		return claveImpuesto;
+	}
+
+	public void setClaveImpuesto(String claveImpuesto) {
+		this.claveImpuesto = claveImpuesto;
+	}
+
+	public String getPedimento() {
+		return pedimento;
+	}
+
+	public void setPedimento(String pedimento) {
+		this.pedimento = pedimento;
+	}
+
+	public String getAduana() {
+		return aduana;
+	}
+
+	public void setAduana(String aduana) {
+		this.aduana = aduana;
+	}
+
+	public String getPatente() {
+		return patente;
+	}
+
+	public void setPatente(String patente) {
+		this.patente = patente;
+	}
+
+	public String getPlanta() {
+		return planta;
+	}
+
+	public void setPlanta(String planta) {
+		this.planta = planta;
+	}
+
+	public String getTipoOperacion() {
+		return tipoOperacion;
+	}
+
+	public void setTipoOperacion(String tipoOperacion) {
+		this.tipoOperacion = tipoOperacion;
+	}
+
+	public List<FePagoTercerosDto> getTerceros() {
+		return terceros;
+	}
+
+	public void setTerceros(List<FePagoTercerosDto> terceros) {
+		this.terceros = terceros;
+	}
+
+	public List<Pago> getPago() {
+		return pago;
+	}
+
+	public void setPago(List<Pago> pago) {
+		this.pago = pago;
+	}
+}

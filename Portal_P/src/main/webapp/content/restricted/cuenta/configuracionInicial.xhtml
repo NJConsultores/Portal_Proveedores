@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"    
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <f:view contentType="text/html" locale="#{language.locale}">
+		<h:head>
+			<title>#{msg['app.title']}</title>
+			<meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+			<meta name="Author" content="Proyecto Base" />
+			<meta name="description" content="Base para sistemas" />
+			<meta name="keywords" content="base, maven, java" />
+	
+			<link rel="Shortcut Icon" href="#{request.contextPath}/content/themes/imagenes/favicon.ico" />
+	
+			<h:outputStylesheet library="css" name="main.css"/>
+			<h:outputStylesheet library="css" name="style.css"/>
+		</h:head>
+		<h:body>
+			<div style="width: 100%; " >
+				<div style="height: 65px; background-color: #000;">
+					<h:form>
+						<p:commandLink actionListener="#{language.setSpanish}" ajax="false" rendered="#{language.language ne 'es'}" 
+										style="font-weight: bold; font-size: 13px; float : right; margin-right: 10px; margin-top: 2px; color: #FFFFFF">
+							Español
+						</p:commandLink>
+						<p:commandLink rendered="#{language.language eq 'es'}" 
+										style="font-weight: bold; font-size: 13px; float : right; margin-right: 10px; margin-top: 2px; color: #FFFFFF; 
+												border-bottom: 1px solid #FFFFFF; text-decoration:none; cursor: default;">
+							Español
+						</p:commandLink>
+						<span style="font-weight: bold; font-size: 13px; color: #FFFFFF; float : right; margin-right: 10px">|</span>
+						<p:commandLink actionListener="#{language.setEnglish}" ajax="false" rendered="#{language.language ne 'en'}" 
+										style="font-weight: bold; font-size: 13px; float : right; margin-right: 10px; margin-top: 2px; color: #FFFFFF">
+							English
+						</p:commandLink>
+						<p:commandLink rendered="#{language.language eq 'en'}" 
+										style="font-weight: bold; font-size: 13px; float : right; margin-right: 10px; margin-top: 2px; color: #FFFFFF; 
+										border-bottom: 1px solid #FFFFFF; text-decoration:none; cursor: default;">
+							English
+						</p:commandLink>
+						<span style="font-weight: bold; font-size: 13px; color: #FFFFFF; float : right; margin-right: 10px">|</span>
+					</h:form>
+					<br/>
+					<br/>
+					<span style="font-weight: bold; font-size: 13px; color: #FFFFFF; ">#{msg['app.title']}</span>
+					<a href="#{request.contextPath}/j_spring_security_logout"
+						style="font-weight: bold; font-size: 13px; float : right; margin-right: 10px; color: #FFFFFF" >
+	                        #{msg['accion.salir']}
+					</a>
+					<span style="font-weight: bold; font-size: 13px; color: #FFFFFF; float : right; margin-right: 10px">#{cuentaMB.nombreCompleto}</span>
+				</div>
+				<div style="margin-top: 10px;">
+					<div style="margin-left: 10px">
+						<ui:insert name="content"></ui:insert>
+					</div>    
+				</div>
+				<br/><br/>
+				<center>
+					<h:outputText value="#{msg['cuenta.cambio.password']}" styleClass="textoNegrita" style="font-size: larger"/>
+					<br/>
+					<ui:include src="cambioPassword.xhtml">
+						<ui:param name="managedMB" value="#{cuentaMB}"/>
+						<ui:param name="diseable" value="#{cuentaMB.diseable}"/>
+					</ui:include>
+				</center>
+				<div style="margin-top: 20px">
+					<p style="text-align: center; font-size: 11px; ">
+						Prospectiva en Tecnología e Integradora de Sistemas, S.A. de C.V.<br/>
+						Powered by 
+						<a href='http://www.infra.com.mx' target="_blank">
+							<img src="#{request.contextPath}/resources/images/infraLogo.png" width="50px" height="25px" border="0" />
+						</a>
+					</p>
+				</div>
+			</div>
+		</h:body>
+	</f:view>
+</html>

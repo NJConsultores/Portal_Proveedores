@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<p:dialog id="dlg_oc" modal="true" width="100%" position="top"
+		header="#{msg['factura.ordenes.seleccionar']}"
+		widgetVar="agregarOrdenesModal" closable="false">
+		<h:form id="agregarOrdenesForm">
+			<p:panelGrid style="border: 0px; width: 100%;">
+				<p:row>
+					<p:column colspan="4">
+						<p:messages id="msgOperacion" showDetail="true" escape="false"
+							closable="true" />
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<h:outputText value="#{msg['cliente.nombre.completo']}"
+							styleClass="obligatorio" />
+					</p:column>
+					<p:column>
+						<h:outputText
+							value="#{enviarFacturaMB.sociedad.BUKRS} / #{enviarFacturaMB.sociedad.BUTXT}"
+							rendered="#{enviarFacturaMB.sociedad ne null}" />
+						<h:outputText
+							value="#{msg['cargar.seleccione']} #{msg['cliente.nombre.completo']}"
+							rendered="#{enviarFacturaMB.sociedad eq null}" />
+					</p:column>
+					<p:column rowspan="2">
+						<p:outputLabel
+							value="#{msg['factura.consulta.numero.orden.compras']}" />
+					</p:column>
+					<p:column rowspan="2">
+						<p:inputText value="#{enviarFacturaMB.ocAgregar}">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{enviarFacturaMB.validarCadenaOrdenes()}" />
+						</p:inputText>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<h:outputLabel value="#{msg['fecha.inicial']}" />
+					</p:column>
+					<p:column>
+						<p:calendar value="#{enviarFacturaMB.fechaDesde}"
+							pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.inicial']}"
+							required="true" showOn="both" readonlyInput="true">
+						</p:calendar>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<h:outputLabel value="#{msg['fecha.final']}" />
+					</p:column>
+					<p:column>
+						<p:calendar value="#{enviarFacturaMB.fechaHasta}"
+							pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.final']}"
+							required="true" showOn="both" readonlyInput="true">
+						</p:calendar>
+					</p:column>
+					<p:column rowspan="2">
+						<p:outputLabel value="#{msg['factura.consulta.numero.pedimento']}" />
+					</p:column>
+					<p:column rowspan="2">
+						<p:inputText value="#{enviarFacturaMB.pedimentos}">
+							<p:ajax event="change" partialSubmit="true" process="@this"
+								listener="#{enviarFacturaMB.validarCadenaPedimentos()}" />
+						</p:inputText>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column>
+						<h:outputText value="#{msg['factura.tipo.documento']}"
+							styleClass="obligatorio" />
+					</p:column>
+					<p:column>
+						<p:selectOneMenu value="#{enviarFacturaMB.tipoRecepcion}"
+							styleClass="selectStatic"
+							converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemValue="#{null}"
+								itemLabel="#{msg['seleccione']}" />
+							<f:selectItems value="#{enviarFacturaMB.listaTiposRecepcion}"
+								var="tipo" itemLabel="#{tipo.TIPO} / #{tipo.TEXTO}"
+								itemValue="#{tipos}" />
+						</p:selectOneMenu>
+					</p:column>
+				</p:row>
+				<p:row>
+					<p:column headerText="Seleccionar" colspan="3">
+						<p:commandButton value="Filtrar"
+							action="#{enviarFacturaMB.buscarOrdenes()}"
+							update="@form msgOperacion tbl_ordenes_disponibles"
+							onerror="PF('statusDialog').hide()"
+							onstart="PF('statusDialog').show()"
+							onsuccess="PF('statusDialog').hide()" />
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			<p:scrollPanel style="width:100%;height:300px" mode="native">
+				<p:dataTable id="tbl_ordenes_disponibles" emptyMessage=""
+					style="width: 100%; height: 1500px"
+					value="#{enviarFacturaMB.ordenes}" var="ord">
+					<f:facet name="header">
+						<div style="text-align: center; width: 100%">
+							<p:commandButton value="#{msg['marcar_todo']}"
+								icon="ui-icon-calendar"
+								action="#{enviarFacturaMB.seleccionarTodas()}"
+								update="tbl_ordenes_disponibles"
+								onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide();" />
+							<p:spacer width="10px" height="1px" />
+							<p:commandButton value="#{msg['desmarcar_todo']}"
+								icon="ui-icon-document-b"
+								action="#{enviarFacturaMB.deseleccionarTodas()}"
+								update="tbl_ordenes_disponibles"
+								onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide();" />
+							<p:spacer width="10px" height="1px" />
+							<p:commandButton value="#{msg['accion.agregar']}"
+								icon="ui-icon-check"
+								update=":agregarOrdenesForm :frm_con_oc :frm_con_oc:tbl_ord_sel"
+								onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide(); PF('agregarOrdenesModal').hide();"
+								actionListener="#{enviarFacturaMB.agregarOrdenes()}" />
+							<p:spacer width="10px" height="1px" />
+							<p:commandButton value="#{msg['accion.cancelar']}"
+								immediate="true" icon="ui-icon-closethick"
+								update=":agregarOrdenesForm @form"
+								onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide(); PF('agregarOrdenesModal').hide();"
+								actionListener="#{enviarFacturaMB.cancelar()}" />
+
+							<p:spacer width="20%" height="1px" />
+
+							<p:outputLabel value="Subtotal: " style="text-align:right" />
+							<h:outputText value="#{enviarFacturaMB.sumaImportes}">
+								<f:convertNumber type="currency" currencySymbol=""
+									maxFractionDigits="2" />
+							</h:outputText>
+							
+						</div>
+					</f:facet>
+					<p:column headerText="#{msg['orden.orden']}">
+						<p:outputLabel value=" #{ord.orden.EBELN}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.posicion']}">
+						<p:outputLabel value="#{ord.orden.EBELP}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.noDoc']}">
+						<p:outputLabel value="#{ord.orden.MBLNR}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.referencia']}">
+						<p:outputLabel value="#{ord.orden.XBLNR}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.fecha']}">
+						<p:outputLabel value="#{ord.orden.BUDAT}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.material']}">
+						<p:outputLabel value="#{ord.orden.MATNR}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.un']}">
+						<p:outputLabel value="#{ord.orden.MEINS}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.descripcion']}">
+						<p:outputLabel value="#{ord.orden.TXZ01}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.ctd_aut']}">
+						<p:outputLabel value="#{ord.orden.MENGE}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.ctd_rec']}">
+						<p:outputLabel value="#{ord.orden.ZMENGE}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.pu']}">
+						<h:outputText value="#{ord.orden.PUNIT}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['orden.importe']}">
+						<h:outputText value="#{ord.orden.NETWR}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['factura.moneda']}">
+						<p:outputLabel value="#{ord.orden.WAERS}" />
+					</p:column>
+					<p:column headerText="#{msg['factura.consulta.numero.pedimento']}" style="width: 100px !important">
+						<p:outputLabel value="#{ord.orden.PRONU}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.seleccionar']}">
+						<p:selectBooleanCheckbox value="#{ord.seleccionada}"
+							valueChangeListener="#{enviarFacturaMB.chequear(ord)}">
+							<p:ajax update="tbl_ordenes_disponibles"
+								onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide();" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+					<p:columnGroup type="footer">
+						<p:row>
+							<p:column footerText="Subtotal: " style="text-align:right"
+								colspan="12" />
+							<p:column footerText="#{enviarFacturaMB.sumaImportes}" />
+							<p:column colspan="2" />
+						</p:row>
+					</p:columnGroup>
+				</p:dataTable>
+			</p:scrollPanel>
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

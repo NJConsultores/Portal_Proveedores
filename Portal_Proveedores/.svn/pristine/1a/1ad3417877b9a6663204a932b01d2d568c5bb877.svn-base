@@ -1,0 +1,16 @@
+/**
+ * ZFE_GET_LOGIN_PROV.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.core.ws.login;
+
+import com.infra.core.ws.login.holders.ZfeCprovOpcHolder;
+import com.infra.core.ws.login.holders.ZfeSLoginProvHolder;
+import com.infra.core.ws.login.holders.ZfeTListaSocHolder;
+
+public interface ZFE_GET_LOGIN_PROV extends java.rmi.Remote {
+    public void zfeGetLoginProv(java.lang.String ELang, java.lang.String EPaswd, java.lang.String EUname, ZfeTListaSocHolder SLista, ZfeSLoginProvHolder SDatos, javax.xml.rpc.holders.StringHolder SMsg, ZfeCprovOpcHolder SOpc, org.apache.axis.holders.UnsignedByteHolder SStat) throws java.rmi.RemoteException;
+}

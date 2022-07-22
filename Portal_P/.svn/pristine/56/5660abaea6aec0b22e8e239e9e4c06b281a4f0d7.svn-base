@@ -1,0 +1,12 @@
+/**
+ * ZFE_SET_AVISO_STATUS.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public interface ZFE_SET_AVISO_STATUS extends java.rmi.Remote {
+    public void zfeSetAvisoStatus(java.lang.String ELang, java.lang.String ELifnr, short ENavis, javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat) throws java.rmi.RemoteException;
+}

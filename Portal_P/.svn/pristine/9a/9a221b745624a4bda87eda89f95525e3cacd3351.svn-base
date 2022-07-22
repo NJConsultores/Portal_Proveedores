@@ -1,0 +1,33 @@
+package com.infra.vis.expo;
+
+public class VisException extends Exception {
+
+	private static final long serialVersionUID = 4351959571899360840L;
+	
+    private String flagExcep;
+	private String customMessag;
+	
+	public String getFlagExcep() {
+		if(null == flagExcep) { return ""; } return flagExcep; }
+	public void setFlagExcep(String flagExcep) { this.flagExcep = flagExcep; }
+	public String getCustomMessag() { return customMessag; }
+	public void setCustomMessag(String customMessag) { this.customMessag = customMessag; }
+	
+	public VisException(final String message) {
+		super(message);
+	}
+
+	public VisException(final Throwable causa) {
+		super(causa);
+	}
+
+	public VisException(final String message, final Throwable causa) {
+		super(message, causa);
+	}
+	
+	public VisException(final String message, final String flagExcep, final String customMessag) {
+		super(message);
+		this.flagExcep = flagExcep;
+		this.customMessag = customMessag;
+	}
+}

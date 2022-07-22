@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{complementoMB.reset()}" />
+		<p:panel header="#{msg['menu.complementosPago']}"
+			styleClass="cfdp-panels" style="min-height: 380px;">
+			<h:form id="formConsulta">
+				<p:messages globalOnly="false" closable="true" autoUpdate="true"
+					showDetail="true" />
+				<h:panelGrid columns="6">
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad"
+						value="#{complementoMB.sociedad}" styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{complementoMB.sociedades}" var="soc"
+							itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputLabel value="#{msg['fecha.inicial']}" />
+					<p:calendar value="#{complementoMB.fechaDesde}" navigator="true"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.inicial']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+					<h:outputLabel value="#{msg['fecha.final']}" />
+					<p:calendar value="#{complementoMB.fechaHasta}" navigator="true"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.final']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+				</h:panelGrid>
+				<p:commandButton value="#{msg['accion.buscar']}"
+					actionListener="#{complementoMB.consultarPagos()}" update="@form"
+					onerror="PF('statusDialog').hide()"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide()" />
+				<div
+					style="font-weight: bold; font-size: 13px; float: right; margin-right: 10px; margin-top: 5px; color: #000;">
+					<h:commandLink onclick="PrimeFaces.monitorDownload(start, stop);">
+						<p:graphicImage name="/images/csv.jpg" value="/images/csv.jpg"
+							width="30" alt="#{msg['msg.exportar.csv']}" />
+						<p:dataExporter type="csv" target="tablaPagos"
+							fileName="reportePagos" encoding="ISO-8859-1" />
+					</h:commandLink>
+				</div>
+				<p:dataTable emptyMessage="" rows="50" paginator="true"
+					value="#{complementoMB.pagos}" var="f" id="tablaPagos" lazy="true"
+					paginatorPosition="bottom" widgetVar="resultadoWidget">
+					<p:ajax event="page" onstart="PF('statusDialog').show()"
+						oncomplete="PF('statusDialog').hide()"
+						onerror="PF('statusDialog').hide()" />
+					<p:column headerText="#{msg['factura.pago.documento']}">
+						<h:outputText value="#{f.VBLNR}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.ejercicio']}">
+						<h:outputText value="#{f.GJAHR}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.mes_contable']}">
+						<h:outputText value="#{f.MONAT}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.importe_moneda_local']}">
+						<h:outputText value="#{f.DMBTR}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['pago.importe_moneda_dto']}">
+						<h:outputText value="#{f.WRBTR}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['pago.tipo_cambio']}">
+						<h:outputText value="#{f.KURSF}" />
+					</p:column>
+					<p:column exportable="false">
+						<center>
+							<p:commandButton value="#{msg['accion.detalle']}"
+								actionListener="#{complementoMB.cargarDetalle(f)}"
+								update=":detalleComplementoForm"
+								onerror="PF('statusDialog').hide()"
+								onstart="PF('statusDialog').show()"
+								onsuccess="PF('statusDialog').hide(); PF('detalleComplementoModal').show();" />
+						</center>
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</p:panel>
+
+		<ui:include src="detalleComplemento.xhtml" />
+
+	</ui:define>
+</ui:composition>

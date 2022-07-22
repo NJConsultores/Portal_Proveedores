@@ -1,0 +1,524 @@
+/**
+ * ZfeSEdocta.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeSEdocta  implements java.io.Serializable {
+    private java.lang.String butxt;
+
+    private java.lang.String xblnr;
+
+    private java.lang.String feemi;
+
+    private java.lang.String feval;
+
+    private java.lang.String ferec;
+
+    private java.math.BigDecimal wrbtr;
+
+    private java.lang.String waers;
+
+    private java.lang.String ebeln;
+
+    private java.lang.String fepag;
+
+    private java.lang.String forpg;
+
+    private java.lang.String augbl;
+
+    private java.lang.String pdf;
+
+    private java.lang.String xml;
+
+    private java.lang.String soporte;
+
+    private java.lang.String uuid;
+
+    private java.lang.String status;
+
+    public ZfeSEdocta() {
+    }
+
+    public ZfeSEdocta(
+           java.lang.String butxt,
+           java.lang.String xblnr,
+           java.lang.String feemi,
+           java.lang.String feval,
+           java.lang.String ferec,
+           java.math.BigDecimal wrbtr,
+           java.lang.String waers,
+           java.lang.String ebeln,
+           java.lang.String fepag,
+           java.lang.String forpg,
+           java.lang.String augbl,
+           java.lang.String pdf,
+           java.lang.String xml,
+           java.lang.String soporte,
+           java.lang.String uuid,
+           java.lang.String status) {
+           this.butxt = butxt;
+           this.xblnr = xblnr;
+           this.feemi = feemi;
+           this.feval = feval;
+           this.ferec = ferec;
+           this.wrbtr = wrbtr;
+           this.waers = waers;
+           this.ebeln = ebeln;
+           this.fepag = fepag;
+           this.forpg = forpg;
+           this.augbl = augbl;
+           this.pdf = pdf;
+           this.xml = xml;
+           this.soporte = soporte;
+           this.uuid = uuid;
+           this.status = status;
+    }
+
+
+    /**
+     * Gets the butxt value for this ZfeSEdocta.
+     * 
+     * @return butxt
+     */
+    public java.lang.String getButxt() {
+        return butxt;
+    }
+
+
+    /**
+     * Sets the butxt value for this ZfeSEdocta.
+     * 
+     * @param butxt
+     */
+    public void setButxt(java.lang.String butxt) {
+        this.butxt = butxt;
+    }
+
+
+    /**
+     * Gets the xblnr value for this ZfeSEdocta.
+     * 
+     * @return xblnr
+     */
+    public java.lang.String getXblnr() {
+        return xblnr;
+    }
+
+
+    /**
+     * Sets the xblnr value for this ZfeSEdocta.
+     * 
+     * @param xblnr
+     */
+    public void setXblnr(java.lang.String xblnr) {
+        this.xblnr = xblnr;
+    }
+
+
+    /**
+     * Gets the feemi value for this ZfeSEdocta.
+     * 
+     * @return feemi
+     */
+    public java.lang.String getFeemi() {
+        return feemi;
+    }
+
+
+    /**
+     * Sets the feemi value for this ZfeSEdocta.
+     * 
+     * @param feemi
+     */
+    public void setFeemi(java.lang.String feemi) {
+        this.feemi = feemi;
+    }
+
+
+    /**
+     * Gets the feval value for this ZfeSEdocta.
+     * 
+     * @return feval
+     */
+    public java.lang.String getFeval() {
+        return feval;
+    }
+
+
+    /**
+     * Sets the feval value for this ZfeSEdocta.
+     * 
+     * @param feval
+     */
+    public void setFeval(java.lang.String feval) {
+        this.feval = feval;
+    }
+
+
+    /**
+     * Gets the ferec value for this ZfeSEdocta.
+     * 
+     * @return ferec
+     */
+    public java.lang.String getFerec() {
+        return ferec;
+    }
+
+
+    /**
+     * Sets the ferec value for this ZfeSEdocta.
+     * 
+     * @param ferec
+     */
+    public void setFerec(java.lang.String ferec) {
+        this.ferec = ferec;
+    }
+
+
+    /**
+     * Gets the wrbtr value for this ZfeSEdocta.
+     * 
+     * @return wrbtr
+     */
+    public java.math.BigDecimal getWrbtr() {
+        return wrbtr;
+    }
+
+
+    /**
+     * Sets the wrbtr value for this ZfeSEdocta.
+     * 
+     * @param wrbtr
+     */
+    public void setWrbtr(java.math.BigDecimal wrbtr) {
+        this.wrbtr = wrbtr;
+    }
+
+
+    /**
+     * Gets the waers value for this ZfeSEdocta.
+     * 
+     * @return waers
+     */
+    public java.lang.String getWaers() {
+        return waers;
+    }
+
+
+    /**
+     * Sets the waers value for this ZfeSEdocta.
+     * 
+     * @param waers
+     */
+    public void setWaers(java.lang.String waers) {
+        this.waers = waers;
+    }
+
+
+    /**
+     * Gets the ebeln value for this ZfeSEdocta.
+     * 
+     * @return ebeln
+     */
+    public java.lang.String getEbeln() {
+        return ebeln;
+    }
+
+
+    /**
+     * Sets the ebeln value for this ZfeSEdocta.
+     * 
+     * @param ebeln
+     */
+    public void setEbeln(java.lang.String ebeln) {
+        this.ebeln = ebeln;
+    }
+
+
+    /**
+     * Gets the fepag value for this ZfeSEdocta.
+     * 
+     * @return fepag
+     */
+    public java.lang.String getFepag() {
+        return fepag;
+    }
+
+
+    /**
+     * Sets the fepag value for this ZfeSEdocta.
+     * 
+     * @param fepag
+     */
+    public void setFepag(java.lang.String fepag) {
+        this.fepag = fepag;
+    }
+
+
+    /**
+     * Gets the forpg value for this ZfeSEdocta.
+     * 
+     * @return forpg
+     */
+    public java.lang.String getForpg() {
+        return forpg;
+    }
+
+
+    /**
+     * Sets the forpg value for this ZfeSEdocta.
+     * 
+     * @param forpg
+     */
+    public void setForpg(java.lang.String forpg) {
+        this.forpg = forpg;
+    }
+
+
+    /**
+     * Gets the augbl value for this ZfeSEdocta.
+     * 
+     * @return augbl
+     */
+    public java.lang.String getAugbl() {
+        return augbl;
+    }
+
+
+    /**
+     * Sets the augbl value for this ZfeSEdocta.
+     * 
+     * @param augbl
+     */
+    public void setAugbl(java.lang.String augbl) {
+        this.augbl = augbl;
+    }
+
+
+    /**
+     * Gets the pdf value for this ZfeSEdocta.
+     * 
+     * @return pdf
+     */
+    public java.lang.String getPdf() {
+        return pdf;
+    }
+
+
+    /**
+     * Sets the pdf value for this ZfeSEdocta.
+     * 
+     * @param pdf
+     */
+    public void setPdf(java.lang.String pdf) {
+        this.pdf = pdf;
+    }
+
+
+    /**
+     * Gets the xml value for this ZfeSEdocta.
+     * 
+     * @return xml
+     */
+    public java.lang.String getXml() {
+        return xml;
+    }
+
+
+    /**
+     * Sets the xml value for this ZfeSEdocta.
+     * 
+     * @param xml
+     */
+    public void setXml(java.lang.String xml) {
+        this.xml = xml;
+    }
+
+
+    /**
+     * Gets the soporte value for this ZfeSEdocta.
+     * 
+     * @return soporte
+     */
+    public java.lang.String getSoporte() {
+        return soporte;
+    }
+
+
+    /**
+     * Sets the soporte value for this ZfeSEdocta.
+     * 
+     * @param soporte
+     */
+    public void setSoporte(java.lang.String soporte) {
+        this.soporte = soporte;
+    }
+
+
+    /**
+     * Gets the uuid value for this ZfeSEdocta.
+     * 
+     * @return uuid
+     */
+    public java.lang.String getUuid() {
+        return uuid;
+    }
+
+
+    /**
+     * Sets the uuid value for this ZfeSEdocta.
+     * 
+     * @param uuid
+     */
+    public void setUuid(java.lang.String uuid) {
+        this.uuid = uuid;
+    }
+
+
+    /**
+     * Gets the status value for this ZfeSEdocta.
+     * 
+     * @return status
+     */
+    public java.lang.String getStatus() {
+        return status;
+    }
+
+
+    /**
+     * Sets the status value for this ZfeSEdocta.
+     * 
+     * @param status
+     */
+    public void setStatus(java.lang.String status) {
+        this.status = status;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof ZfeSEdocta)) return false;
+        ZfeSEdocta other = (ZfeSEdocta) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = true && 
+            ((this.butxt==null && other.getButxt()==null) || 
+             (this.butxt!=null &&
+              this.butxt.equals(other.getButxt()))) &&
+            ((this.xblnr==null && other.getXblnr()==null) || 
+             (this.xblnr!=null &&
+              this.xblnr.equals(other.getXblnr()))) &&
+            ((this.feemi==null && other.getFeemi()==null) || 
+             (this.feemi!=null &&
+              this.feemi.equals(other.getFeemi()))) &&
+            ((this.feval==null && other.getFeval()==null) || 
+             (this.feval!=null &&
+              this.feval.equals(other.getFeval()))) &&
+            ((this.ferec==null && other.getFerec()==null) || 
+             (this.ferec!=null &&
+              this.ferec.equals(other.getFerec()))) &&
+            ((this.wrbtr==null && other.getWrbtr()==null) || 
+             (this.wrbtr!=null &&
+              this.wrbtr.equals(other.getWrbtr()))) &&
+            ((this.waers==null && other.getWaers()==null) || 
+             (this.waers!=null &&
+              this.waers.equals(other.getWaers()))) &&
+            ((this.ebeln==null && other.getEbeln()==null) || 
+             (this.ebeln!=null &&
+              this.ebeln.equals(other.getEbeln()))) &&
+            ((this.fepag==null && other.getFepag()==null) || 
+             (this.fepag!=null &&
+              this.fepag.equals(other.getFepag()))) &&
+            ((this.forpg==null && other.getForpg()==null) || 
+             (this.forpg!=null &&
+              this.forpg.equals(other.getForpg()))) &&
+            ((this.augbl==null && other.getAugbl()==null) || 
+             (this.augbl!=null &&
+              this.augbl.equals(other.getAugbl()))) &&
+            ((this.pdf==null && other.getPdf()==null) || 
+             (this.pdf!=null &&
+              this.pdf.equals(other.getPdf()))) &&
+            ((this.xml==null && other.getXml()==null) || 
+             (this.xml!=null &&
+              this.xml.equals(other.getXml()))) &&
+            ((this.soporte==null && other.getSoporte()==null) || 
+             (this.soporte!=null &&
+              this.soporte.equals(other.getSoporte()))) &&
+            ((this.uuid==null && other.getUuid()==null) || 
+             (this.uuid!=null &&
+              this.uuid.equals(other.getUuid()))) &&
+            ((this.status==null && other.getStatus()==null) || 
+             (this.status!=null &&
+              this.status.equals(other.getStatus())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = 1;
+        if (getButxt() != null) {
+            _hashCode += getButxt().hashCode();
+        }
+        if (getXblnr() != null) {
+            _hashCode += getXblnr().hashCode();
+        }
+        if (getFeemi() != null) {
+            _hashCode += getFeemi().hashCode();
+        }
+        if (getFeval() != null) {
+            _hashCode += getFeval().hashCode();
+        }
+        if (getFerec() != null) {
+            _hashCode += getFerec().hashCode();
+        }
+        if (getWrbtr() != null) {
+            _hashCode += getWrbtr().hashCode();
+        }
+        if (getWaers() != null) {
+            _hashCode += getWaers().hashCode();
+        }
+        if (getEbeln() != null) {
+            _hashCode += getEbeln().hashCode();
+        }
+        if (getFepag() != null) {
+            _hashCode += getFepag().hashCode();
+        }
+        if (getForpg() != null) {
+            _hashCode += getForpg().hashCode();
+        }
+        if (getAugbl() != null) {
+            _hashCode += getAugbl().hashCode();
+        }
+        if (getPdf() != null) {
+            _hashCode += getPdf().hashCode();
+        }
+        if (getXml() != null) {
+            _hashCode += getXml().hashCode();
+        }
+        if (getSoporte() != null) {
+            _hashCode += getSoporte().hashCode();
+        }
+        if (getUuid() != null) {
+            _hashCode += getUuid().hashCode();
+        }
+        if (getStatus() != null) {
+            _hashCode += getStatus().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+}

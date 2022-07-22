@@ -1,0 +1,37 @@
+package com.infra.cliente.service.ws;
+
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Map;
+
+import com.infra.cliente.ws.holders.ZfeTPorecHolder;
+
+/**
+ *
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+public interface WSFactura {
+
+	public Map<String, String> guardarCFDIOC(String idioma, String proveedorActual, String rfcActual, String sociedad,
+			String ordenes, InputStream xml, InputStream pdf, InputStream otroPdf, ZfeTPorecHolder holder);
+
+	public Map<String, String> guardarCFDI(String idioma, String proveedorActual, String rfcActual, String sociedad,
+			String area, String responsable, String factura, String concepto, InputStream xml, InputStream pdf,
+			InputStream otroPdf);
+
+	public Map<String, String> guardarCBB(String idioma, String proveedorActual, String rfcActual, String sociedad,
+			String area, String responsable, Date fechaFactura, String factura, String concepto, BigDecimal subtotal,
+			BigDecimal iva, String moneda, InputStream pdf, InputStream otroPdf, BigDecimal isNotaCredito);
+
+	public Map<String, String> guardarCBBOC(String idioma, String proveedorActual, String rfcActual, String sociedad,
+			InputStream pdf, InputStream otroPdf, String factura, String moneda, Date fechaFactura, BigDecimal iva,
+			String ordenes, ZfeTPorecHolder holder, BigDecimal isNotaCredito);
+
+	public Map<String, Object> getFacturas(Date fechaDesde, Date fechaHasta, String idioma, String proveedorActual,
+			String sociedad, String estatusFactura);
+
+	public Map<String, Object> getEdoCta(Date fechaDesde, Date fechaHasta, String idioma, String proveedorActual,
+			String sociedad, String estatusFactura);
+
+}

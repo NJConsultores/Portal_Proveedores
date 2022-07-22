@@ -1,0 +1,232 @@
+/**
+ * ZfeSListFact.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeSListFact implements java.io.Serializable {
+	private java.lang.String xblnr;
+
+	private java.lang.String belnr;
+
+	private java.math.BigDecimal dmbtr;
+
+	private java.lang.String waers;
+
+	private java.lang.String venci;
+
+	private java.lang.String augdt;
+
+	private java.lang.String statu;
+
+	public ZfeSListFact() {
+	}
+
+	public ZfeSListFact(java.lang.String xblnr, java.lang.String belnr, java.math.BigDecimal dmbtr,
+			java.lang.String waers, java.lang.String venci, java.lang.String augdt, java.lang.String statu) {
+		this.xblnr = xblnr;
+		this.belnr = belnr;
+		this.dmbtr = dmbtr;
+		this.waers = waers;
+		this.venci = venci;
+		this.augdt = augdt;
+		this.statu = statu;
+	}
+
+	/**
+	 * Gets the xblnr value for this ZfeSListFact.
+	 * 
+	 * @return xblnr
+	 */
+	public java.lang.String getXblnr() {
+		return xblnr;
+	}
+
+	/**
+	 * Sets the xblnr value for this ZfeSListFact.
+	 * 
+	 * @param xblnr
+	 */
+	public void setXblnr(java.lang.String xblnr) {
+		this.xblnr = xblnr;
+	}
+
+	/**
+	 * Gets the belnr value for this ZfeSListFact.
+	 * 
+	 * @return belnr
+	 */
+	public java.lang.String getBelnr() {
+		return belnr;
+	}
+
+	/**
+	 * Sets the belnr value for this ZfeSListFact.
+	 * 
+	 * @param belnr
+	 */
+	public void setBelnr(java.lang.String belnr) {
+		this.belnr = belnr;
+	}
+
+	/**
+	 * Gets the dmbtr value for this ZfeSListFact.
+	 * 
+	 * @return dmbtr
+	 */
+	public java.math.BigDecimal getDmbtr() {
+		return dmbtr;
+	}
+
+	/**
+	 * Sets the dmbtr value for this ZfeSListFact.
+	 * 
+	 * @param dmbtr
+	 */
+	public void setDmbtr(java.math.BigDecimal dmbtr) {
+		this.dmbtr = dmbtr;
+	}
+
+	/**
+	 * Gets the waers value for this ZfeSListFact.
+	 * 
+	 * @return waers
+	 */
+	public java.lang.String getWaers() {
+		return waers;
+	}
+
+	/**
+	 * Sets the waers value for this ZfeSListFact.
+	 * 
+	 * @param waers
+	 */
+	public void setWaers(java.lang.String waers) {
+		this.waers = waers;
+	}
+
+	/**
+	 * Gets the venci value for this ZfeSListFact.
+	 * 
+	 * @return venci
+	 */
+	public java.lang.String getVenci() {
+		return venci;
+	}
+
+	/**
+	 * Sets the venci value for this ZfeSListFact.
+	 * 
+	 * @param venci
+	 */
+	public void setVenci(java.lang.String venci) {
+		this.venci = venci;
+	}
+
+	/**
+	 * Gets the augdt value for this ZfeSListFact.
+	 * 
+	 * @return augdt
+	 */
+	public java.lang.String getAugdt() {
+		return augdt;
+	}
+
+	/**
+	 * Sets the augdt value for this ZfeSListFact.
+	 * 
+	 * @param augdt
+	 */
+	public void setAugdt(java.lang.String augdt) {
+		this.augdt = augdt;
+	}
+
+	/**
+	 * Gets the statu value for this ZfeSListFact.
+	 * 
+	 * @return statu
+	 */
+	public java.lang.String getStatu() {
+		return statu;
+	}
+
+	/**
+	 * Sets the statu value for this ZfeSListFact.
+	 * 
+	 * @param statu
+	 */
+	public void setStatu(java.lang.String statu) {
+		this.statu = statu;
+	}
+
+	private java.lang.Object __equalsCalc = null;
+
+	public synchronized boolean equals(java.lang.Object obj) {
+		if (!(obj instanceof ZfeSListFact))
+			return false;
+		ZfeSListFact other = (ZfeSListFact) obj;
+		if (obj == null)
+			return false;
+		if (this == obj)
+			return true;
+		if (__equalsCalc != null) {
+			return (__equalsCalc == obj);
+		}
+		__equalsCalc = obj;
+		boolean _equals;
+		_equals = true
+				&& ((this.xblnr == null && other.getXblnr() == null)
+						|| (this.xblnr != null && this.xblnr.equals(other.getXblnr())))
+				&& ((this.belnr == null && other.getBelnr() == null)
+						|| (this.belnr != null && this.belnr.equals(other.getBelnr())))
+				&& ((this.dmbtr == null && other.getDmbtr() == null)
+						|| (this.dmbtr != null && this.dmbtr.equals(other.getDmbtr())))
+				&& ((this.waers == null && other.getWaers() == null)
+						|| (this.waers != null && this.waers.equals(other.getWaers())))
+				&& ((this.venci == null && other.getVenci() == null)
+						|| (this.venci != null && this.venci.equals(other.getVenci())))
+				&& ((this.augdt == null && other.getAugdt() == null)
+						|| (this.augdt != null && this.augdt.equals(other.getAugdt())))
+				&& ((this.statu == null && other.getStatu() == null)
+						|| (this.statu != null && this.statu.equals(other.getStatu())));
+		__equalsCalc = null;
+		return _equals;
+	}
+
+	private boolean __hashCodeCalc = false;
+
+	public synchronized int hashCode() {
+		if (__hashCodeCalc) {
+			return 0;
+		}
+		__hashCodeCalc = true;
+		int _hashCode = 1;
+		if (getXblnr() != null) {
+			_hashCode += getXblnr().hashCode();
+		}
+		if (getBelnr() != null) {
+			_hashCode += getBelnr().hashCode();
+		}
+		if (getDmbtr() != null) {
+			_hashCode += getDmbtr().hashCode();
+		}
+		if (getWaers() != null) {
+			_hashCode += getWaers().hashCode();
+		}
+		if (getVenci() != null) {
+			_hashCode += getVenci().hashCode();
+		}
+		if (getAugdt() != null) {
+			_hashCode += getAugdt().hashCode();
+		}
+		if (getStatu() != null) {
+			_hashCode += getStatu().hashCode();
+		}
+		__hashCodeCalc = false;
+		return _hashCode;
+	}
+
+}

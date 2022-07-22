@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="openas2">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="certificates"/>
+        <xs:element ref="partnerships"/>
+        <xs:element ref="loggers"/>
+        <xs:element ref="commands"/>
+        <xs:element ref="commandProcessors"/>
+        <xs:element ref="processor"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="certificates">
+    <xs:complexType>
+      <xs:attribute name="classname" use="required"/>
+      <xs:attribute name="filename" use="required"/>
+      <xs:attribute name="interval" use="required" type="xs:integer"/>
+      <xs:attribute name="password" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="partnerships">
+    <xs:complexType>
+      <xs:attribute name="classname" use="required"/>
+      <xs:attribute name="filename" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="loggers">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="logger"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="logger">
+    <xs:complexType>
+      <xs:attribute name="classname" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="commands">
+    <xs:complexType>
+      <xs:attribute name="classname" use="required"/>
+      <xs:attribute name="filename" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="commandProcessors">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="commandProcessor"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="commandProcessor">
+    <xs:complexType>
+      <xs:attribute name="classname" use="required"/>
+      <xs:attribute name="password" type="xs:NCName"/>
+      <xs:attribute name="portId" type="xs:integer"/>
+      <xs:attribute name="userid" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="processor">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="module"/>
+      </xs:sequence>
+      <xs:attribute name="classname" use="required"/>
+      <xs:attribute name="pendingMDN" use="required"/>
+      <xs:attribute name="pendingMDNinfo" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="module">
+    <xs:complexType>
+      <xs:attribute name="classname" use="required"/>
+      <xs:attribute name="defaults"/>
+      <xs:attribute name="errordir"/>
+      <xs:attribute name="errorformat"/>
+      <xs:attribute name="filename"/>
+      <xs:attribute name="header"/>
+      <xs:attribute name="interval" type="xs:integer"/>
+      <xs:attribute name="mimetype"/>
+      <xs:attribute name="outboxdir"/>
+      <xs:attribute name="port" type="xs:integer"/>
+      <xs:attribute name="protocol" type="xs:NCName"/>
+      <xs:attribute name="resenddelay" type="xs:integer"/>
+      <xs:attribute name="resenddir"/>
+      <xs:attribute name="sendFilename" type="xs:boolean"/>
+      <xs:attribute name="tempdir"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

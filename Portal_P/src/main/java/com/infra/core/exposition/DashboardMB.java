@@ -1,0 +1,98 @@
+/*
+ * 
+ */
+
+
+package com.infra.core.exposition;
+
+import java.io.Serializable;
+import javax.faces.context.FacesContext;
+import org.primefaces.model.DashboardColumn;
+import org.primefaces.model.DashboardModel;
+import org.primefaces.model.DefaultDashboardColumn;
+import org.primefaces.model.DefaultDashboardModel;
+import org.primefaces.model.chart.CartesianChartModel;
+import org.primefaces.model.chart.ChartSeries;
+import org.primefaces.model.chart.PieChartModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Controller;
+ 
+@Scope("session")
+@Controller
+public class DashboardMB implements Serializable {
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private final Logger logger = LoggerFactory.getLogger(DashboardMB.class);
+    private DashboardModel model;
+    private PieChartModel modelPie;
+    private CartesianChartModel modelLine;
+
+    public void init() {
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            buildDashboard();
+            pieBean();
+            lineBean();
+        }
+    }
+
+    private void buildDashboard() {
+        logger.debug("buildDashboard");
+
+        model = new DefaultDashboardModel();
+        DashboardColumn column1 = new DefaultDashboardColumn();
+        DashboardColumn column2 = new DefaultDashboardColumn();
+
+        column1.addWidget("notificaciones");
+        column1.addWidget("calendario");
+
+        column2.addWidget("alarmas");
+        column2.addWidget("grafica");
+
+        model.addColumn(column1);
+        model.addColumn(column2);
+    }
+    
+    public void pieBean() {
+        modelPie = new PieChartModel();
+        modelPie.set("A", 540);
+        modelPie.set("B", 325);
+        modelPie.set("C", 702);
+        modelPie.set("D", 421);
+    }
+    
+    public void lineBean() {
+        modelLine = new CartesianChartModel();
+        ChartSeries boys = new ChartSeries();
+        boys.setLabel("Boys");
+        boys.set("2004", 120);
+        boys.set("2005", 100);
+        boys.set("2005", 50);
+        boys.set("2005", 105);
+        ChartSeries girls = new ChartSeries();
+        girls.setLabel("Girls");
+        girls.set("2004", 52);
+        girls.set("2005", 60);
+        girls.set("2006", 40);
+        girls.set("2007", 80);
+        modelLine.addSeries(boys);
+        modelLine.addSeries(girls);
+    }
+
+    public CartesianChartModel getModelLine() {
+        return modelLine;
+    }
+    
+    public PieChartModel getModelPie() {
+        return modelPie;
+    }
+
+    public DashboardModel getModel() {
+        return model;
+    }
+
+}

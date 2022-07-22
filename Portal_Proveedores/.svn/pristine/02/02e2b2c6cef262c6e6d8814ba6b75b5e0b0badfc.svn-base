@@ -1,0 +1,59 @@
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTListaIiHolder;
+
+public class ZFE_GET_LISTA_IIProxy implements ZFE_GET_LISTA_II {
+	private String _endpoint = null;
+	private ZFE_GET_LISTA_II zFE_GET_LISTA_II = null;
+
+	public ZFE_GET_LISTA_IIProxy() {
+		_initZFE_GET_LISTA_IIProxy();
+	}
+
+	public ZFE_GET_LISTA_IIProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_GET_LISTA_IIProxy();
+	}
+
+	private void _initZFE_GET_LISTA_IIProxy() {
+		try {
+			zFE_GET_LISTA_II = (new Get_lista_iiLocator()).getget_lista_ii();
+			if (zFE_GET_LISTA_II != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_GET_LISTA_II)._setProperty("javax.xml.rpc.service.endpoint.address",
+							_endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_GET_LISTA_II)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_GET_LISTA_II != null)
+			((javax.xml.rpc.Stub) zFE_GET_LISTA_II)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+
+	}
+
+	public ZFE_GET_LISTA_II getZFE_GET_LISTA_II() {
+		if (zFE_GET_LISTA_II == null)
+			_initZFE_GET_LISTA_IIProxy();
+		return zFE_GET_LISTA_II;
+	}
+
+	public void zfeGetListaIi(java.lang.String EBukrs, java.lang.String ELang, ZfeTListaIiHolder SLista,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException {
+		if (zFE_GET_LISTA_II == null)
+			_initZFE_GET_LISTA_IIProxy();
+		zFE_GET_LISTA_II.zfeGetListaIi(EBukrs, ELang, SLista, SMsg, SStat);
+	}
+
+}

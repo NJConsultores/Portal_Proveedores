@@ -1,0 +1,58 @@
+
+
+
+
+
+package com.infra.core.security;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AccountExpiredException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.LockedException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
+import com.infra.core.util.LocaleUtil;
+
+@Component
+public class CoreAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
+	private static final Logger logger = LoggerFactory.getLogger(CoreAuthenticationFailureHandler.class);
+
+	@Override
+	public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse resp, AuthenticationException ae)
+			throws IOException, ServletException {
+		logger.debug("onAuthenticationFailure");
+
+		String username = null;
+		String ip = req.getRemoteAddr();
+		username = (String) req.getParameter("j_username");
+
+		logger.debug("Exception: {}", ae.getMessage());
+
+		String msgError;
+
+		if (ae instanceof BadCredentialsException) {
+			msgError = ae.getMessage();
+		} else if (ae instanceof LockedException) {
+			msgError = LocaleUtil.getResourceBundle(req).getString("error.cuenta.bloqueada");
+		} else if (ae instanceof AccountExpiredException) {
+			msgError = LocaleUtil.getResourceBundle(req).getString("error.cuenta.credenciales.invalidas");
+		} else if (ae instanceof UsernameNotFoundException) {
+			msgError = ae.getMessage();
+		} else {
+			msgError = ae.getMessage();
+		}
+
+		req.getSession().setAttribute("error", msgError);
+		super.setDefaultFailureUrl("/index.do");
+		super.onAuthenticationFailure(req, resp, ae);
+
+	}
+
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+	<ui:define name="content">
+		<f:event type="preRenderView"
+			listener="#{enviarFacturaMB.resetValidar()}" />
+		<p:panel header="#{msg['menu.validar_xml']}" styleClass="cfdp-panels"
+			style="min-height: 380px;">
+			<p:messages id="msgOperacion" showDetail="true" escape="false"
+				closable="true" />
+			<h:form enctype="multipart/form-data">
+				<h:panelGrid columns="2">
+					<h:outputText value="#{msg['factura.envio.factura']}"
+						styleClass="obligatorio" />
+					<p:fileUpload value="#{enviarFacturaMB.xml}" mode="simple" />
+					<h:outputText value="#{msg['factura.envio.factura.pdf']}"
+						styleClass="obligatorio" />
+					<p:fileUpload value="#{enviarFacturaMB.pdf}" mode="simple" />
+				</h:panelGrid>
+				<p:commandButton value="#{msg['menu.validar_xml']}"
+					action="#{enviarFacturaMB.validarFactura()}" ajax="false"
+					onclick="PrimeFaces.monitorDownload(start, stop);" />
+			</h:form>
+		</p:panel>
+	</ui:define>
+</ui:composition>

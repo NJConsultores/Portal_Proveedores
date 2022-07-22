@@ -1,0 +1,67 @@
+package com.infra.vis.util;
+
+
+public class VisorMapConst {
+
+    public static final String SERIE = "serie";
+    public static final String CONCEP = "concepto";
+    public static final String FOLIO = "folio";
+    public static final String FEC_EMIS = "fecEmisi";
+    public static final String TIP_COMP = "tipComp";
+    public static final String CERTIF = "certificado";
+    public static final String DIVISA = "divisa";
+    public static final String TIP_CAM = "tipCamb";
+    public static final String MOT_DESC = "motDesc";
+    public static final String MET_PAGO = "metPago";
+    public static final String FORM_PAGO = "formPago";
+    public static final String COND_PAGO = "condPago";
+    
+    public static final String CADENA = "CADENA";
+    public static final String PRINT_IT = "PRINT_IT";
+    public static final String CERT_SELLSAT = "certSellSAT";
+    public static final String TIM_UUID = "uuidTimb";
+    public static final String CERT_FEC = "fecCertCFDI";
+    public static final String TIM_DIG = "TIMBREDIG";
+    public static final String TIM_CAD = "TIMCAD";
+    public static final String QRIMAG = "QRIMAG";
+    
+    public static final String RECEP = "datRecep";
+    public static final String EMISOR = "datEmisor";
+    public static final String EXPEDIDO = "expedido";
+    
+    public static final String SUBTOTAL = "subtotal";
+    public static final String DESCUENTO = "descuento";
+    
+    public static final String TOT_REP = "TOTALRep";
+    public static final String TOTALLET = "TOTALLET";
+    public static final String PESOS = "PESOS";
+    public static final String MONNAC = "MN";
+    
+    public static final String TIPCAM = "TIP_CAM";
+    
+    
+    public static final String IVA_TRAS = "IVATraslado";
+    public static final String IEPS_TRAS = "IEPSTraslado";
+    public static final String TOTAL_TRAS = "TOTALTRASLA";
+    
+    public static final String RET_IVA = "IVARete";
+    public static final String RET_ISR = "ISRRete";
+    public static final String RET_TOT = "TOTALRete";
+    public static final String SELL_SAT = "SELLOSAT";
+    
+    public static final String NUMCONCE = "NUMCONCE";
+    
+    public static final String LOGOIMAG = "LOGOIMAG";
+    
+    public static final String SEFOLIO = "sefolio";
+    public static final String APROBACION = "aprobacion";
+    public static final String FECEXP = "fecExp";
+    public static final String VERCERT = "vercert";
+
+    public static final String SELLOCFD = "SELLOCFD";
+
+    public static final String LAB_PARTE = "Parte : ";
+    public static final String LAB_ADUAN = "Información Aduanera: ";
+    public static final String LAB_SEP = " || ";
+    
+}

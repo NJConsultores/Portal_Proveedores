@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="Addenda">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Bocar" minOccurs="1">
+     				<xs:annotation>
+         				<xs:documentation xml:lang="ES">Información comercial requerida por Bocar.</xs:documentation>
+     				</xs:annotation>
+      				<xs:complexType>
+		        		<xs:sequence>
+		        			<xs:group ref="Ambos" minOccurs="0" maxOccurs="1"/>
+			        		<xs:choice minOccurs="1" maxOccurs="1">
+			          			<xs:group ref="COC" />
+			            		<xs:group ref="SOC" />
+			            		<xs:group ref="AAN" />
+			        		</xs:choice>
+			        	</xs:sequence>
+		       			<xs:attribute name="tipo" type="tipoAddenda" use="required" />
+		       			<xs:attribute name="moneda" type="idMoneda" use="optional" />
+		       			<xs:attribute name="tipoCambio" type="xs:float" use="optional" />
+		          		<xs:attribute name="total" type="xs:decimal" use="required" />
+		          		<xs:attribute name="numeroFactura" type="xs:string" use="optional" />
+      				</xs:complexType>
+ 				</xs:element>
+ 			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:group name="Ambos">
+        <xs:sequence>
+        	<xs:element name="textoCabecera" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        	<xs:element name="claveImpuesto" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:group>
+    <xs:group name="COC">
+        <xs:sequence>
+        	<xs:element name="numeroReferencia" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        	<xs:choice minOccurs="0" maxOccurs="1">
+	        	<xs:element name="documentosMaterial">
+	                <xs:complexType>
+	                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+	                        <xs:element name="documentoMaterial" type="xs:string" />
+	                    </xs:sequence>
+	                </xs:complexType>
+	            </xs:element>
+            </xs:choice>
+            <xs:element name="numeroPedido" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:group>
+    <xs:group name="SOC">
+        <xs:sequence>
+       		 <xs:element name="partidas" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="partida">
+                            <xs:complexType>
+                            	<xs:attribute name="cuentaContable" type="xs:string" use="required" />
+                            	<xs:attribute name="ceco" type="xs:string" use="optional" />
+                            	<xs:attribute name="importePartida" type="xs:float" use="required" />
+                            	<xs:attribute name="claveImpuesto" type="xs:string" use="required" />
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="referencia" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:group>
+    <xs:group name="AAN">
+        <xs:sequence>
+       		 <xs:element name="pedimento" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                	<xs:attribute name="pedimento" type="xs:string" use="required" />
+                	<xs:attribute name="patente" type="xs:string" use="required" />
+                	<xs:attribute name="aduana" type="xs:string" use="required" />
+                	<xs:attribute name="tipoOperacion" type="tipoOperacion" use="required" />
+                	<xs:attribute name="planta" type="xs:string" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="terceros" minOccurs="0" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                        <xs:element name="pago">
+                            <xs:complexType>
+                            	<xs:attribute name="importe" type="xs:decimal" use="required" />
+                            	<xs:attribute name="tasa" type="xs:decimal" use="required" />
+                            	<xs:attribute name="claveConcepto" type="xs:string" use="required" />
+                            	<xs:attribute name="uuid" type="xs:string" use="required" />
+                            	<xs:attribute name="rfc" type="xs:string" use="required" />
+                            	<xs:attribute name="folio" type="xs:string" use="optional" />
+                            	<xs:attribute name="nombre" type="xs:string" use="required" />
+                            	<xs:attribute name="concepto" type="xs:string" use="required" />
+                            	<xs:attribute name="iva" type="xs:decimal" use="required" />
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+    <xs:simpleType name="idMoneda">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EUR" />
+            <xs:enumeration value="MXN" />
+            <xs:enumeration value="USD" />
+            <xs:enumeration value="GBP" />
+            <xs:enumeration value="JPY" />
+            <xs:enumeration value="CAD" />
+            <xs:enumeration value="CHF" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="tipoAddenda">
+        <xs:restriction base="xs:int">
+            <xs:enumeration value="1" />
+            <xs:enumeration value="2" />
+            <xs:enumeration value="3" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="tipoOperacion">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="I" />
+            <xs:enumeration value="E" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>

@@ -1,0 +1,22 @@
+   
+.ui-chkbox-icon.ui-icon {
+    background-color: gray;
+    overflow: visible;
+}
+
+.ui-fileupload-content-small {
+    width: 250px;
+    height: 75px;
+    border-top-width: 1px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+.ui-fileupload-content-huge {
+    width: 250px;
+    height: 400px;
+    border-top-width: 1px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+

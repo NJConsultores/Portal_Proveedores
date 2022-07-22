@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    
+    <p:toolbar>
+        <p:toolbarGroup >
+            <p:commandButton  title="#{msg['accion.nuevo']}" icon="ui-icon-document" 
+                              disabled="#{!toolbar.puedeCrear}" actionListener="#{managedMB.nuevo}" 
+                              update="#{componenteUpdate}"/>
+            <p:commandButton  title="#{msg['accion.editar']}" icon="ui-icon-pencil" 
+                              disabled="#{!toolbar.puedeEditar}" actionListener="#{managedMB.editar}" 
+                              update="#{componenteUpdate}"/>
+            <p:commandButton title="#{msg['accion.guardar']}" icon="ui-icon-disk" 
+                             update="#{componenteUpdate}"
+                             disabled="#{!toolbar.puedeGuardar}" actionListener="#{managedMB.guardar}"/>
+            <p:commandButton title="#{msg['accion.eliminar']}" icon="ui-icon-trash" 
+                             update="#{componenteUpdate}"
+                             disabled="#{!toolbar.puedeEliminar}" actionListener="#{managedMB.eliminar}"
+                             />
+        </p:toolbarGroup>
+    </p:toolbar>
+    
+</ui:composition>

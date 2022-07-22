@@ -1,0 +1,16 @@
+/**
+ * ZFE_GET_LISTA_MON.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.TableOfZfeCmonSolHolder;
+
+public interface ZFE_GET_LISTA_MON extends java.rmi.Remote {
+	public void zfeGetListaMon(java.lang.String ELang, TableOfZfeCmonSolHolder SLista,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException;
+}

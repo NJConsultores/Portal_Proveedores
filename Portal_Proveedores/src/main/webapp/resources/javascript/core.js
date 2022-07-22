@@ -1,0 +1,28 @@
+/**
+JS de 9lessons.info
+http://www.9lessons.info/2014/09/facebook-style-notification-popup-using.html
+**/
+
+$(document).ready(function ()
+{
+    $("#notificationLink").click(function ()
+    {
+        $("#notificationContainer").fadeToggle(300);
+        /** $("#notification_count").fadeOut("slow"); **/
+        return false;
+    });
+
+//Document Click
+    $(document).click(function ()
+    {
+        $("#notificationContainer").hide();
+    });
+//Popup Click
+    $("#notificationContainer").click(function ()
+    {
+        return false;
+    });
+
+});
+
+/** Termina JS de 9lessons**/

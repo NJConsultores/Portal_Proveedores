@@ -1,0 +1,9 @@
+#Desarrollo
+
+usuario =reyna
+password =lagunas
+
+core = http://localhost:8080/WebServicesIntermedio/core
+factura = http://localhost:8080/WebServicesIntermedio/factura
+catalogo= http://localhost:8080/WebServicesIntermedio/catalogo
+

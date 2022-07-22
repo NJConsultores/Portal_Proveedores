@@ -1,0 +1,159 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{enviarFacturaMB.resetCBB()}" />
+		<p:panel header="#{msg['panel.factura.CBB']}" styleClass="cfdp-panels"
+			style="min-height: 380px;">
+			<h:form enctype="multipart/form-data">
+				<p:messages id="msgOperacion" showDetail="true" escape="false"
+					closable="true" />
+				<table>
+					<tr>
+						<td style="width: 10%"><h:outputText
+								value="#{msg['cliente.nombre.completo']}"
+								styleClass="obligatorio" /></td>
+						<td style="width: 20%"><p:selectOneMenu id="cmb_sociedad"
+								value="#{enviarFacturaMB.sociedad}" styleClass="selectStatic"
+								converter="omnifaces.SelectItemsConverter" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msg['seleccione']}" />
+								<f:selectItems value="#{enviarFacturaMB.sociedades}" var="soc"
+									itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+								<p:ajax partialSubmit="true"
+									listener="#{enviarFacturaMB.loadAreas()}" process="@this"
+									update="@form" onstart="PF('statusDialog').show();"
+									oncomplete="PF('statusDialog').hide();" />
+							</p:selectOneMenu></td>
+						<td style="width: 10%"></td>
+						<td><h:outputText value="#{msg['factura.fecha_factura']}"
+								styleClass="obligatorio" /></td>
+						<td style="width: 40%"><p:calendar
+								value="#{enviarFacturaMB.fechaFactura}" pattern="dd/MM/yyyy"
+								showOn="both" readonlyInput="true">
+								<p:ajax event="dateSelect" process="@this" partialSubmit="true" />
+							</p:calendar></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="#{msg['factura.area']}"
+								styleClass="obligatorio" /></td>
+						<td><p:selectOneMenu id="cmb_area"
+								value="#{enviarFacturaMB.area}" styleClass="selectStatic"
+								converter="omnifaces.SelectItemsConverter" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msg['seleccione']}" />
+								<f:selectItems value="#{enviarFacturaMB.areas}" var="are"
+									itemLabel="#{are.AREID} / #{are.AREDS}" itemValue="#{are}" />
+								<p:ajax partialSubmit="true"
+									listener="#{enviarFacturaMB.loadResponsables()}"
+									process="@this" update="@form"
+									onstart="PF('statusDialog').show();"
+									oncomplete="PF('statusDialog').hide();" />
+							</p:selectOneMenu></td>
+						<td style="width: 10%"></td>
+						<td><h:outputText value="#{msg['factura.responsable']}"
+								styleClass="obligatorio" /></td>
+						<td><p:selectOneMenu id="cmb_responsable"
+								value="#{enviarFacturaMB.responsable}" styleClass="selectStatic"
+								converter="omnifaces.SelectItemsConverter" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msg['seleccione']}" />
+								<f:selectItems value="#{enviarFacturaMB.responsables}"
+									var="resp" itemLabel="#{resp.GERID} / #{resp.GERDS}"
+									itemValue="#{resp}" />
+								<p:ajax partialSubmit="true" process="@this" />
+							</p:selectOneMenu></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="#{msg['factura.factura']}"
+								styleClass="obligatorio" /></td>
+						<td><p:inputText value="#{enviarFacturaMB.factura}">
+								<p:ajax event="blur" partialSubmit="true" process="@this" />
+							</p:inputText></td>
+						<td></td>
+						<td><h:outputText value="#{msg['es.nota_credito']}" /></td>
+						<td><p:selectBooleanCheckbox valueChangeListener="#{enviarFacturaMB.cambiaConceptos()}"
+								value="#{enviarFacturaMB.notaCredito}"> 
+								<p:ajax onstart="PF('statusDialog').show();" event="change" update="cmb_conceptos"
+									oncomplete="PF('statusDialog').hide();" />
+							</p:selectBooleanCheckbox></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="#{msg['factura.subtotal']}"
+								styleClass="obligatorio" /></td>
+						<td><p:inputText id="subtotal"
+								value="#{enviarFacturaMB.subtotal}"
+								converterId="javax.faces.Double" converter="javax.faces.Double"
+								placeholder="0.00">
+								<p:ajax event="blur" partialSubmit="true" process="@this" />
+							</p:inputText></td>
+						<td></td>
+						<td><h:outputText value="#{msg['factura.concepto']}"
+								styleClass="obligatorio" /></td>
+						<td><p:selectOneMenu id="cmb_conceptos"
+								value="#{enviarFacturaMB.concepto}" styleClass="selectStatic"
+								converter="omnifaces.SelectItemsConverter" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msg['seleccione']}" />
+								<f:selectItems value="#{enviarFacturaMB.conceptos}" var="conc"
+									itemLabel="#{conc.TEXT}" itemValue="#{conc}" />
+								<p:ajax partialSubmit="true" process="@this" />
+							</p:selectOneMenu></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="#{msg['factura.moneda']}"
+								styleClass="obligatorio" /></td>
+						<td><p:selectOneMenu id="cmb_moneda"
+								value="#{enviarFacturaMB.moneda}" styleClass="selectStatic"
+								converter="omnifaces.SelectItemsConverter" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msg['seleccione']}" />
+								<f:selectItems value="#{enviarFacturaMB.monedas}" var="mone"
+									itemLabel="#{mone.WAERS}" itemValue="#{mone}" />
+								<p:ajax partialSubmit="true" process="@this" />
+							</p:selectOneMenu></td>
+						<td></td>
+						<td><h:outputText value="#{msg['factura.iva']}"
+								styleClass="obligatorio" /></td>
+						<td><p:selectOneMenu id="cmb_iva"
+								value="#{enviarFacturaMB.impuesto}" styleClass="selectStatic"
+								converter="omnifaces.SelectItemsConverter" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="#{msg['seleccione']}" />
+								<f:selectItems value="#{enviarFacturaMB.impuestos}" var="imp"
+									itemLabel="#{imp.TASA}" itemValue="#{imp}" />
+								<p:ajax partialSubmit="true" process="@this" />
+							</p:selectOneMenu></td>
+					</tr>
+					<tr>
+						<td><h:outputText value="#{msg['factura.envio.factura.pdf']}"
+								styleClass="obligatorio" /></td>
+						<td><p:fileUpload value="#{enviarFacturaMB.pdf}"
+								mode="simple" /></td>
+						<td></td>
+						<td><h:outputText
+								value="#{msg['factura.envio.factura.otros']}"
+								rendered="#{p:ifAnyGranted('ROLE_PDF_ADICIONAL')}" /></td>
+						<td><p:fileUpload value="#{enviarFacturaMB.pdfSellado}"
+								mode="simple" rendered="#{p:ifAnyGranted('ROLE_PDF_ADICIONAL')}" /></td>
+					</tr>
+				</table>
+				<p:commandButton value="#{msg['accion.cargar']}"
+					action="#{enviarFacturaMB.enviarCBB()}" ajax="false" update="@form"
+					onclick="PF('statusDialog').show();"
+					oncomplete="PF('statusDialog').hide();" />
+			</h:form>
+		</p:panel>
+	</ui:define>
+</ui:composition>

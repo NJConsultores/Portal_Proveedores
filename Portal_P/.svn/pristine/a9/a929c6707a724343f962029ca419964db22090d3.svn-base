@@ -1,0 +1,17 @@
+/**
+ * GET_LOGIN.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.core.ws.login;
+
+public interface GET_LOGIN extends javax.xml.rpc.Service {
+//    public java.lang.String getGET_LOGINAddress();
+	public String getAddress();
+
+    public ZFE_GET_LOGIN_PROV getGET_LOGIN() throws javax.xml.rpc.ServiceException;
+
+    public ZFE_GET_LOGIN_PROV getGET_LOGIN(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+}

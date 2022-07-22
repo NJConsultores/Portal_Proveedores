@@ -1,0 +1,147 @@
+package com.infra.vis.serv;
+
+import java.math.BigDecimal;
+import com.infra.vis.util.CoinUtil;
+import com.infra.vis.util.Divisor;
+import com.infra.vis.util.NumberUtil;
+import com.infra.vis.util.TextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CurrencyServImpl implements CurrencyServ {
+
+	private static final Logger LOGVIS = LoggerFactory.getLogger(CurrencyServImpl.class);
+	
+	public String extractCurrLet(final BigDecimal currency, final String moneda) {
+        final StringBuilder textoCurr = new StringBuilder();
+        
+        //checamos primero los millones
+        final int cienmil = this.procesaNumber(currency, Divisor.MILLON, textoCurr);
+        textoCurr.append(TextUtil.SPACE);
+        //checamos los miles
+        final int miles = this.procesaNumber(new BigDecimal(cienmil), Divisor.MIL, textoCurr);
+        textoCurr.append(TextUtil.SPACE);
+      //checamos los cientos
+        final BigDecimal[] cien = new BigDecimal(miles).divideAndRemainder(Divisor.CIEN.valor());
+        textoCurr.append(this.procesaCen(NumberUtil.getDivisor(cien), NumberUtil.getRemain(cien)));
+        
+        //agregamos moneda 
+        textoCurr.append(TextUtil.SPACE).append(CoinUtil.detMoneda(moneda));
+        
+        //centavos
+        textoCurr.append(TextUtil.SPACE).append(NumberUtil.gectCent(currency));
+        
+        textoCurr.append(NumberUtil.POSTCENT);
+        
+        //desc moneda
+        textoCurr.append(TextUtil.SPACE).append(CoinUtil.detMonedaAb(moneda));
+        
+        LOGVIS.debug(textoCurr.toString());
+        return textoCurr.toString();
+    }
+    
+    private int procesaNumber(final BigDecimal currency, final Divisor divid, final StringBuilder cadena) {
+        final BigDecimal[] valores = currency.divideAndRemainder(divid.valor());
+        final int valDiv = NumberUtil.getDivisor(valores); 
+        final int valRem = NumberUtil.getRemain(valores);
+        if(NumberUtil.ZERO != valDiv){
+            cadena.append(this.proces3Digit(valDiv, divid));
+        }
+        return valRem; 
+    }
+    
+    private String proces3Digit(final int numVal, final Divisor divisor){
+        final StringBuilder cadena = new StringBuilder();
+        
+        //primero los cien
+        final BigDecimal[] centenar = new BigDecimal(numVal).divideAndRemainder(Divisor.CIEN.valor());
+        final int cenDiv = NumberUtil.getDivisor(centenar); 
+        final int cenRem = NumberUtil.getRemain(centenar);
+        
+        if(NumberUtil.ZERO != cenDiv){
+            cadena.append(this.procesaCen(cenDiv, cenRem));
+        } else {
+            cadena.append(this.procesaDec(numVal));
+        }
+        
+        cadena.append(TextUtil.SPACE);
+        switch (divisor) {
+            case MILLON:
+                if("UN".equalsIgnoreCase(cadena.toString().trim())) {
+                    cadena.append("MILLON");
+                } else {
+                   cadena.append("MILLONES");
+                }
+            break;
+            case MIL:
+                cadena.append("MIL");
+            break;
+            
+            default:
+            break;
+        }
+        return cadena.toString();        
+    }
+    
+    private String procesaCen(final int cenDiv, final int cenRem) {
+        
+        if(NumberUtil.ZERO == cenDiv && NumberUtil.ZERO == cenRem){
+            return TextUtil.EMPTY;
+        } else if(NumberUtil.ZERO == cenDiv && NumberUtil.ZERO != cenRem){
+            return this.procesaDec(cenRem);
+        }
+        
+        final String valRem = NumberUtil.isMenorTreinta(cenRem);
+        final StringBuilder textoCurr = new StringBuilder();
+        
+        if(TextUtil.EMPTY.equals(valRem)) {
+            textoCurr.append(NumberUtil.detCenten(cenDiv))
+            .append(TextUtil.SPACE)
+            .append(this.procesaUni(new BigDecimal(cenRem)));
+        } else if(NumberUtil.ONE_PIECE == cenDiv && NumberUtil.CERO.equals(valRem)) {
+            textoCurr.append(NumberUtil.detCenten(NumberUtil.ZERO));
+        } else if(NumberUtil.ONE_PIECE < cenDiv && NumberUtil.CERO.equals(valRem)) {
+            textoCurr.append(NumberUtil.detCenten(cenDiv));
+        } else {
+            textoCurr.append(NumberUtil.detCenten(cenDiv))
+                    .append(TextUtil.SPACE).append(valRem);
+        }
+        return textoCurr.toString().trim();
+    }
+    
+    private String procesaDec(final int decimal) {
+        final String valRem = NumberUtil.isMenorTreinta(decimal);
+        if(TextUtil.EMPTY.equals(valRem)) {
+            final BigDecimal[] decenas = new BigDecimal(decimal).divideAndRemainder(Divisor.TEN.valor());
+            final StringBuilder textoCurr = new StringBuilder();
+            textoCurr.append(NumberUtil.detDece(NumberUtil.getDivisor(decenas)));
+            final int decremain = NumberUtil.getRemain(decenas);
+            if(NumberUtil.ZERO != decremain){
+                textoCurr.append(TextUtil.SPACE).append(TextUtil.AND).append(TextUtil.SPACE);
+                textoCurr.append(NumberUtil.detUnid(decremain));
+            }
+            return textoCurr.toString().trim();
+        } else {
+            return valRem;
+        }
+    }
+    
+    private String procesaUni(final BigDecimal valNum) {
+        final StringBuilder textoCurr = new StringBuilder();
+        final BigDecimal[] decenas = valNum.divideAndRemainder(Divisor.TEN.valor());
+        textoCurr.append(NumberUtil.detDece(NumberUtil.getDivisor(decenas)))
+        .append(TextUtil.SPACE);
+        
+        if(NumberUtil.ZERO != NumberUtil.getRemain(decenas)){
+            textoCurr.append(TextUtil.AND).append(TextUtil.SPACE);
+            textoCurr.append(NumberUtil.detUnid(NumberUtil.getRemain(decenas)));
+        }
+        
+        return textoCurr.toString();
+    }
+
+    
+    
+}

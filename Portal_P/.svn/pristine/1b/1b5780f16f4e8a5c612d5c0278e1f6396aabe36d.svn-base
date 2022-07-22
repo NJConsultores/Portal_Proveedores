@@ -1,0 +1,17 @@
+/**
+ * ZFE_GET_LISTA_FACT.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTListFactHolder;
+
+public interface ZFE_GET_LISTA_FACT extends java.rmi.Remote {
+	public void zfeGetListaFact(java.lang.String EBudatHigh, java.lang.String EBudatLow, java.lang.String EBukrs,
+			java.lang.String ELang, java.lang.String ELifnr, java.lang.String EStatus, ZfeTListFactHolder SLista,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException;
+}

@@ -1,0 +1,47 @@
+///*
+// * To change this license header, choose License Headers in Project Properties.
+// * To change this template file, choose Tools | Templates
+// * and open the template in the editor.
+// */
+//
+//package com.infra.factura.service;
+//
+//import java.util.List;
+//
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.stereotype.Service;
+//
+//import com.infra.factura.dto.FeCertificadoSat;
+//import com.infra.factura.persistence.ArchivosSatMapper;
+//
+///**
+// *
+// * @author rlagunas
+// */
+//@Service
+//public class CertificadoSatServiceImpl implements CertificadoSatService{
+//    private static final Logger logger = LoggerFactory.getLogger(CertificadoSatServiceImpl.class);
+////    @Autowired
+////    private ArchivosSatMapper archivosSatMapper;
+//
+////    @Override
+////    public List<FeCertificadoSat> obtenerCertificados(String noSerie, String rfc, long inicio, long total) {
+////        logger.debug("Obtener certificados");
+////        
+////        logger.debug("NoSerie: {} RFC: {} ", noSerie, rfc);
+////        logger.debug("Inicio: {} Total: {} ", inicio, total);
+////        
+////        return archivosSatMapper.obtenerCertificadosPaginacion(inicio, total, noSerie, rfc);
+////    }
+////
+////    @Override
+////    public Long obtenerTotalCertificados(String noSerie, String rfc) {
+////        Long total = archivosSatMapper.obtenerTotalCertificados(noSerie, rfc);
+////        total = total == null ? 0 : total;        
+////        
+////        return total;
+////    }
+//    
+//}

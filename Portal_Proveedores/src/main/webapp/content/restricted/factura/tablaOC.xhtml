@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+	<p:dataTable value="#{enviarFacturaMB.ordenesSeleccionadas}"
+		id="tbl_ord_sel" var="ord" emptyMessage="" paginator="true"
+		paginatorPosition="bottom" rows="10" style="width: 100%">
+		<p:column headerText="#{msg['orden.orden']}">
+			<p:outputLabel value=" #{ord.orden.EBELN}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.posicion']}">
+			<p:outputLabel value="#{ord.orden.EBELP}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.noDoc']}">
+			<p:outputLabel value="#{ord.orden.MBLNR}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.referencia']}">
+			<p:outputLabel value="#{ord.orden.XBLNR}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.fecha']}">
+			<p:outputLabel value="#{ord.orden.BUDAT}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.material']}">
+			<p:outputLabel value="#{ord.orden.MATNR}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.un']}">
+			<p:outputLabel value="#{ord.orden.MEINS}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.descripcion']}">
+			<p:outputLabel value="#{ord.orden.TXZ01}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.ctd_aut']}">
+			<p:outputLabel value="#{ord.orden.MENGE}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.ctd_rec']}">
+			<p:outputLabel value="#{ord.orden.ZMENGE}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.pu']}">
+			<h:outputText value="#{ord.orden.PUNIT}">
+				<f:convertNumber type="currency" currencySymbol=""
+					maxFractionDigits="2" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="#{msg['orden.importe']}">
+			<h:outputText value="#{ord.orden.NETWR}">
+				<f:convertNumber type="currency" currencySymbol=""
+					maxFractionDigits="2" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="#{msg['factura.moneda']}">
+			<p:outputLabel value="#{ord.orden.WAERS}" />
+		</p:column>
+		<p:column headerText="#{msg['factura.consulta.numero.pedimento']}" style="width: 100px !important">
+			<p:outputLabel value="#{ord.orden.PRONU}" />
+		</p:column>
+		<p:column headerText="#{msg['orden.seleccionar']}">
+			<p:selectBooleanCheckbox value="#{ord.seleccionada}"
+				valueChangeListener="#{enviarFacturaMB.chequearSeleccionada(ord)}">
+				<p:ajax update="tbl_ord_sel" onstart="PF('statusDialog').show();"
+					oncomplete="PF('statusDialog').hide();" />
+			</p:selectBooleanCheckbox>
+		</p:column>
+		<p:columnGroup type="footer">
+			<p:row>
+				<p:column footerText="Subtotal: " style="text-align:right"
+					colspan="11" />
+				<p:column footerText="#{enviarFacturaMB.sumaImportesSeleccionadas}">
+				</p:column>
+				<p:column colspan="3" />
+			</p:row>
+		</p:columnGroup>
+	</p:dataTable>
+
+</ui:composition>

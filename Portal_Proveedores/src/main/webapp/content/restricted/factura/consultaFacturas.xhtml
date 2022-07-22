@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+
+	<ui:define name="content">
+		<f:event type="preRenderView"
+			listener="#{enviarFacturaMB.resetConsulta()}" />
+		<p:panel header="#{msg['menu.factura.reporte']}"
+			styleClass="cfdp-panels" style="min-height: 380px;">
+			<p:messages id="msgOperacion" globalOnly="false" closable="true"
+				autoUpdate="true" showDetail="true" />
+			<h:form id="formConsulta">
+				<h:panelGrid columns="4">
+					<h:outputText value="#{msg['cliente.nombre.completo']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_sociedad"
+						value="#{enviarFacturaMB.sociedad}" styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}" itemLabel="#{msg['seleccione']}" />
+						<f:selectItems value="#{enviarFacturaMB.sociedades}" var="soc"
+							itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputText value="#{msg['factura.estatus']}"
+						styleClass="obligatorio" />
+					<p:selectOneMenu id="cmb_estatus"
+						value="#{enviarFacturaMB.estatusFactura}"
+						styleClass="selectStatic"
+						converter="omnifaces.SelectItemsConverter" filter="true"
+						filterMatchMode="contains">
+						<f:selectItem itemValue="P"
+							itemLabel="#{msg['factura.estatus.pagado']}" />
+						<f:selectItem itemValue="N"
+							itemLabel="#{msg['factura.estatus.porPagar']}" />
+						<f:selectItem itemValue="T"
+							itemLabel="#{msg['factura.estatus.todos']}" />
+						<p:ajax partialSubmit="true" process="@this" />
+					</p:selectOneMenu>
+					<h:outputLabel value="#{msg['fecha.inicial']}" />
+					<p:calendar value="#{enviarFacturaMB.fechaDesde}"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.inicial']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+					<h:outputLabel value="#{msg['fecha.final']}" />
+					<p:calendar value="#{enviarFacturaMB.fechaHasta}"
+						pattern="dd/MM/yyyy" requiredMessage="#{msg['fecha.final']}"
+						required="true" showOn="both" readonlyInput="true">
+					</p:calendar>
+				</h:panelGrid>
+				<p:commandButton value="#{msg['accion.buscar']}"
+					actionListener="#{enviarFacturaMB.consultarFacturas()}"
+					update="@form :msgOperacion" onerror="PF('statusDialog').hide()"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide()" />
+				<div
+					style="font-weight: bold; font-size: 13px; float: right; margin-right: 10px; margin-top: 5px; color: #000;">
+					<h:commandLink onclick="PrimeFaces.monitorDownload(start, stop);">
+						<p:graphicImage name="/images/csv.jpg" value="/images/csv.jpg"
+							width="30" alt="#{msg['msg.exportar.csv']}" />
+						<p:dataExporter type="xls" target="tablaFacturas"
+							fileName="reporteFacturas" encoding="ISO-8859-1" />
+					</h:commandLink>
+				</div>
+				<p:dataTable emptyMessage="" rows="20" paginator="true"
+					value="#{enviarFacturaMB.facturas}" var="f" id="tablaFacturas"
+					lazy="true" paginatorPosition="bottom" widgetVar="resultadoWidget">
+					<p:ajax event="page" onstart="PF('statusDialog').show()"
+						oncomplete="PF('statusDialog').hide()"
+						onerror="PF('statusDialog').hide()" />
+					<f:facet name="header">
+						<h:outputText value="#{msg['factura.lista']}" />
+					</f:facet>
+					<p:column
+						headerText="#{msg['aprobacion.agente.aduanal.detalle.factura.titulo']}">
+						<h:outputText value="#{f.factura.XBLNR}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.noDoc']}">
+						<h:outputText value="#{f.factura.BELNR}" />
+					</p:column>
+					<p:column headerText="#{msg['orden.importe']}">
+						<h:outputText value="#{f.factura.DMBTR}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['factura.impuesto']}">
+						<h:outputText value="#{f.factura.HWBAS}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['factura.importeTotal']}">
+						<h:outputText value="#{f.factura.TOTAL}">
+							<f:convertNumber type="currency" currencySymbol=""
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['factura.moneda']}">
+						<h:outputText value="#{f.factura.WAERS}" />
+					</p:column>
+					<p:column headerText="#{msg['factura.vencNeto']}">
+						<h:outputText value="#{f.factura.VENCI}" />
+					</p:column>
+					<p:column headerText="#{msg['factura.fechaPago']}">
+						<h:outputText value="#{f.factura.AUGDT}" />
+					</p:column>
+					<p:column headerText="#{msg['factura.estado']}">
+						<h:outputText
+							value="#{f.factura.STATU eq 'P' ? msg['factura.estatus.pagado'] : f.factura.STATU eq 'N' ? msg['factura.estatus.porPagar'] : f.factura.STATU}" />
+					</p:column>
+					<p:column headerText="#{msg['anticipo.header']}" exportable="false">
+						<p:selectBooleanCheckbox value="#{f.seleccionada}"
+							rendered="#{f.factura.ANTIC eq 'X'}"
+							valueChangeListener="#{enviarFacturaMB.chequearFact(f)}">
+							<p:ajax update="tablaFacturas"
+								onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide();" />
+						</p:selectBooleanCheckbox>
+					</p:column>
+				</p:dataTable>
+
+				<p:commandButton value="#{msg['anticipo.accion']}"
+					actionListener="#{enviarFacturaMB.agregarArchivos()}"
+					update=":agregarAnticiposForm :msgOperacion"
+					onerror="PF('statusDialog').hide()"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide(); PF('anticiposModal').show();" />
+
+			</h:form>
+		</p:panel>
+
+		<ui:include src="anticipos.xhtml" />
+
+	</ui:define>
+</ui:composition>

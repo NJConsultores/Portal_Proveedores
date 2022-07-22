@@ -1,0 +1,60 @@
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.TableOfZfeCsocAreaRHolder;
+
+public class ZFE_GET_LISTA_RESP_AREAProxy implements ZFE_GET_LISTA_RESP_AREA {
+	private String _endpoint = null;
+	private ZFE_GET_LISTA_RESP_AREA zFE_GET_LISTA_RESP_AREA = null;
+
+	public ZFE_GET_LISTA_RESP_AREAProxy() {
+		_initZFE_GET_LISTA_RESP_AREAProxy();
+	}
+
+	public ZFE_GET_LISTA_RESP_AREAProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_GET_LISTA_RESP_AREAProxy();
+	}
+
+	private void _initZFE_GET_LISTA_RESP_AREAProxy() {
+		try {
+			zFE_GET_LISTA_RESP_AREA = (new Get_lista_resp_areaLocator()).getget_lista_resp_area();
+			if (zFE_GET_LISTA_RESP_AREA != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_GET_LISTA_RESP_AREA)
+							._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_GET_LISTA_RESP_AREA)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_GET_LISTA_RESP_AREA != null)
+			((javax.xml.rpc.Stub) zFE_GET_LISTA_RESP_AREA)._setProperty("javax.xml.rpc.service.endpoint.address",
+					_endpoint);
+
+	}
+
+	public ZFE_GET_LISTA_RESP_AREA getZFE_GET_LISTA_RESP_AREA() {
+		if (zFE_GET_LISTA_RESP_AREA == null)
+			_initZFE_GET_LISTA_RESP_AREAProxy();
+		return zFE_GET_LISTA_RESP_AREA;
+	}
+
+	public void zfeGetListaRespArea(java.lang.String EArea, java.lang.String EBukrs, java.lang.String ELang,
+			TableOfZfeCsocAreaRHolder SLista, javax.xml.rpc.holders.StringHolder SMsg,
+			org.apache.axis.holders.UnsignedByteHolder SStat) throws java.rmi.RemoteException {
+		if (zFE_GET_LISTA_RESP_AREA == null)
+			_initZFE_GET_LISTA_RESP_AREAProxy();
+		zFE_GET_LISTA_RESP_AREA.zfeGetListaRespArea(EArea, EBukrs, ELang, SLista, SMsg, SStat);
+	}
+
+}

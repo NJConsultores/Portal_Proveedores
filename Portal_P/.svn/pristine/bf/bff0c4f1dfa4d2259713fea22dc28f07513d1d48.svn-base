@@ -1,0 +1,275 @@
+package com.infra.cliente.service.ws;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
+import javax.xml.rpc.ServiceException;
+import javax.xml.rpc.holders.StringHolder;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+
+import com.infra.cliente.ws.Crea_factLocator;
+import com.infra.cliente.ws.GET_EDO_CTALocator;
+import com.infra.cliente.ws.Get_lista_factLocator;
+import com.infra.cliente.ws.ZFE_CREA_FACT;
+import com.infra.cliente.ws.ZFE_GET_EDO_CTA;
+import com.infra.cliente.ws.ZFE_GET_LISTA_FACT;
+import com.infra.cliente.ws.ZfeSEdocta;
+import com.infra.cliente.ws.ZfeSListFact;
+import com.infra.cliente.ws.holders.ZfeTEdoctaHolder;
+import com.infra.cliente.ws.holders.ZfeTListFactHolder;
+import com.infra.cliente.ws.holders.ZfeTPorecHolder;
+import com.infra.core.ws.exception.WSException;
+import com.infra.factura.business.schema.util.StringAndInputstreamUtil;
+import com.infra.factura.util.Base64;
+import com.infra.factura.util.FechaUtil;
+
+/**
+ * @author Reyna Lagunas Aranda <reyna.lagunas.aranda@gmail.com>
+ */
+@Service
+public class WSFacturaImpl implements WSFactura {
+
+	private final static Logger logger = Logger.getLogger(WSFacturaImpl.class);
+
+	private final static ResourceBundle resources = ResourceBundle.getBundle("wsdl/wsdl");
+
+	@Override
+	public Map<String, String> guardarCFDIOC(String idioma, String proveedorActual, String rfcActual, String sociedad,
+			String ordenes, InputStream xml, InputStream pdf, InputStream otroPdf, ZfeTPorecHolder holder) {
+		logger.info("guardarCFDIOC [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		Map respuesta = new HashMap<String, String>();
+		try {
+			Crea_factLocator locator = new Crea_factLocator();
+			locator.setcrea_factEndpointAddress(resources.getString("creaFact"));
+			ZFE_CREA_FACT creaFact = locator.getcrea_fact();
+			String cadenaXML = "";
+			byte[] bytesOtro = null;
+			byte[] bytesPDF = null;
+			try {
+				if (null != xml)
+					cadenaXML = StringAndInputstreamUtil.convertStreamToString(xml);
+				if (null != otroPdf)
+					bytesOtro = IOUtils.toByteArray(otroPdf);
+				if (null != pdf)
+					bytesPDF = IOUtils.toByteArray(pdf);
+			} catch (IOException e) {
+				System.out.println("Surgio un error al convertir Stream a String");
+				e.printStackTrace();
+			}
+			creaFact.zfeCreaFact(null, sociedad, null, null, null, null, idioma, proveedorActual, ordenes, null,
+					(null != otroPdf ? Base64.encodeBase64String(bytesOtro) : ""),
+					(null != pdf ? Base64.encodeBase64String(bytesPDF) : ""), null, rfcActual, null, null, null, null,
+					(null != cadenaXML ? Base64.encodeBase64String(cadenaXML.getBytes()) : ""), holder, mensaje,
+					status);
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, String> guardarCFDI(String idioma, String proveedorActual, String rfcActual, String sociedad,
+			String area, String responsable, String factura, String concepto, InputStream xml, InputStream pdf,
+			InputStream otroPdf) {
+		logger.info("guardarCFDI [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTPorecHolder holder = new ZfeTPorecHolder();
+		Map respuesta = new HashMap<String, String>();
+		try {
+			Crea_factLocator locator = new Crea_factLocator();
+			locator.setcrea_factEndpointAddress(resources.getString("creaFact"));
+			ZFE_CREA_FACT creaFact = locator.getcrea_fact();
+			String cadenaXML = "";
+			byte[] bytesOtro = null;
+			byte[] bytesPDF = null;
+			try {
+				if (null != xml)
+					cadenaXML = StringAndInputstreamUtil.convertStreamToString(xml);
+				if (null != otroPdf)
+					bytesOtro = IOUtils.toByteArray(otroPdf);
+				if (null != pdf)
+					bytesPDF = IOUtils.toByteArray(pdf);
+			} catch (IOException e) {
+				System.out.println("Surgio un error al convertir Stream a String");
+				e.printStackTrace();
+			}
+			creaFact.zfeCreaFact(area, sociedad, concepto, null, null, null, idioma, proveedorActual, null, null,
+					(null != otroPdf ? Base64.encodeBase64String(bytesOtro) : ""),
+					(null != pdf ? Base64.encodeBase64String(bytesPDF) : ""), responsable, rfcActual, null, null, null,
+					null, (null != cadenaXML ? Base64.encodeBase64String(cadenaXML.getBytes()) : ""), holder, mensaje,
+					status);
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, String> guardarCBB(String idioma, String proveedorActual, String rfcActual, String sociedad,
+			String area, String responsable, Date fechaFactura, String factura, String concepto, BigDecimal subtotal,
+			BigDecimal iva, String moneda, InputStream pdf, InputStream otroPdf, BigDecimal isNotaCredito) {
+		logger.info("guardarCBB [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTPorecHolder holder = new ZfeTPorecHolder();
+		Map respuesta = new HashMap<String, String>();
+		try {
+			Crea_factLocator locator = new Crea_factLocator();
+			locator.setcrea_factEndpointAddress(resources.getString("creaFact"));
+			ZFE_CREA_FACT creaFact = locator.getcrea_fact();
+			byte[] bytesOtro = null;
+			byte[] bytesPDF = null;
+			try {
+				if (null != otroPdf)
+					bytesOtro = IOUtils.toByteArray(otroPdf);
+				bytesPDF = IOUtils.toByteArray(pdf);
+			} catch (IOException e) {
+				System.out.println("Surgio un error al convertir Stream a String");
+				e.printStackTrace();
+			}
+			creaFact.zfeCreaFact(area, sociedad, concepto, FechaUtil.formatoWS(fechaFactura), factura, iva, idioma,
+					proveedorActual, null, moneda, (null != otroPdf ? Base64.encodeBase64String(bytesOtro) : ""),
+					Base64.encodeBase64String(bytesPDF), responsable, rfcActual, null, subtotal, null, null, null,
+					holder, mensaje, status);
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, String> guardarCBBOC(String idioma, String proveedorActual, String rfcActual, String sociedad,
+			InputStream pdf, InputStream otroPdf, String factura, String moneda, Date fechaFactura, BigDecimal iva,
+			String ordenes, ZfeTPorecHolder holder, BigDecimal isNotaCredito) {
+		logger.info("guardarCBBOC [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		Map respuesta = new HashMap<String, String>();
+		try {
+			Crea_factLocator locator = new Crea_factLocator();
+			locator.setcrea_factEndpointAddress(resources.getString("creaFact"));
+			ZFE_CREA_FACT creaFact = locator.getcrea_fact();
+			byte[] bytesOtro = null;
+			byte[] bytesPDF = null;
+			try {
+				if (null != otroPdf)
+					bytesOtro = IOUtils.toByteArray(otroPdf);
+				bytesPDF = IOUtils.toByteArray(pdf);
+			} catch (IOException e) {
+				System.out.println("Surgio un error al convertir Stream a String");
+				e.printStackTrace();
+			}
+			creaFact.zfeCreaFact(null, sociedad, null, FechaUtil.formatoWS(fechaFactura), factura, iva, idioma,
+					proveedorActual, ordenes, moneda, (null != otroPdf ? Base64.encodeBase64String(bytesOtro) : ""),
+					Base64.encodeBase64String(bytesPDF), null, rfcActual, null, null, null, null, null, holder, mensaje,
+					status);
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getFacturas(Date fechaDesde, Date fechaHasta, String idioma, String proveedorActual,
+			String sociedad, String estatusFactura) {
+		logger.info("getFacturas [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTListFactHolder holder = new ZfeTListFactHolder();
+		Map respuesta = new HashMap<String, String>();
+		List<ZfeSListFact> listaFacturas = new ArrayList();
+		try {
+			Get_lista_factLocator locator = new Get_lista_factLocator();
+			locator.setget_lista_factEndpointAddress(resources.getString("listaFactura"));
+			ZFE_GET_LISTA_FACT getFacturas = locator.getget_lista_fact();
+			getFacturas.zfeGetListaFact(FechaUtil.formatoWS(fechaHasta), FechaUtil.formatoWS(fechaDesde), sociedad,
+					idioma, proveedorActual, estatusFactura, holder, mensaje, status);
+			ZfeSListFact[] arreglo = holder.value.getItem();
+			if (null != arreglo) {
+				listaFacturas = Arrays.asList(arreglo);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+			respuesta.put("lista", listaFacturas);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+	@Override
+	public Map<String, Object> getEdoCta(Date fechaDesde, Date fechaHasta, String idioma, String proveedorActual,
+			String sociedad, String estatusFactura) {
+		logger.info("getEdoCta [" + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()) + "]");
+		StringHolder mensaje = new javax.xml.rpc.holders.StringHolder();
+		org.apache.axis.holders.UnsignedByteHolder status = new org.apache.axis.holders.UnsignedByteHolder();
+		ZfeTEdoctaHolder holder = new ZfeTEdoctaHolder();
+		Map respuesta = new HashMap<String, String>();
+		List<ZfeSEdocta> listaEdo = new ArrayList();
+		try {
+			GET_EDO_CTALocator locator = new GET_EDO_CTALocator();
+			locator.setGET_EDO_CTAEndpointAddress(resources.getString("listaEdoCta"));
+			ZFE_GET_EDO_CTA getEdoCta = locator.getGET_EDO_CTA();
+			getEdoCta.zfeGetEdoCta(sociedad, FechaUtil.formatoWS(fechaHasta), FechaUtil.formatoWS(fechaDesde), idioma,
+					proveedorActual, estatusFactura, holder, mensaje, status);
+			ZfeSEdocta[] arreglo = holder.value.getItem();
+			if (null != arreglo) {
+				listaEdo = Arrays.asList(arreglo);
+			}
+			respuesta.put("estatus", status.value.toString());
+			respuesta.put("mensaje", mensaje.value);
+		} catch (ServiceException e) {
+			logger.error("Unable to reach service:", e);
+			throw new WSException(e.getMessage());
+		} catch (RemoteException e) {
+			logger.error("RemoteException: ", e);
+			throw new WSException(e.getMessage());
+		}
+		return respuesta;
+	}
+
+}

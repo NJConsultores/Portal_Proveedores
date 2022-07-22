@@ -1,0 +1,20 @@
+/**
+ * ZFE_CREA_FACT.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTPorecHolder;
+
+public interface ZFE_CREA_FACT extends java.rmi.Remote {
+	public void zfeCreaFact(java.lang.String EArea, java.lang.String EBukrs, java.lang.String EConc,
+			java.lang.String EFecha, java.lang.String EFolio, java.math.BigDecimal EIva, java.lang.String ELang,
+			java.lang.String ELifnr, java.lang.String EListaOc, java.lang.String EMoneda, java.lang.String EOpdf,
+			java.lang.String EPdf, java.lang.String EResp, java.lang.String ERfc, java.lang.String ESerie,
+			java.math.BigDecimal ESubtt, java.lang.String ETipo, java.math.BigDecimal ETotal, java.lang.String EXml,
+			ZfeTPorecHolder TPorec, javax.xml.rpc.holders.StringHolder SMsg,
+			org.apache.axis.holders.UnsignedByteHolder SStat) throws java.rmi.RemoteException;
+}

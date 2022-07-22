@@ -1,0 +1,60 @@
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTEdoctaHolder;
+
+public class ZFE_GET_EDO_CTAProxy implements ZFE_GET_EDO_CTA {
+	private String _endpoint = null;
+	private ZFE_GET_EDO_CTA zFE_GET_EDO_CTA = null;
+
+	public ZFE_GET_EDO_CTAProxy() {
+		_initZFE_GET_EDO_CTAProxy();
+	}
+
+	public ZFE_GET_EDO_CTAProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_GET_EDO_CTAProxy();
+	}
+
+	private void _initZFE_GET_EDO_CTAProxy() {
+		try {
+			zFE_GET_EDO_CTA = (new GET_EDO_CTALocator()).getGET_EDO_CTA();
+			if (zFE_GET_EDO_CTA != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_GET_EDO_CTA)._setProperty("javax.xml.rpc.service.endpoint.address",
+							_endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_GET_EDO_CTA)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_GET_EDO_CTA != null)
+			((javax.xml.rpc.Stub) zFE_GET_EDO_CTA)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+
+	}
+
+	public ZFE_GET_EDO_CTA getZFE_GET_EDO_CTA() {
+		if (zFE_GET_EDO_CTA == null)
+			_initZFE_GET_EDO_CTAProxy();
+		return zFE_GET_EDO_CTA;
+	}
+
+	public void zfeGetEdoCta(java.lang.String EBukrs, java.lang.String EFechaFin, java.lang.String EFechaIni,
+			java.lang.String ELang, java.lang.String ELifnr, java.lang.String EStatus, ZfeTEdoctaHolder SEdocta,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException {
+		if (zFE_GET_EDO_CTA == null)
+			_initZFE_GET_EDO_CTAProxy();
+		zFE_GET_EDO_CTA.zfeGetEdoCta(EBukrs, EFechaFin, EFechaIni, ELang, ELifnr, EStatus, SEdocta, SMsg, SStat);
+	}
+
+}

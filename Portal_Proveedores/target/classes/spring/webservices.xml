@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<!-- import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" / -->
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<bean id="validaFactura" class="com.infra.pac.ws.impl.ValidaFacturaPACImpl"
+		scope="prototype">
+		<aop:scoped-proxy />
+	</bean>
+	
+<!-- 	<bean id="interceptor" -->
+<!-- 		class="com.infra.inter.ws.interceptor.GlobalEndpointInterceptor" /> -->
+
+	<jaxws:endpoint xmlns:tns="http://service.infra.com/"
+		id="validaFacturaPAC" implementor="#validaFactura" endpointName="tns:ValidaFacturaServiceImplPort"
+		serviceName="tns:ValidaFacturaServiceImplService" address="/ValidaFacturaServiceImplPort">
+	</jaxws:endpoint>
+
+</beans>

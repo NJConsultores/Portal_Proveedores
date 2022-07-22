@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core">
+	<p:dialog id="dlg_detalleComplemento" modal="true" width="100%"
+		position="top" header="#{msg['accion.detalle']} #{complementoMB.pago.VBLNR}"
+		widgetVar="detalleComplementoModal" closable="false">
+		<h:form id="detalleComplementoForm">
+			
+			<p:messages id="messages" globalOnly="false" closable="true"
+				showDetail="true" />
+			
+			<h:panelGrid columns="6">
+					<h:outputText value="#{msg['factura.pago.documento']}"
+						styleClass="textoNegrita" />
+					<h:outputText value="#{complementoMB.pago.VBLNR}" />
+					<h:outputLabel value="#{msg['pago.ejercicio']}"
+						styleClass="textoNegrita" />
+					<h:outputText value="#{complementoMB.pago.GJAHR}" />
+					<h:outputLabel value="#{msg['pago.mes_contable']}"
+						styleClass="textoNegrita" />
+					<h:outputText value="#{complementoMB.pago.MONAT}" />
+				</h:panelGrid>
+				<p:separator />
+			
+			<p:panelGrid styleClass="tbl_formulario">
+				<p:row>
+					<p:column>
+						<p:outputLabel id="nombrePdf"
+							value="#{msg['contiguracion.nombre']} #{msg['pdf.titulo']}: #{complementoMB.pdf.fileName}" />
+						<p:fileUpload fileUploadListener="#{complementoMB.manejadorPdf}"
+							label="#{msg['cargar.archivo']}"
+							mode="advanced"
+							update="messages nombrePdf" auto="true"
+							allowTypes="/(\.|\/)(pdf)$/">
+							<f:attribute name="pos" value="#{f.posicion}" />
+						</p:fileUpload>
+					</p:column>
+					<p:column>
+						<p:outputLabel id="nombreXml"
+							value="#{msg['contiguracion.nombre']} #{msg['xml.titulo']}: #{complementoMB.xml.fileName}" />
+						<p:fileUpload fileUploadListener="#{complementoMB.manejadorXml}"
+							label="#{msg['cargar.archivo']}"
+							mode="advanced"
+							update="messages nombreXml" auto="true"
+							allowTypes="/(\.|\/)(xml)$/">
+							<f:attribute name="pos" value="#{f.posicion}" />
+						</p:fileUpload>
+					</p:column>
+				</p:row>
+			</p:panelGrid>
+			<div
+				style="font-weight: bold; font-size: 13px; float: right; margin-right: 10px; margin-top: 5px; color: #000;">
+				<h:commandLink onclick="PrimeFaces.monitorDownload(start, stop);">
+					<p:graphicImage name="/images/csv.jpg" value="/images/csv.jpg"
+						width="30" alt="#{msg['msg.exportar.csv']}" />
+					<p:dataExporter type="csv" target="tbl_detalle"
+						fileName="reporteFacturas" encoding="ISO-8859-1" />
+				</h:commandLink>
+			</div>
+			<p:scrollPanel style="width:100%;height:300px" mode="native">
+				<p:dataTable id="tbl_detalle" emptyMessage=""
+					style="width: 100%; height: 1500px"
+					value="#{complementoMB.facturas}" var="f">
+					<f:facet name="header">
+						<div style="text-align: center; width: 100%">
+							<p:spacer width="10px" height="1px" />
+							<p:commandButton value="#{msg['accion.guardar']}"
+								icon="ui-icon-check"
+								update=":formConsulta :detalleComplementoForm @form"
+								onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide(); PF('detalleComplementoModal').hide();"
+								actionListener="#{complementoMB.guardarFacturas()}" />
+							<p:spacer width="10px" height="1px" />
+							<p:commandButton value="#{msg['accion.cancelar']}"
+								immediate="true" icon="ui-icon-closethick"
+								update=":detalleComplementoForm @form"
+								onstart="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide(); PF('detalleComplementoModal').hide();"
+								actionListener="#{complementoMB.cancelarGuardadoFacturas()}" />
+							<p:spacer width="20%" height="1px" />
+						</div>
+					</f:facet>
+					<p:column headerText="#{msg['pago.factura.num_doc_comercial']}">
+						<h:outputText value="#{f.VBELN}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.factura.fecha_contabilizacion']}">
+						<h:outputText value="#{f.BUDAT}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.factura.moneda']}">
+						<h:outputText value="#{f.WAERS}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.importe_moneda_local']}">
+						<h:outputText value="#{f.DMBTR}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.importe_moneda_dto']}">
+						<h:outputText value="#{f.WRBTR}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.tipo_cambio']}">
+						<h:outputText value="#{f.KURSF}" />
+					</p:column>
+					<p:column headerText="#{msg['pago.factura.fecha_compensacion']}">
+						<h:outputText value="#{f.AUGDT}" />
+					</p:column>
+				</p:dataTable>
+			</p:scrollPanel>
+
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

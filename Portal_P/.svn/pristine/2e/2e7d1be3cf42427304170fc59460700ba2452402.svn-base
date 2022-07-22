@@ -1,0 +1,87 @@
+/**
+ * ZfeTListaTpr.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeTListaTpr implements java.io.Serializable {
+	private ZfeSListaTpr[] item;
+
+	public ZfeTListaTpr() {
+	}
+
+	public ZfeTListaTpr(ZfeSListaTpr[] item) {
+		this.item = item;
+	}
+
+	/**
+	 * Gets the item value for this ZfeTListaTpr.
+	 * 
+	 * @return item
+	 */
+	public ZfeSListaTpr[] getItem() {
+		return item;
+	}
+
+	/**
+	 * Sets the item value for this ZfeTListaTpr.
+	 * 
+	 * @param item
+	 */
+	public void setItem(ZfeSListaTpr[] item) {
+		this.item = item;
+	}
+
+	public ZfeSListaTpr getItem(int i) {
+		return this.item[i];
+	}
+
+	public void setItem(int i, ZfeSListaTpr _value) {
+		this.item[i] = _value;
+	}
+
+	private java.lang.Object __equalsCalc = null;
+
+	public synchronized boolean equals(java.lang.Object obj) {
+		if (!(obj instanceof ZfeTListaTpr))
+			return false;
+		ZfeTListaTpr other = (ZfeTListaTpr) obj;
+		if (obj == null)
+			return false;
+		if (this == obj)
+			return true;
+		if (__equalsCalc != null) {
+			return (__equalsCalc == obj);
+		}
+		__equalsCalc = obj;
+		boolean _equals;
+		_equals = true && ((this.item == null && other.getItem() == null)
+				|| (this.item != null && java.util.Arrays.equals(this.item, other.getItem())));
+		__equalsCalc = null;
+		return _equals;
+	}
+
+	private boolean __hashCodeCalc = false;
+
+	public synchronized int hashCode() {
+		if (__hashCodeCalc) {
+			return 0;
+		}
+		__hashCodeCalc = true;
+		int _hashCode = 1;
+		if (getItem() != null) {
+			for (int i = 0; i < java.lang.reflect.Array.getLength(getItem()); i++) {
+				java.lang.Object obj = java.lang.reflect.Array.get(getItem(), i);
+				if (obj != null && !obj.getClass().isArray()) {
+					_hashCode += obj.hashCode();
+				}
+			}
+		}
+		__hashCodeCalc = false;
+		return _hashCode;
+	}
+
+}

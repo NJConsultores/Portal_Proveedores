@@ -1,0 +1,271 @@
+msg.comprobante.incorrecto=Incorrect invoice
+msg.cuenta.agente.aduanal.incorrecto=Incorrect Expense Account
+msg.comprobantes.incorrectos=Incorrect invoices
+msg.comprobante.no.valido=Invoice is not valid<br/>
+msg.comprobantes.no.validos=Invoice [<b>{0}</b>] are not valid due to the following error message:&nbsp;
+msg.comprobante.no.aceptado=Invoice was not accepted<br/>
+msg.cuenta.agente.aduanal.no.aceptado=The Expense Account was not APPROVED due to following reason:&nbsp;{0}
+msg.comprobantes.no.aceptados=Invoice [<b>{0}</b>] were not accepted due to the following error message:&nbsp;
+msg.comprobante.en.revision=Invoice on review
+msg.cuenta.agente.aduanal.en.revision=Expense Account on review
+msg.comprobante.correcto=Correct invoice
+msg.cuenta.agente.aduanal.correcto=Correct Expense Account
+msg.comprobante.aprobado.rechazado=The Invoice was APPROVED FISCALLY and REJECTED by the following reasons: <br>
+msg.comprobante.aprobado.contabilidad=The Invoice was APPROVED FISCALLY and is under review by accounting
+msg.cuenta.agente.aduanal.aprobado.contabilidad=The Expense Account was APPROVED and is under review by accounting
+msg.comprobante.aprobado.almacen=The Invoice was APPROVED FISCALLY and is under review by the user and/or warehouse staff
+msg.cuenta.agente.aduanal.aprobado.almacen=The Expense Account was APPROVED and is under review by the user and/or warehouse staff
+msg.comprobante.aprobado=The Invoice was APPROVED FISCALLY
+msg.cuenta.agente.aduanal.aprobado=The Expense Account was APPROVED and has been scheduled for payment
+msg.comprobante.contactar.comprador=Please contact the buyer
+msg.comprobante.sin.respuesta.sap=No response was received from SAP after send the Invoice
+msg.comprobante.aprobado.contabilidad.log=Invoice in review by the accounting department
+msg.comprobante.aprobado.almacen.log=Invoice in review by the user and / or warehouse
+msg.comprobante.aprobado.comercio.exterior.log=Invoice in approval process by Foreign Trade
+msg.comprobante.aprobado.autorizar=The Invoice was APPROVED FISCALLY and is in the approval process by foreign trade
+msg.comprobante.aprobado.nivel.2=The Expense Account was APPROVED and is in the approval process by foreign trade Management
+msg.cuenta.agente.aduanal.rechazada=The Expense Account has been REJECTED sucessfully
+
+msg.Error.formato.archivos=Error in file format.
+
+msg.comprobantes.incorrectos.envio=It has not been able to send all Invoices due to the following:
+msg.comprobante.incorrecto.envio=The Invoice [<b>{0}</b>] was APPROVED FISCALLY and REJECTED for the following reasons:&nbsp;
+msg.comprobante.pendiente.envio=The Invoice [<b>{0}</b>] was APPROVED FISCALLY and is under review by accounting
+msg.comprobante.en.revision.envio=The Invoice [<b>{0}</b>] was APPROVED FISCALLY and is under review by the user and/or warehouse staff
+msg.comprobantes.correctos=Correct Invoices
+msg.comprobantes.aprobados=The Invoices were APPROVED FISCALLY and have been scheduled for payment.
+msg.comprobantes.no.validos.no.aceptados=Invoice [<b>{0}</b>] was not valid or accepted due to the following error message:&nbsp;
+msg.comprobantes.aprobados.agentes.aduanales=The Invoice was APPROVED FISCALLY and are in the approval process by foreign trade.
+
+msg.envio.password=An email was sent with the password.
+msg.registro.ok=Registered correctly.
+msg.registro.error=Failed to save the record.
+msg.datos.invalidos=Invalid data.
+msg.nombre.existe=The name already exist.
+msg.sociedad.permisos=You are not authorized on the Company.
+msg.eliminar.ok=The record has been deleted.
+msg.eliminar.error=Failed to delete the record.
+msg.cert.existe=The certificate already exists, you must perform manual loading.
+msg.rfc.existe=The RFC captured already exists.
+msg.rfc.invalido=The RFC is incorrect.
+msg.rfc.agregar.error=Failed to add RFC, try again.
+msg.rfc.ya.agregado=The RFC is already added to the list.
+msg.rfc.agregar.exito=RFC successfully added to the list.
+msg.factura.no.existe=Invoice not found with the RFC and the UUID provided.
+msg.usuario.no.existe=The user/email does not exist.
+msg.recuperar.password.exito=The password has been sent by email.
+msg.recuperar.password.error=Failed to retrieve the password, try again.
+msg.orden.incorrecta= Purchase orders must be 10 characters. Wrong order.
+msg.datos.invalidos=Invalid Data.
+msg.referencia.incorrecta=Please enter digits only on Reference Number. Wrong Reference.
+msg.referencia.min= Reference Number has to be {0} digits minimum. Wrong Reference.
+msg.referencia.max= Reference Number has to be {0} digits maximum. Wrong Reference.
+msg.referencia.requerido=Reference Number is required.
+msg.numero.factura.requerido=Invoice Number is required.
+msg.numero.pedido.requerido=Order Number is required.
+msg.numero.elemento.anticipo.requerido=Functional Area is required.
+msg.descripcion.requerido=Description is required.
+msg.indicador.impuesto.requerido=TAX Code is required.
+msg.numero.pedido.incorrecto= Please enter digits only on Order Number. Wrong Order Number.
+msg.importe.capturado.mayor= The captured amount musto not exceed:
+msg.datos.financieros.requeridos= The major account, the amount and the tax indicator are mandatory data.
+msg.indicador.impuesto.incorrecto= The indicator does not match the tax exempt tax Invoice.
+msg.filtro.invalido=Invalid Filter.
+msg.filtro.periodo.fecha.emision=Initial date and Final date of issue must be indicated.
+msg.filtro.periodo.fecha.recepcion=Initial date and Final date of reception must be indicated.
+msg.filtro.ingrese.rango.fechas=Enter the date range
+msg.encabezado.log.estatus.nacional=Invoice with tax Folio completion.
+msg.encabezado.log.estatus.extranjero=Invoice with ID.
+msg.materiales.incorrecto= Enter at least a number Material Movement.
+msg.zip.requerido=The ZIP File of the Invoices is required.
+msg.zip.file.size=<br/>The file size must not exceed 5.0 MB.
+msg.zip.file.size.2=The size of the ZIP files and EXCEL together must not exceed 8.0 MB
+msg.zip.file.type=<br/>The file must be a File ZIP. [Selected file: {0}]
+msg.excel.file.type=The file must be a File EXCEL. [Selected file: {0}]
+msg.cargar.archivos.requerido=Select a file.
+msg.tam.archivo=<br/>The file size should not exceed 1.3MB.
+msg.archivo.tipo.xml=<br/>The file in the first field must be of type XML. [Selected file: {0}]
+msg.archivo.tipo.xls=<br/>The file in the first field must be of type XLSX. [Selected file: {0}]
+msg.archivo.segundo.pdf=<br/>The file in the second field must be of type PDF. [Selected file: {0}]
+msg.archivo.tercer.pdf=<br/>The file in the third field must be of type PDF. [Selected file: {0}]
+msg.comprobante.rev=Invoice on review.
+msg.pdf.requerido=Invoice PDF is required.
+msg.ultima.actualizacion.no= Last updated: NOT AVAILABLE.
+msg.ultima.actualizacion= Last updated: {0}
+msg.usuario.existe=Failed to create the user, the username already exists.
+msg.elegir.rol=You must choose at least one role.
+msg.accion.no.permitida=Unauthorized action
+msg.filtro.seleccione.proveedor=You must select a supplier.
+msg.filtro.longitud.minima.uuid=The minimum length to find a UUID is 4 characters
+msg.modificacion.estatus = The status was changed to {0}
+msg.error.modificacion.estatus.cancelado=It was not possible to change the status of the invoice to Canceled
+msg.error.archivo.extension.pdf=The file name {0} must have the extension .pdf or contains spaces
+msg.error.numero.proveedor.obligatorio=The number Supplier is required.
+msg.error.rfc.sociedad.excede.maximo.posiciones=RFC society exceeds the maximum of positions in the registry.
+msg.error.rfc.sociedad.es.requerido=RFC society is required.
+msg.error.fecha.emision.excede.maximo.posiciones=The issuance date exceeds the maximum of positions in the registry.
+msg.error.fecha.emision.formato.no.valido=Format Date is invalid. Must be dd/MM/yyyy or MM/dd/yyyy.
+msg.error.folio.excede.maximo.posiciones=The invoice number exceeds the maximum positions in the registry.
+msg.error.fecha.emision.es.requerido=The issuance date is required
+msg.error.monto.total.es.requerido=The total amount is required
+msg.error.monto.honorarios.es.requerido=The Fees amount is required
+msg.error.monto.terceros.es.requerido=The Third Parties amount is required
+msg.error.tipo.documento.es.requerido=The document type is required
+msg.error.moneda.es.requerido=The currency is required
+msg.error.numero.referencia.es.requerido=The reference number is required
+msg.error.folio.es.requerido=The invoice number is required
+msg.error.monto.total.decimal.positivo=The total amount must be a positive decimal number (no comma). Example : 1234.50
+msg.error.monto.honorarios.decimal.positivo=The Fees amount must be a positive decimal number (no comma). Example : 1234.50
+msg.error.monto.terceros.decimal.positivo=The Third Parties amount must be a positive decimal number (no comma). Example : 1234.50
+msg.error.tipo.documento.no.valido=The selected document type is invalid
+msg.error.moneda.excede.maximo.posiciones=The currency exceeds the maximum positions in the register
+msg.error.moneda.expresada.en=The currency must be expressed in {0}
+msg.error.numero.referencia.excede.maximo.posiciones=The reference number exceeds the maximum positions in the register
+msg.error.numero.referencia.longitud.minima=The reference number should be at least 10 digits
+msg.error.numero.referencia.incorrecto=Please enter digits only on Reference Number. Wrong Reference {0}
+msg.error.numero.proveedor.excel.no.existe=The provider number captured in the excel file does not exist.
+msg.error.rfc.sociedad.no.encontrado=No society RFC {0} found . Please check.
+msg.error.pdf.no.corresponde.layout.excel=The PDF that comes within the ZIP file {0} does not match the registered layout {1}. Please check.
+msg.error.pdf.no.corresponde.layout.excel.agente.aduanal=The PDF name {0} registered in the layout does not come within the ZIP file. Please check.
+msg.error.numero.archivos.pdf.diferente.layout.excel=The number of PDF files that come in the ZIP, does not correspond with the layout. Please check.
+msg.error.archivo.zip.vacio=The Zip is empty or does not contains files with .pdf extension
+msg.error.debe.seleccionar.archivo.zip.layout=You must select a layout file and a zip file with your invoices
+msg.error.archivo.debe.ser.tipo.zip=The file in the first field must be of type zip.
+msg.error.archivo.debe.ser.tipo.excel=The file in the first field must be of type xlsx.
+msg.patente.requerido=Patent is required.
+msg.aduana.requerido=Customs is required.
+msg.patente.incorrecta= Please enter digits only on Patent. Wrong Patent
+msg.aduana.incorrecta= Please enter digits only on Customs. Wrong Customs
+msg.pedimento.incorrecta= Please enter digits only on Declaration. Wrong Declaration
+msg.error.tipo.proveedor.layout.excel.agente.aduanal=The number Supplier {0} does not correspond to the type of Supplier {1}. Please check.
+
+#Proveedor
+msg.proveedor.registro.ok=Supplier {0} was saved successfully.
+msg.proveedor.eliminacion.ok=Supplier successfully removed.
+msg.proveedores.carga.masiva.mensaje=Suppliers bulk load was done successfully.
+msg.renglon=Row [{0}] -> {1}<br/>
+msg.proveedor.bloqueo.exito=Successfully locked Suppliers.
+msg.proveedor.desbloqueo.exito=Suppliers successfully unlocked.
+msg.proveedor.carga.masiva.ok=The bulk load supplier finished successfully.
+error.rfc.incorrecta=The Tax ID is incorrect
+error.proveedor.existe=Supplier {0} already exists.
+error.proveedor.registro.inesperado=An error occurred while updating Supplier, check the server log, ID exception {0}
+error.proveedor.registro.administrador=An error occurred while updating Supplier, contact the Administrator, ID exception {0}
+error.proveedor.no.existe=The Supplier {0} does not exist in the catalog portal.
+error.proveedor.columna.num.cta.obligatorio=The account number is a required field
+error.proveedor.columna.num.cta.numerico=The account number is a numeric field (no letters or special characters)
+error.proveedor.columna.numero=The Tax ID {0} is already registered with the Supplier number {1}
+error.proveedor.columna.razon.social.obigatorio=The business name is a required field
+error.proveedor.columna.correo.obigatorio=Email is a required field
+error.proveedor.num.campos=The row must contain {0} fields separated by (;)
+error.proveedor.bloqueo.lectura.archivo=The CSV file can not be read correctly.
+error.proveedor.consulta.detalle=Failed to see the details
+error.proveedor.num.cuenta.ya.existe=The number of account already exists for another supplier.
+error.proveedor.rfc.ya.existe=The Tax ID  already exists for another supplier.
+error.proveedor.correo.ya.existe=The email already exists for another supplier.
+bitacora.error.rango.fechas=Only ranges are available dates less than or equal to {0} days
+
+#Configuracion
+msg.configuracion.registro.ok=The setting is added.
+error.configuracion.existe=The configuration name already exists.
+error.configuracion.registro=Failed to save configuration.
+
+#Seguridad - Usuarios
+msg.registro.usuario.envio.notificacion=A notification email was sent to the account: {0}
+error.registro.usuario.datos.invalidos=Verify that all required fields contain some value.
+error.registro.usuario.envio.notificacion=An error occurred while sending mail notification to the user, please manually notify the following information: <br> Username: {0} <br> Password: {1}
+error.registro.usuario.datos.invalidos.rol.comercio.exterior=Enter at least one Infra Group Company to the role {0}.
+
+#Certificados PAC
+msg.certificado.pac.mensaje=The certificate is loaded correctly.
+
+#Generador de Identificadores
+error.generador.identificador.nombre=The sequence name already exists.
+error.generador.identificador.nombre.tabla=The name of the table is active.
+
+#Cambio de Contraeña
+msg.cuenta.cambio.password.ok=The password has been changed
+msg.cuenta.cambio.password.error=The password has not been changed
+msg.cuenta.cambio.password.actual.requerido=Insert password
+msg.cuenta.cambio.password.nueva.requerido=Insert new password
+msg.cuenta.cambio.password.nueva.confirmar.requerido=Rewrite new password
+msg.cuenta.cambio.password.nuevas.no.coinciden=New password does not match with its confirmation
+msg.cuenta.cambio.password.cerrar.sesion=You must log out to continue.
+msg.cuenta.cambio.password.solicitud.procesada=The request has been processed.
+error.cuenta.cambio.password=The captured password [{0}] does not meet the required conditions.
+msg.cuenta.cambio.password.solicitud.procesarPin=The request has been processed, please check your mail inbox, to get the pin to change the password.
+msg.cuenta.cambio.pin=PIN missing, it has been sent by email.
+
+#Envio agente Aduanal
+error.factura.envio.agencia.aduanal.comprobante=Error processing one document of ZIP file
+
+#Envio forwarder
+error.factura.envio.forwarder.respuesta.nula=No response in the validation of information
+
+error.accion.no.permitida=Action not allowed.
+error.cuenta=SEG 1000 - Error processing credentials.
+error.cuenta.vencida=SEG 1001 - Account expired.
+error.cuenta.bloqueada=SEG 1002 - Account locked.
+error.cuenta.no.login=SEG 1003 - Account without permission to authenticate.
+error.cuenta.login=SEG 1004 - No login information.
+error.cuenta.credenciales.invalidas=SEG 1005 - User and/or password is incorrect, please check.
+error.username.existe=The Username already exists.
+error.elegir.rol=You must choose at least one role.
+error.inesperado=An error occurred while processing the Document:&nbsp;
+error.ingreso.factura=Error in entering invoice information.
+error.ingreso.facturas=Error in entering invoices information.
+error.envio.factura=Failed to submit Invoice.
+error.envio.facturas=Failed to submit Invoices.
+error.proceso.factura=Could not process the invoice.
+error.proceso.comprobante=Could not process the receipt.
+error.proceso.facturas=Unable to process invoices.
+error.documento.req= The document type is required.
+error.archivo.pdf=The file must be of PDF type.
+error.cargar.comprobante=Error loading the invoice.
+error.falta.capturar=Foul capture:
+error.seleccione.tipo.addenda= Select the type of addenda that you want to generate.
+error.comprobante.incorrecto=Incorrect receipt.
+error.comprobante.buscar= Error finding receipt.
+error.rol.no.existe=There is no role {0}
+error.inesperado.general=An unexpected error: {0}
+error.catalogo.file=The file '{0}' is not the type CSV.
+error.catalogo.encoding.file=The file has a different encoding to {0}.
+error.contenido.vacio=Content empty.
+error.enviar.comprobante.sap.rechazo=An error occurred when consulting the receipt in SAP, rejected message:nbsp;
+error.enviar.comprobante.sap=An error occurred when sending the receipt to SAP:nbsp;
+error.consultar.comprobante.sap=An error occurred when consulting the receipt in SAP:nbsp;
+error.enviar.comprobante.sap.rechazo.tolerancia=The XML amounts do not fit and the difference is greater than the tolerance set. (Tolerance +/- {0})
+
+#RFC Receptor
+error.rfc.receptor.existe=There is another company with the same key (Tax ID)
+error.rfc.receptor.solicitud=Unable to process the request
+
+#Consulta Facturas
+msg.nombre.arcihvo.zip=digitalTaxReceipts.zip
+error.seleccionar.registro.descarga.zip=Lack select a row
+error.seleccionar.registro.descarga.zip.detalle=Please select at least one row to start downloading the ZIP file
+
+#Planta
+error.no.planta.existe=Plant Number {0} already exists in the catalog
+
+#Errores de validacion para envio de factura
+error.pdf=Charge PDF
+error.pdfAdicional=Charge aditional PDF
+error.sociedad=Select Society
+error.area=Select area
+error.responsable=Select responsable
+error.fechaFactura=Select date invoice
+error.concepto=Write concept
+error.subtotal=Write the subtotal
+error.impuesto=Select tax
+error.moneda=Select currency
+error.ordenes=Select the purchase orders
+error.xml=Charge XML
+error.factura=Write folio invoice
+
+orden.tipoDocumento.error=Document type is required.
+
+orden.ordenes.entrada=Solo se aceptan numeros separados por comas, sin espacios.
+
+proveedor.listado.carga.validacion=Data type error on line {0} and column {1}
+proveedor.listado.carga.validacion.columnas=The line {0} must have {1} columns

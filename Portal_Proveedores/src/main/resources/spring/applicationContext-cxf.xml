@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-4.0.xsd
+           http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+
+	<!-- activates annotations (@Service, @Component, @Autowired) -->
+	<context:component-scan base-package="com.infra.factura.business.ws" />
+
+	<jaxws:client id="consultaCfdiSatClient"
+		serviceClass="com.infra.factura.ws.IConsultaCFDIService"
+		address="https://consultaqr.facturaelectronica.sat.gob.mx/ConsultaCFDIService.svc" />
+
+	<bean id="validaFactura" class="com.infra.pac.ws.impl.ValidaFacturaPACImpl"
+		scope="prototype">
+	</bean>
+
+	<jaxws:endpoint id="validaComprobante" implementor="#validaFactura" address="/validarComprobante"/>
+</beans>

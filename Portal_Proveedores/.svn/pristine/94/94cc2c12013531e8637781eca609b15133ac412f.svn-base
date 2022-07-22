@@ -1,0 +1,258 @@
+/**
+ * ZfeSPorec.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeSPorec implements java.io.Serializable {
+	private java.lang.String ebeln;
+
+	private java.lang.String ebelp;
+
+	private java.lang.String mblnr;
+
+	private java.lang.String mjahr;
+
+	private java.lang.String mblpo;
+
+	private java.lang.String xblnr;
+
+	private java.math.BigDecimal wrbtr;
+
+	private java.math.BigDecimal menge;
+
+	public ZfeSPorec() {
+	}
+
+	public ZfeSPorec(java.lang.String ebeln, java.lang.String ebelp, java.lang.String mblnr, java.lang.String mjahr,
+			java.lang.String mblpo, java.lang.String xblnr, java.math.BigDecimal wrbtr, java.math.BigDecimal menge) {
+		this.ebeln = ebeln;
+		this.ebelp = ebelp;
+		this.mblnr = mblnr;
+		this.mjahr = mjahr;
+		this.mblpo = mblpo;
+		this.xblnr = xblnr;
+		this.wrbtr = wrbtr;
+		this.menge = menge;
+	}
+
+	/**
+	 * Gets the ebeln value for this ZfeSPorec.
+	 * 
+	 * @return ebeln
+	 */
+	public java.lang.String getEbeln() {
+		return ebeln;
+	}
+
+	/**
+	 * Sets the ebeln value for this ZfeSPorec.
+	 * 
+	 * @param ebeln
+	 */
+	public void setEbeln(java.lang.String ebeln) {
+		this.ebeln = ebeln;
+	}
+
+	/**
+	 * Gets the ebelp value for this ZfeSPorec.
+	 * 
+	 * @return ebelp
+	 */
+	public java.lang.String getEbelp() {
+		return ebelp;
+	}
+
+	/**
+	 * Sets the ebelp value for this ZfeSPorec.
+	 * 
+	 * @param ebelp
+	 */
+	public void setEbelp(java.lang.String ebelp) {
+		this.ebelp = ebelp;
+	}
+
+	/**
+	 * Gets the mblnr value for this ZfeSPorec.
+	 * 
+	 * @return mblnr
+	 */
+	public java.lang.String getMblnr() {
+		return mblnr;
+	}
+
+	/**
+	 * Sets the mblnr value for this ZfeSPorec.
+	 * 
+	 * @param mblnr
+	 */
+	public void setMblnr(java.lang.String mblnr) {
+		this.mblnr = mblnr;
+	}
+
+	/**
+	 * Gets the mjahr value for this ZfeSPorec.
+	 * 
+	 * @return mjahr
+	 */
+	public java.lang.String getMjahr() {
+		return mjahr;
+	}
+
+	/**
+	 * Sets the mjahr value for this ZfeSPorec.
+	 * 
+	 * @param mjahr
+	 */
+	public void setMjahr(java.lang.String mjahr) {
+		this.mjahr = mjahr;
+	}
+
+	/**
+	 * Gets the mblpo value for this ZfeSPorec.
+	 * 
+	 * @return mblpo
+	 */
+	public java.lang.String getMblpo() {
+		return mblpo;
+	}
+
+	/**
+	 * Sets the mblpo value for this ZfeSPorec.
+	 * 
+	 * @param mblpo
+	 */
+	public void setMblpo(java.lang.String mblpo) {
+		this.mblpo = mblpo;
+	}
+
+	/**
+	 * Gets the xblnr value for this ZfeSPorec.
+	 * 
+	 * @return xblnr
+	 */
+	public java.lang.String getXblnr() {
+		return xblnr;
+	}
+
+	/**
+	 * Sets the xblnr value for this ZfeSPorec.
+	 * 
+	 * @param xblnr
+	 */
+	public void setXblnr(java.lang.String xblnr) {
+		this.xblnr = xblnr;
+	}
+
+	/**
+	 * Gets the wrbtr value for this ZfeSPorec.
+	 * 
+	 * @return wrbtr
+	 */
+	public java.math.BigDecimal getWrbtr() {
+		return wrbtr;
+	}
+
+	/**
+	 * Sets the wrbtr value for this ZfeSPorec.
+	 * 
+	 * @param wrbtr
+	 */
+	public void setWrbtr(java.math.BigDecimal wrbtr) {
+		this.wrbtr = wrbtr;
+	}
+
+	/**
+	 * Gets the menge value for this ZfeSPorec.
+	 * 
+	 * @return menge
+	 */
+	public java.math.BigDecimal getMenge() {
+		return menge;
+	}
+
+	/**
+	 * Sets the menge value for this ZfeSPorec.
+	 * 
+	 * @param menge
+	 */
+	public void setMenge(java.math.BigDecimal menge) {
+		this.menge = menge;
+	}
+
+	private java.lang.Object __equalsCalc = null;
+
+	public synchronized boolean equals(java.lang.Object obj) {
+		if (!(obj instanceof ZfeSPorec))
+			return false;
+		ZfeSPorec other = (ZfeSPorec) obj;
+		if (obj == null)
+			return false;
+		if (this == obj)
+			return true;
+		if (__equalsCalc != null) {
+			return (__equalsCalc == obj);
+		}
+		__equalsCalc = obj;
+		boolean _equals;
+		_equals = true
+				&& ((this.ebeln == null && other.getEbeln() == null)
+						|| (this.ebeln != null && this.ebeln.equals(other.getEbeln())))
+				&& ((this.ebelp == null && other.getEbelp() == null)
+						|| (this.ebelp != null && this.ebelp.equals(other.getEbelp())))
+				&& ((this.mblnr == null && other.getMblnr() == null)
+						|| (this.mblnr != null && this.mblnr.equals(other.getMblnr())))
+				&& ((this.mjahr == null && other.getMjahr() == null)
+						|| (this.mjahr != null && this.mjahr.equals(other.getMjahr())))
+				&& ((this.mblpo == null && other.getMblpo() == null)
+						|| (this.mblpo != null && this.mblpo.equals(other.getMblpo())))
+				&& ((this.xblnr == null && other.getXblnr() == null)
+						|| (this.xblnr != null && this.xblnr.equals(other.getXblnr())))
+				&& ((this.wrbtr == null && other.getWrbtr() == null)
+						|| (this.wrbtr != null && this.wrbtr.equals(other.getWrbtr())))
+				&& ((this.menge == null && other.getMenge() == null)
+						|| (this.menge != null && this.menge.equals(other.getMenge())));
+		__equalsCalc = null;
+		return _equals;
+	}
+
+	private boolean __hashCodeCalc = false;
+
+	public synchronized int hashCode() {
+		if (__hashCodeCalc) {
+			return 0;
+		}
+		__hashCodeCalc = true;
+		int _hashCode = 1;
+		if (getEbeln() != null) {
+			_hashCode += getEbeln().hashCode();
+		}
+		if (getEbelp() != null) {
+			_hashCode += getEbelp().hashCode();
+		}
+		if (getMblnr() != null) {
+			_hashCode += getMblnr().hashCode();
+		}
+		if (getMjahr() != null) {
+			_hashCode += getMjahr().hashCode();
+		}
+		if (getMblpo() != null) {
+			_hashCode += getMblpo().hashCode();
+		}
+		if (getXblnr() != null) {
+			_hashCode += getXblnr().hashCode();
+		}
+		if (getWrbtr() != null) {
+			_hashCode += getWrbtr().hashCode();
+		}
+		if (getMenge() != null) {
+			_hashCode += getMenge().hashCode();
+		}
+		__hashCodeCalc = false;
+		return _hashCode;
+	}
+
+}

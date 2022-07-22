@@ -1,0 +1,109 @@
+///*
+// * To change this license header, choose License Headers in Project Properties.
+// * To change this template file, choose Tools | Templates
+// * and open the template in the editor.
+// */
+//
+//package com.infra.vis.util;
+//
+//import java.io.InputStream;
+//import javax.xml.bind.JAXBContext;
+//import javax.xml.bind.JAXBException;
+//import javax.xml.bind.Unmarshaller;
+//import javax.xml.transform.Source;
+//import javax.xml.validation.SchemaFactory;
+//import com.prospectiva.cfd.util.CFDVarUtil;
+//import com.prospectiva.cfd.ver2.CompBasic2;
+//import com.prospectiva.cfd.ver3.CompBasic3;
+//
+///**
+// *
+// * @author rlagunas
+// */
+//public class CFDVarUtilLocal { 
+//      
+//    private static final String EMPTY = "";
+//    public static final String LENG_SCHEM ="http://www.w3.org/2001/XMLSchema";
+//	
+//    public static String getVersion2(final InputStream inputFile) throws Exception {
+//        try {
+//            final JAXBContext jaxbContext = JAXBContext.newInstance(CompBasic2.class);
+//            final Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+//            final CompBasic2 compDummy = (CompBasic2)jaxbUnmarshaller.unmarshal(inputFile);
+//            return compDummy.getVersion();
+//        } catch (JAXBException jaxexpo) {
+//            System.out.println("::: getVersion2 :::: ");
+//            jaxexpo.printStackTrace();
+//            System.out.println("::: getVersion2 :::: ");
+//            
+//            return "";
+//        }
+//        
+//    }
+//    
+//    public static String getVersion3(final InputStream inputFile) throws Exception {
+//        try {
+//            final JAXBContext jaxbContext = JAXBContext.newInstance(CompBasic3.class);
+//            final Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+//            final CompBasic3 compDummy = (CompBasic3)jaxbUnmarshaller.unmarshal(inputFile);
+//            return compDummy.getVersion();
+//        } catch (JAXBException jaxexpo) {
+//            System.out.println("::: getVersion3 :::: ");
+//            jaxexpo.printStackTrace();
+//            
+//            System.out.println("::: getVersion3 :::: ");
+//            return "";
+//            
+//        }
+//        
+//    }
+//    
+//    public static boolean tieneEsq(final InputStream inputFile, final Source[] esquemas, final Class<?> claze) throws Exception {
+//        try {
+//            final JAXBContext jaxbContext = JAXBContext.newInstance(claze);
+//            final Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+//            jaxbUnmarshaller.setSchema(
+//                    SchemaFactory.newInstance(CFDVarUtil.LENG_SCHEM).newSchema(esquemas));
+//            final Object objetoX = jaxbUnmarshaller.unmarshal(inputFile);
+//            if(null != objetoX){
+//                return Boolean.TRUE;
+//            }
+//        } catch (JAXBException jaxexpo) {
+//            final String messExpo = CFDVarUtil.detLocMess(jaxexpo);
+//            if(messExpo.contains("cvc-complex-type.2.4.a")
+//                    || messExpo.contains("Invalid content was found starting with element")
+//                    || messExpo.contains("Se ha encontrado contenido no válido a partir del elemento")){
+//                return Boolean.FALSE;
+//            }
+//        }
+//        return Boolean.FALSE;
+//    }
+//    
+//    public static boolean tieneEsq2(final InputStream inputFile, final Source[] esquemas) throws Exception {
+//        return CFDVarUtil.tieneEsq(inputFile, esquemas, CompBasic2.class); 
+//    }
+//    
+//    public static boolean tieneEsq3(final InputStream inputFile, final Source[] esquemas) throws Exception {
+//        return CFDVarUtil.tieneEsq(inputFile, esquemas, CompBasic3.class); 
+//    }
+//    
+//    public static String detLocMess(final JAXBException expo){
+//        final String mess = CFDVarUtil.getLocMess(expo);
+//        if(!"".equals(mess)){
+//            return mess;
+//        } else if(null != expo.getLinkedException()){
+//            return CFDVarUtil.getLocMess((Exception) expo.getLinkedException());
+//        } else if(null != expo.getCause()){
+//            return CFDVarUtil.getLocMess((Exception) expo.getCause());
+//        }
+//        return "";
+//    }
+//    
+//    public static String getLocMess(final Exception expo){
+//        if(null != expo.getLocalizedMessage() && 
+//                !"".equals(expo.getLocalizedMessage())){
+//            return expo.getLocalizedMessage();
+//        }
+//        return ""; 
+//    }
+//}

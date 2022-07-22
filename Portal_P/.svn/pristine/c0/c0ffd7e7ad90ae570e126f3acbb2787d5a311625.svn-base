@@ -1,0 +1,314 @@
+/**
+ * ZfeCsocAreaR.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeCsocAreaR  implements java.io.Serializable {
+    private java.lang.String mandt;
+
+    private java.lang.String bukrs;
+
+    private java.lang.String area;
+
+    private java.lang.String gerid;
+
+    private java.lang.String gerds;
+
+    private java.lang.String gerus;
+
+    private java.lang.String asius;
+
+    private java.lang.String gerem;
+
+    private java.lang.String asiem;
+
+    public ZfeCsocAreaR() {
+    }
+
+    public ZfeCsocAreaR(
+           java.lang.String mandt,
+           java.lang.String bukrs,
+           java.lang.String area,
+           java.lang.String gerid,
+           java.lang.String gerds,
+           java.lang.String gerus,
+           java.lang.String asius,
+           java.lang.String gerem,
+           java.lang.String asiem) {
+           this.mandt = mandt;
+           this.bukrs = bukrs;
+           this.area = area;
+           this.gerid = gerid;
+           this.gerds = gerds;
+           this.gerus = gerus;
+           this.asius = asius;
+           this.gerem = gerem;
+           this.asiem = asiem;
+    }
+
+
+    /**
+     * Gets the mandt value for this ZfeCsocAreaR.
+     * 
+     * @return mandt
+     */
+    public java.lang.String getMandt() {
+        return mandt;
+    }
+
+
+    /**
+     * Sets the mandt value for this ZfeCsocAreaR.
+     * 
+     * @param mandt
+     */
+    public void setMandt(java.lang.String mandt) {
+        this.mandt = mandt;
+    }
+
+
+    /**
+     * Gets the bukrs value for this ZfeCsocAreaR.
+     * 
+     * @return bukrs
+     */
+    public java.lang.String getBukrs() {
+        return bukrs;
+    }
+
+
+    /**
+     * Sets the bukrs value for this ZfeCsocAreaR.
+     * 
+     * @param bukrs
+     */
+    public void setBukrs(java.lang.String bukrs) {
+        this.bukrs = bukrs;
+    }
+
+
+    /**
+     * Gets the area value for this ZfeCsocAreaR.
+     * 
+     * @return area
+     */
+    public java.lang.String getArea() {
+        return area;
+    }
+
+
+    /**
+     * Sets the area value for this ZfeCsocAreaR.
+     * 
+     * @param area
+     */
+    public void setArea(java.lang.String area) {
+        this.area = area;
+    }
+
+
+    /**
+     * Gets the gerid value for this ZfeCsocAreaR.
+     * 
+     * @return gerid
+     */
+    public java.lang.String getGerid() {
+        return gerid;
+    }
+
+
+    /**
+     * Sets the gerid value for this ZfeCsocAreaR.
+     * 
+     * @param gerid
+     */
+    public void setGerid(java.lang.String gerid) {
+        this.gerid = gerid;
+    }
+
+
+    /**
+     * Gets the gerds value for this ZfeCsocAreaR.
+     * 
+     * @return gerds
+     */
+    public java.lang.String getGerds() {
+        return gerds;
+    }
+
+
+    /**
+     * Sets the gerds value for this ZfeCsocAreaR.
+     * 
+     * @param gerds
+     */
+    public void setGerds(java.lang.String gerds) {
+        this.gerds = gerds;
+    }
+
+
+    /**
+     * Gets the gerus value for this ZfeCsocAreaR.
+     * 
+     * @return gerus
+     */
+    public java.lang.String getGerus() {
+        return gerus;
+    }
+
+
+    /**
+     * Sets the gerus value for this ZfeCsocAreaR.
+     * 
+     * @param gerus
+     */
+    public void setGerus(java.lang.String gerus) {
+        this.gerus = gerus;
+    }
+
+
+    /**
+     * Gets the asius value for this ZfeCsocAreaR.
+     * 
+     * @return asius
+     */
+    public java.lang.String getAsius() {
+        return asius;
+    }
+
+
+    /**
+     * Sets the asius value for this ZfeCsocAreaR.
+     * 
+     * @param asius
+     */
+    public void setAsius(java.lang.String asius) {
+        this.asius = asius;
+    }
+
+
+    /**
+     * Gets the gerem value for this ZfeCsocAreaR.
+     * 
+     * @return gerem
+     */
+    public java.lang.String getGerem() {
+        return gerem;
+    }
+
+
+    /**
+     * Sets the gerem value for this ZfeCsocAreaR.
+     * 
+     * @param gerem
+     */
+    public void setGerem(java.lang.String gerem) {
+        this.gerem = gerem;
+    }
+
+
+    /**
+     * Gets the asiem value for this ZfeCsocAreaR.
+     * 
+     * @return asiem
+     */
+    public java.lang.String getAsiem() {
+        return asiem;
+    }
+
+
+    /**
+     * Sets the asiem value for this ZfeCsocAreaR.
+     * 
+     * @param asiem
+     */
+    public void setAsiem(java.lang.String asiem) {
+        this.asiem = asiem;
+    }
+
+    private java.lang.Object __equalsCalc = null;
+    public synchronized boolean equals(java.lang.Object obj) {
+        if (!(obj instanceof ZfeCsocAreaR)) return false;
+        ZfeCsocAreaR other = (ZfeCsocAreaR) obj;
+        if (obj == null) return false;
+        if (this == obj) return true;
+        if (__equalsCalc != null) {
+            return (__equalsCalc == obj);
+        }
+        __equalsCalc = obj;
+        boolean _equals;
+        _equals = true && 
+            ((this.mandt==null && other.getMandt()==null) || 
+             (this.mandt!=null &&
+              this.mandt.equals(other.getMandt()))) &&
+            ((this.bukrs==null && other.getBukrs()==null) || 
+             (this.bukrs!=null &&
+              this.bukrs.equals(other.getBukrs()))) &&
+            ((this.area==null && other.getArea()==null) || 
+             (this.area!=null &&
+              this.area.equals(other.getArea()))) &&
+            ((this.gerid==null && other.getGerid()==null) || 
+             (this.gerid!=null &&
+              this.gerid.equals(other.getGerid()))) &&
+            ((this.gerds==null && other.getGerds()==null) || 
+             (this.gerds!=null &&
+              this.gerds.equals(other.getGerds()))) &&
+            ((this.gerus==null && other.getGerus()==null) || 
+             (this.gerus!=null &&
+              this.gerus.equals(other.getGerus()))) &&
+            ((this.asius==null && other.getAsius()==null) || 
+             (this.asius!=null &&
+              this.asius.equals(other.getAsius()))) &&
+            ((this.gerem==null && other.getGerem()==null) || 
+             (this.gerem!=null &&
+              this.gerem.equals(other.getGerem()))) &&
+            ((this.asiem==null && other.getAsiem()==null) || 
+             (this.asiem!=null &&
+              this.asiem.equals(other.getAsiem())));
+        __equalsCalc = null;
+        return _equals;
+    }
+
+    private boolean __hashCodeCalc = false;
+    public synchronized int hashCode() {
+        if (__hashCodeCalc) {
+            return 0;
+        }
+        __hashCodeCalc = true;
+        int _hashCode = 1;
+        if (getMandt() != null) {
+            _hashCode += getMandt().hashCode();
+        }
+        if (getBukrs() != null) {
+            _hashCode += getBukrs().hashCode();
+        }
+        if (getArea() != null) {
+            _hashCode += getArea().hashCode();
+        }
+        if (getGerid() != null) {
+            _hashCode += getGerid().hashCode();
+        }
+        if (getGerds() != null) {
+            _hashCode += getGerds().hashCode();
+        }
+        if (getGerus() != null) {
+            _hashCode += getGerus().hashCode();
+        }
+        if (getAsius() != null) {
+            _hashCode += getAsius().hashCode();
+        }
+        if (getGerem() != null) {
+            _hashCode += getGerem().hashCode();
+        }
+        if (getAsiem() != null) {
+            _hashCode += getAsiem().hashCode();
+        }
+        __hashCodeCalc = false;
+        return _hashCode;
+    }
+
+}

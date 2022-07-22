@@ -1,0 +1,172 @@
+package com.infra.vis.dto;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+import com.infra.vis.util.TextUtil;
+
+public class ReportPrint implements Serializable {
+
+    private static final long serialVersionUID = 2818535565124886138L;
+
+    private String dunit;
+    private String eanval;
+    private String codigo;
+    private String descrip;
+    private Double cantid;
+    private String unidad;
+    private String aduana;
+    private String predial;
+    private String complemento;
+    private String parte;
+    private BigDecimal preciunit;
+    private BigDecimal impBruto;
+    private BigDecimal descuen;
+    private BigDecimal impuesto;
+    private BigDecimal importe;
+
+    public String getDunit() {
+        return dunit;
+    }
+
+    public void setDunit(String dunit) {
+        this.dunit = dunit;
+    }
+
+    public String getEanval() {
+        return eanval;
+    }
+
+    public void setEanval(String eanval) {
+        this.eanval = eanval;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+
+    public String getDescrip() {
+        return descrip;
+    }
+
+    public void setDescrip(String descrip) {
+        this.descrip = descrip;
+    }
+
+    public Double getCantid() {
+        return cantid;
+    }
+
+    public void setCantid(Double cantid) {
+        this.cantid = cantid;
+    }
+
+    public String getUnidad() {
+        return unidad;
+    }
+
+    public void setUnidad(String unidad) {
+        this.unidad = unidad;
+    }
+
+    public BigDecimal getPreciunit() {
+        return preciunit;
+    }
+
+    public void setPreciunit(BigDecimal preciunit) {
+        this.preciunit = preciunit;
+    }
+
+    public BigDecimal getImpBruto() {
+        return impBruto;
+    }
+
+    public void setImpBruto(BigDecimal impBruto) {
+        this.impBruto = impBruto;
+    }
+
+    public BigDecimal getDescuen() {
+        return descuen;
+    }
+
+    public void setDescuen(BigDecimal descuen) {
+        this.descuen = descuen;
+    }
+
+    public BigDecimal getImpuesto() {
+        return impuesto;
+    }
+
+    public void setImpuesto(BigDecimal impuesto) {
+        this.impuesto = impuesto;
+    }
+
+    public BigDecimal getImporte() {
+        return importe;
+    }
+
+    public void setImporte(BigDecimal importe) {
+        this.importe = importe;
+    }
+
+    public String getAduana() {
+        return aduana;
+    }
+
+    public void setAduana(String aduana) {
+        this.aduana = aduana;
+    }
+
+    public String getPredial() {
+        return predial;
+    }
+
+    public void setPredial(String predial) {
+        this.predial = predial;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    public String getParte() {
+        return parte;
+    }
+
+    public void setParte(String parte) {
+        this.parte = parte;
+    }
+
+    public String getDunean() {
+        final StringBuilder cadena = new StringBuilder();
+        if (TextUtil.isUsableText(dunit)) {
+            cadena.append(dunit);
+        }
+        cadena.append(TextUtil.NEOLINE);
+        if (TextUtil.isUsableText(eanval)) {
+            cadena.append(eanval);
+        }
+        return cadena.toString();
+    }
+
+    public String getCantidunit() {
+        final StringBuilder cadena = new StringBuilder();
+        if (null != cantid) {
+            cadena.append(cantid);
+        }
+        cadena.append(TextUtil.SPACE);
+        if (null != unidad) {
+            cadena.append(unidad);
+        }
+        return cadena.toString();
+    }
+
+}

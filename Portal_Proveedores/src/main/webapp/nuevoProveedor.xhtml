@@ -1,0 +1,583 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"> 
+      
+<f:view contentType="text/html" locale="#{language.locale}">
+	<h:head>
+		<title>#{msg['app.title']}</title>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+		<meta http-equiv="Cache-Control"
+			content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		
+		
+
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+		<meta name="Author" content="Infra Group" />
+		<meta name="description" content="Portal de Proveedores" />
+
+		<link rel="Shortcut Icon"
+			href="#{request.contextPath}/resources/images/favicon.ico" />
+
+		<h:outputScript library="javascript" name="calendar-es.js" />
+		<h:outputScript library="javascript" name="ajax.js" />
+		<!-- 		<h:outputStylesheet library="css" name="main.css" /> -->
+		<h:outputStylesheet library="css" name="images.css" />
+
+
+		<f:facet name="first">
+			<h:outputStylesheet library="css" name="main.css" />
+		</f:facet>
+
+		<script type="text/javascript">
+			function start() {
+				PF('statusDialog').show();
+			}
+
+			function stop() {
+				PF('statusDialog').hide();
+			}
+		</script>
+	</h:head>
+	<h:body>
+
+		<!-- <f:ajax event="load" listener="#{bean.onload}" /> -->
+		<f:ajax event="load" listener="#{AltaProveedorMB.onload}" />
+		<f:facet name="last">
+			<h:outputStylesheet library="css" name="style.css" />
+		</f:facet>
+		<div style="width: 100%; z-index: -1">
+			<div id="i18n"
+				style="height: 30px !important; background-color: #283f69 !important; color: #fff !important;">
+				<div class="language-object"
+					style="margin-top: -1px; height: 30px; !important">
+					<h:form>
+						<p:dialog id="dlg_error" widgetVar="wid_error" modal="true"
+							draggable="false" closable="false" resizable="false" width="30%"
+							header="Hubo error en la transacci&oacute;n">
+							<h:form id="frm_error">
+								<p:panelGrid styleClass="tbl_formulario" style="width: 100%;">
+									<p:row>
+										<p:column>
+											<p:messages globalOnly="false" autoUpdate="true"
+												severity="info,error,warning" showSummary="false"
+												showDetail="true" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column style="text-align: right;">
+											<p:commandButton value="Aceptar" process="@this"
+												partialSubmit="true" update="@this"
+												onclick="PF('wid_error').hide();" type="" />
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</h:form>
+						</p:dialog>
+						<span title="#{msg['app.idioma.english']}"
+							class="#{language.language eq 'en' ? 'Language selected' : 'Language'}">
+							&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <p:commandLink
+								style="color: #fff !important;" id="button_en_us"
+								actionListener="#{language.setEnglish}" ajax="false">
+								<p:outputLabel value="ENGLISH"
+									styleClass="#{language.language ne 'en' ? 'textoCursiva' : 'textoNegrita'}" />
+							</p:commandLink>
+						</span>
+						<span title="#{msg['app.idioma.espanol']}"
+							class="#{language.language eq 'es' ? 'Language selected' : 'Language'}">
+							&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; <p:commandLink
+								style="color: #fff !important;" id="button_es_mx"
+								actionListener="#{language.setSpanish}" ajax="false">
+								<p:outputLabel value="ESPAÑOL"
+									styleClass="#{language.language ne 'es' ? 'textoCursiva' : 'textoNegrita'}" />
+							</p:commandLink> &nbsp;&nbsp;&nbsp;
+						</span>
+					</h:form>
+				</div>
+			</div>
+			<p:graphicImage name="bannerEmpresa.png" library="images"
+				height="140px" width="100%" />
+
+			<div style="height: 5px;" />
+			<div style="margin-top: 10px;">
+				<div style="margin-left: 0px">
+					<f:event type="preRenderView" listener="#{altaProveedorMB.reset()}"
+						update="frm_nuevo_proveedor" />
+					<p:messages id="message" globalOnly="false" closable="true"
+						showDetail="true" />
+					<p:panel header="#{msg['proveedor.nuevo.titulo']}">
+						<h:form enctype="multipart/form-data" id="frm_nuevo_proveedor">
+
+							<h:panelGrid columns="6">
+
+								<h:outputText value="#{msg['cliente.nombre.completo']}"
+									styleClass="obligatorio" />
+								<p:selectOneMenu id="cmb_sociedad"
+									value="#{altaProveedorMB.sociedad}" styleClass="selectStatic"
+									converter="omnifaces.SelectItemsConverter" filter="true"
+									filterMatchMode="contains">
+									<f:selectItem itemValue="#{null}"
+										itemLabel="#{msg['seleccione']}" />
+									<f:selectItems value="#{altaProveedorMB.sociedades}" var="soc"
+										itemLabel="#{soc.BUKRS} / #{soc.BUTXT}" itemValue="#{soc}" />
+									<p:ajax partialSubmit="true" process="@this" />
+								</p:selectOneMenu>
+
+
+								<h:outputText value="#{msg['proveedor.nuevo.rfc']}"
+									styleClass="obligatorio" />
+								<p:inputText value="#{altaProveedorMB.rfc}" maxlength="13"  oninput="this.value = this.value.toUpperCase()" validatorMessage="La longitud minima del RFC debe de ser 12" >
+									<f:validateLength minimum="12" />
+									<p:ajax partialSubmit="true" process="@this"
+										update=":message pnl_dom_arc fls_info"
+										listener="#{altaProveedorMB.validaTipoPersona()}" />
+								</p:inputText>
+
+								<h:outputText value="#{msg['proveedor.nuevo.correo_infra']}"
+									styleClass="obligatorio" />
+								<p:inputText maxlength="241" value="#{altaProveedorMB.correoContactoInfra}" required="true" requiredMessage='El campo "Correo electrónico contacto INFRA" no debe estar vacío.'>
+									<p:ajax partialSubmit="true" process="@this" update=":message"
+										listener="#{altaProveedorMB.validaCorreoContacto()}" />
+								</p:inputText>
+
+							</h:panelGrid>
+
+
+							<p:fieldset legend="#{msg['cuenta.informacion']}" id="fls_info">
+
+								<h:panelGrid columns="4">
+
+									<h:outputText value="#{msg['proveedor.nuevo.razon_social']}"
+										styleClass="obligatorio" />
+									<p:inputText maxlength="120" value="#{altaProveedorMB.razonSocial}" required="true" requiredMessage='El campo "Razon Social" no debe estar vacío.' />
+
+									<h:outputText value="#{msg['proveedor.nuevo.representante']}"
+										id="repO" styleClass="obligatorio"
+										rendered="#{altaProveedorMB.isMoral()}" />
+									<p:inputText value="#{altaProveedorMB.nombreRepresentante}"
+										id="repI" rendered="#{altaProveedorMB.isMoral()}" required="true" requiredMessage='El campo "Nombre del Representante Legal" no debe estar vacío.'  />
+
+									<h:outputText value="#{msg['proveedor.nuevo.cuenta_bancaria']}"
+										styleClass="obligatorio"  />
+									<p:inputText onkeypress="return /[0-9]/i.test(event.key)" value="#{altaProveedorMB.cuenta}" maxlength="18" required="true"
+										requiredMessage='El campo "Cuenta Bancaria o CLABE" no debe estar vacío.'
+									 	validatorMessage="La longitud minima del Cuenta Bancaria o CLABE debe de ser 18">
+											<f:validateLength minimum="18" />
+											<p:ajax partialSubmit="true" process="@this" update=":message"
+												listener="#{altaProveedorMB.validaCLABE()}" />
+											
+									</p:inputText>
+									
+									<h:outputText
+										value="#{msg['proveedor.nuevo.correo_proveedor']}"
+										styleClass="obligatorio" />
+									<p:inputText maxlength="241"  value="#{altaProveedorMB.correoProveedor}" required="true" requiredMessage='El campo "Correo electrónico proveedor" no debe estar vacío.'>
+										<p:ajax partialSubmit="true" process="@this" update=":message"
+											listener="#{altaProveedorMB.validaCorreoProveedor()}" />
+
+									</p:inputText>
+
+								</h:panelGrid>
+							</p:fieldset>
+
+							<h:panelGrid columns="2" id="pnl_dom_arc">
+
+								<p:fieldset legend="#{msg['proveedor.nuevo.domicilio']}">
+
+									<h:panelGrid columns="4">
+
+										<h:outputText value="#{msg['proveedor.estado']}"
+											styleClass="obligatorio" />
+										<p:selectOneMenu id="cmb_estado"
+											value="#{altaProveedorMB.region}" styleClass="selectStatic"
+											converter="omnifaces.SelectItemsConverter" filter="true"
+											filterMatchMode="contains">
+											<f:selectItem itemValue="#{null}"
+												itemLabel="#{msg['seleccione']}" />
+											<f:selectItems value="#{altaProveedorMB.regiones}" var="reg"
+												itemLabel="#{reg.REGION} / #{reg.TEXTO}" itemValue="#{reg}" />
+											<p:ajax partialSubmit="true" process="@this" />
+										</p:selectOneMenu>
+
+										<h:outputText value="#{msg['proveedor.calle']}"
+											styleClass="obligatorio" />
+										<p:inputText maxlength="60" value="#{altaProveedorMB.calle}" required="true" requiredMessage='El campo "Calle" no debe estar vacío.' />
+										
+										<h:outputText value="#{msg['proveedor.numero']}"
+											styleClass="obligatorio" />
+										<p:inputText maxlength="10" value="#{altaProveedorMB.numero}" required="true" requiredMessage='El campo "No. (Numero)" no debe estar vacío.' />
+										
+										
+										<h:outputText value="#{msg['proveedor.cp']}"
+											styleClass="obligatorio" />
+										<p:inputText maxlength="5" onkeypress="return /[0-9]/i.test(event.key)"  value="#{altaProveedorMB.cp}" required="true" requiredMessage='El campo "Codigo Postal" no debe estar vacío.'>
+											<p:ajax partialSubmit="true" process="@this" update=":message"
+												listener="#{altaProveedorMB.validaCodigoPostal()}" />
+	
+										</p:inputText>
+										<h:outputText value="#{msg['proveedor.colonia']}"
+											styleClass="obligatorio" />
+										<p:inputText maxlength="40"  value="#{altaProveedorMB.colonia}" required="true" requiredMessage='El campo "Colonia" no debe estar vacío.'/>
+										
+										<h:outputText value="#{msg['proveedor.municipio']}"
+											styleClass="obligatorio" />
+										<p:inputText maxlength="40" value="#{altaProveedorMB.municipio}" styleClass="Matchalert" required="true" requiredMessage='El campo "Municipio o delegación" no debe estar vacío.' />
+
+									</h:panelGrid>
+								</p:fieldset>
+
+								<p:fieldset legend="PDF #{msg['cargar.archivos.seleccionados']}">
+
+									<h:panelGrid columns="2">
+
+										<h:outputText value="#{msg['proveedor.nuevo.archivo_acta']}"
+											styleClass="obligatorio"
+											rendered="#{altaProveedorMB.isMoral()}" />
+										<p:fileUpload value="#{altaProveedorMB.acta}" mode="simple"
+											rendered="#{altaProveedorMB.isMoral()}" />
+
+										<h:outputText value="#{msg['proveedor.nuevo.archivo_poder']}"
+											styleClass="obligatorio"
+											rendered="#{altaProveedorMB.isMoral()}" />
+										<p:fileUpload value="#{altaProveedorMB.poder}" mode="simple"
+											rendered="#{altaProveedorMB.isMoral()}" />
+
+										<h:outputText
+											value="#{msg['proveedor.nuevo.archivo_situacion']}"
+											styleClass="obligatorio"/>
+										<p:fileUpload value="#{altaProveedorMB.situacion}"
+											mode="simple"/>
+
+										<h:outputText value="#{msg['proveedor.nuevo.archivo_estado']}"
+											styleClass="obligatorio" />
+										<p:fileUpload value="#{altaProveedorMB.estadoCuenta}"
+											mode="simple" />
+
+										<h:outputText value="#{msg['proveedor.nuevo.archivo_ine']}"
+											styleClass="obligatorio"/>
+										<p:fileUpload value="#{altaProveedorMB.ine}" mode="simple"/>
+
+										<h:outputText value="#{msg['proveedor.nuevo.archivo_comprobante']}"
+											styleClass="obligatorio" />
+										<p:fileUpload value="#{altaProveedorMB.comprobante}"
+											mode="simple" />
+
+										<h:outputText value="#{msg['proveedor.nuevo.archivo_formato']}"
+											styleClass="obligatorio" />
+										<p:fileUpload value="#{altaProveedorMB.formato}"
+											mode="simple" />
+
+									</h:panelGrid>
+								</p:fieldset>
+
+							</h:panelGrid>
+
+							<p:commandButton value="#{msg['accion.guardar']}"
+								action="#{altaProveedorMB.guardarProveedor()}" ajax="false"
+								update="@form" onclick="PF('statusDialog').show();"
+								oncomplete="PF('statusDialog').hide();" />
+
+							<p:commandButton value="#{msg['accion.cancelar']}" ajax="true"
+								onclick="javascript:window.location.href='#{request.contextPath}/index.do';" />
+
+							<p:dialog id="dlg_prueba" widgetVar="wid_prueba" modal="true"
+								draggable="false" closable="false" resizable="false" width="30%"
+								header="Hubo error en la transacci&oacute;n">
+								<h:form id="frm_error">
+									<p:panelGrid styleClass="tbl_formulario" style="width: 100%;">
+										<p:row>
+											<p:column>
+												<p:messages globalOnly="false" autoUpdate="true"
+													severity="info,error,warning" showSummary="false"
+													showDetail="true" />
+											</p:column>
+										</p:row>
+										<p:row>
+											<p:column style="text-align: right;">
+												<p:commandButton value="Aceptar" process="@this"
+													partialSubmit="true" update="@this"
+													onclick="PF('wid_prueba').hide();" type="" />
+											</p:column>
+										</p:row>
+									</p:panelGrid>
+								</h:form>
+							</p:dialog>
+
+						</h:form>
+					</p:panel>
+
+				</div>
+			</div>
+		</div>
+
+	</h:body>
+	
+<script type="text/javascript">  
+	setInterval(function() {
+		function setInputFilter(textbox, inputFilter) {
+			  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+			    textbox.addEventListener(event, function() {
+			    	
+			      if (inputFilter(this.value)) {
+			        this.oldValue = this.value;
+			        this.oldSelectionStart = this.selectionStart;
+			        this.oldSelectionEnd = this.selectionEnd; 
+			      }
+			      
+			      else if (this.hasOwnProperty("oldValue")) {
+			        this.value = this.oldValue;
+			        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd); 
+			      } 
+			      
+			      else { 
+			        this.value = "";
+			      }
+			      
+			    });
+			  });
+		}
+		
+		setInputFilter(document.getElementById("frm_nuevo_proveedor:j_idt35"), function(value) {
+			var z = /(^$|^[^\W_]+$)/;
+			if(!value.match(z)){ 
+				alert("No se permiten caracteres especiales");
+			}
+			else{
+				var TMPRFC = document.getElementById("frm_nuevo_proveedor:j_idt35").value;
+				let NEWRFC = TMPRFC.toUpperCase(); 
+				console.log(TMPRFC);
+				document.getElementById("frm_nuevo_proveedor:j_idt35").value = NEWRFC;
+ 				return  /(^$|^[^\W_]+$)/i.test(value); 
+			}
+		});
+	}, 1000);	
+</script>  
+
+<script type="text/javascript">  
+	setInterval(function() {
+		function setInputFilter(textbox, inputFilter) {
+			  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+			    textbox.addEventListener(event, function() {
+			    	
+			      if (inputFilter(this.value)) {
+			        this.oldValue = this.value;
+			        this.oldSelectionStart = this.selectionStart;
+			        this.oldSelectionEnd = this.selectionEnd; 
+			      }
+			      
+			      else if (this.hasOwnProperty("oldValue")) {
+			        this.value = this.oldValue;
+			        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd); 
+			      } 
+			      
+			      else { 
+			        this.value = "";
+			      }
+			      
+			    });
+			  });
+		}
+		
+		setInputFilter(document.getElementById("frm_nuevo_proveedor:j_idt59"), function(value) {
+			var z =  /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-\s]+$)/i;
+			if(!value.match(z)){ 
+				alert("No se permiten caracteres especiales");
+			}
+			else{
+ 				return   /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-\s]+$)/i.test(value); 
+			}
+		});
+	}, 1000);	
+</script>  
+
+<script type="text/javascript">  
+	setInterval(function() {
+		function setInputFilter(textbox, inputFilter) {
+			  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+			    textbox.addEventListener(event, function() {
+			    	
+			      if (inputFilter(this.value)) {
+			        this.oldValue = this.value;
+			        this.oldSelectionStart = this.selectionStart;
+			        this.oldSelectionEnd = this.selectionEnd; 
+			      }
+			      
+			      else if (this.hasOwnProperty("oldValue")) {
+			        this.value = this.oldValue;
+			        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd); 
+			      } 
+			      
+			      else { 
+			        this.value = "";
+			      }
+			      
+			    });
+			  });
+		}
+		
+		setInputFilter(document.getElementById("frm_nuevo_proveedor:j_idt57"), function(value) {
+			var z =  /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-\s]+$)/i;
+			if(!value.match(z)){ 
+				alert("No se permiten caracteres especiales");
+			}
+			else{
+ 				return   /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-\s]+$)/i.test(value); 
+			}
+		});
+	}, 1000);	
+</script>  
+
+<script type="text/javascript">  
+	setInterval(function() {
+		function setInputFilter(textbox, inputFilter) {
+			  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+			    textbox.addEventListener(event, function() {
+			    	
+			      if (inputFilter(this.value)) {
+			        this.oldValue = this.value;
+			        this.oldSelectionStart = this.selectionStart;
+			        this.oldSelectionEnd = this.selectionEnd; 
+			      }
+			      
+			      else if (this.hasOwnProperty("oldValue")) {
+			        this.value = this.oldValue;
+			        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd); 
+			      } 
+			      
+			      else { 
+			        this.value = "";
+			      }
+			      
+			    });
+			  });
+		}
+		
+		setInputFilter(document.getElementById("frm_nuevo_proveedor:j_idt40"), function(value) {
+			var z =  /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-\s]+$)/i;
+			if(!value.match(z)){ 
+				alert("No se permiten caracteres especiales");
+			}
+			else{
+ 				return   /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-\s]+$)/i.test(value); 
+			}
+		});
+	}, 1000);
+</script>  
+<script type="text/javascript">  
+	setInterval(function() {
+		function setInputFilter(textbox, inputFilter) {
+			  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+			    textbox.addEventListener(event, function() {
+			    	
+			      if (inputFilter(this.value)) {
+			        this.oldValue = this.value;
+			        this.oldSelectionStart = this.selectionStart;
+			        this.oldSelectionEnd = this.selectionEnd; 
+			      }
+			      
+			      else if (this.hasOwnProperty("oldValue")) {
+			        this.value = this.oldValue;
+			        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd); 
+			      } 
+			      
+			      else { 
+			        this.value = "";
+			      }
+			      
+			    });
+			  });
+		}
+		
+		setInputFilter(document.getElementById("frm_nuevo_proveedor:repI"), function(value) {
+			var z =  /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-\s]+$)/i;
+			if(!value.match(z)){ 
+				alert("No se permiten caracteres especiales");
+			}
+			else{
+ 				return   /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-\s]+$)/i.test(value); 
+			}
+		});
+	}, 1000);
+</script> 
+
+<script type="text/javascript">  
+	setInterval(function() {
+		function setInputFilter(textbox, inputFilter) {
+			  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+			    textbox.addEventListener(event, function() {
+			    	
+			      if (inputFilter(this.value)) {
+			        this.oldValue = this.value;
+			        this.oldSelectionStart = this.selectionStart;
+			        this.oldSelectionEnd = this.selectionEnd; 
+			      }
+			      
+			      else if (this.hasOwnProperty("oldValue")) {
+			        this.value = this.oldValue;
+			        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd); 
+			      } 
+			      
+			      else { 
+			        this.value = "";
+			      }
+			      
+			    });
+			  });
+		}
+		
+		setInputFilter(document.getElementById("frm_nuevo_proveedor:j_idt51"), function(value) {
+			var z =  /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-.\s]+$)/i;
+			if(!value.match(z)){ 
+				alert("No se permiten caracteres especiales");
+			}
+			else{
+ 				return   /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-.\s]+$)/i.test(value); 
+			}
+		});
+	}, 1000);
+</script>  
+
+<script type="text/javascript">  
+	setInterval(function() {
+		function setInputFilter(textbox, inputFilter) {
+			  ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+			    textbox.addEventListener(event, function() {
+			    	
+			      if (inputFilter(this.value)) {
+			        this.oldValue = this.value;
+			        this.oldSelectionStart = this.selectionStart;
+			        this.oldSelectionEnd = this.selectionEnd; 
+			      }
+			      
+			      else if (this.hasOwnProperty("oldValue")) {
+			        this.value = this.oldValue;
+			        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd); 
+			      } 
+			      
+			      else { 
+			        this.value = "";
+			      }
+			      
+			    });
+			  });
+		}
+		
+		setInputFilter(document.getElementById("frm_nuevo_proveedor:j_idt53"), function(value) {
+			var z =  /(^$|^[a-zA-ZÀ-ÖØ-öø-ÿ0-9\-_/\s]+$)/i;
+			if(!value.match(z)){ 
+				alert("No se permiten caracteres especiales");
+			}
+			else{
+ 				return   /(^$|^[0-9\s]+$)/i.test(value); 
+			}
+		});
+	}, 1000);
+</script>  
+	
+</f:view>
+</html>

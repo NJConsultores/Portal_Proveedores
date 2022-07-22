@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified">
+	<xs:element name="CbbCfi">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="resultadoValidacion" />
+			</xs:sequence>
+			<xs:attribute name="fechaAsignacion" use="required" />
+			<xs:attribute name="folio" use="required" type="xs:integer" />
+			<xs:attribute name="serie" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:pattern value="[a-zA-Z0-9]{0,}" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="folioFinal" use="required" type="xs:integer" />
+			<xs:attribute name="folioInicial" use="required" type="xs:integer" />
+			<xs:attribute name="numAprobacion" use="required" type="xs:integer" />
+			<xs:attribute name="rfcProveedor" use="required" type="xs:string" />
+			<xs:attribute name="tipoDocumento" use="required" type="xs:NCName" />
+			<xs:attribute name="vigencia" use="required" />
+			<xs:attribute name="docType" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="crédito" />
+						<xs:enumeration value="débito" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="invoiceType" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="MM" />
+						<xs:enumeration value="FI" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="mmIndex" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="yes" />
+						<xs:enumeration value="no" />
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="comments" use="required">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:maxLength value="35"></xs:maxLength>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="resultadoValidacion" type="xs:string" />
+</xs:schema>

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+
+	<ui:define name="content">
+		<f:event type="preRenderView" listener="#{avisosMB.loadAvisos()}" />
+		<p:panel styleClass="cfdp-panels" style="min-height: 300px; max-height: 500px;">
+			<h:form id="frm_dashboard">
+				<table>
+					<tr>
+						<td>
+							<h3>#{msg['principal.bienvenido']}</h3>
+						</td>
+						<td align="center" style="text-align: center;"><p:commandButton
+								icon="ui-icon-document"
+								value="#{msg['opcion.manual_usuario']}" ajax="false"
+								onclick="PrimeFaces.monitorDownload(start, stop);">
+								<p:fileDownload value="#{avisosMB.descargarAyuda()}" />
+							</p:commandButton></td>
+					</tr>
+					<tr>
+						<td align="center" style="text-align: center;"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><p:dataTable id="tbl_avisos" var="av"
+								emptyMessage="#{msg['avisos.ninguno']}" scrollable="true" rows="10"
+								value="#{avisosMB.avisos}" style="width: 100%;"
+								rowStyleClass="#{av.tpavi == 'P' ? 'porProveedor' : 'porSociedad'}">
+								<p:column headerText="#{msg['tablas.nombre']}" width="20%">
+									<p:outputLabel value="#{av.ttulo}" />
+								</p:column>
+								<p:column headerText="#{msg['tablas.tipo']}" width="10%">
+									<p:outputLabel
+										value="#{av.tpavi eq 'S' ? msg['avisos.tipo.S'] : msg['avisos.tipo.P']} " />
+								</p:column>
+								<p:column headerText="#{msg['tablas.descripcion']}" width="62%">
+									<p:outputLabel value="#{av.texto}" />
+								</p:column>
+								<p:column headerText="#{msg['tablas.acciones']}" width="8%">
+									<p:commandButton icon="ui-icon-closethick"
+										onstart="PF('statusDialog').show()"
+										onsuccess="PF('statusDialog').hide()"
+										action="#{avisosMB.descartarAviso(av.navis)}"
+										rendered="#{av.tpavi eq 'P'}" partialSubmit="true"
+										update=":frm_dashboard" title="#{msg['avisos.confirmacion']}">
+										<p:confirm header="#{msg['avisos.confirmacion']}"
+											message="#{msg['avisos.mensaje']}" icon="ui-icon-alert" />
+									</p:commandButton>
+								</p:column>
+							</p:dataTable></td>
+					</tr>
+				</table>
+			</h:form>
+		</p:panel>
+	</ui:define>
+
+</ui:composition>

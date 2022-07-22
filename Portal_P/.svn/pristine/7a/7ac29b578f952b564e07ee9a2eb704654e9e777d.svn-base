@@ -1,0 +1,38 @@
+#Produccion
+log4j.rootLogger=info,R
+## desarrollo
+#log4j.rootLogger=debug, stdout
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+
+# Pattern to output the caller's file name and line number.
+log4j.appender.stdout.layout.ConversionPattern=%5p [%t] (%F:%L) - %m%n
+
+log4j.appender.R=org.apache.log4j.RollingFileAppender
+log4j.appender.R.File=../logs/recepcion-factura/recepcionFactura.log
+
+log4j.appender.R.MaxFileSize=2048KB
+# Keep one backup file
+log4j.appender.R.MaxBackupIndex=1
+
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%p %t %c - %m%n
+
+# Esta linea impide, exitosamente, que salga el moletos anuncio de view state dispose error
+log4j.logger.org.springframework.web.context.request.FacesRequestAttributes=OFF
+
+# La siguientes lineas han intentado, sin \u00ef\u00bf\u00bdxito el despliegue del stack
+# trace del inicio que india que ciertas cosas no son serializables:
+log4j.logger.java.io.IOException=OFF
+log4j.logger.java.io.WriteAbortedException=OFF
+log4j.logger.java.io.NotSerializableException=OFF
+#log4j.logger.org.mybatis.spring.SqlSessionTemplate=ON
+
+#log4j.logger.org.apache.ibatis=stdout
+#log4j.logger.java.sql.Connection=stdout
+
+log4j.logger.java.sql.Statement=stdout
+log4j.logger.java.sql.PreparedStatement=stdout
+log4j.logger.java.sql.ResultSet=OFF
+

@@ -1,0 +1,84 @@
+//package com.infra.vis.dto;
+//
+//import java.io.Serializable;
+//
+//import org.springframework.core.io.Resource;
+//
+//public class JasperBean implements Serializable {
+//
+//    private static final long serialVersionUID = 7800058778893247136L;
+//
+//    private Resource jasperCFDI32;
+//    private Resource jasperCFDI22;
+//    private Resource xslt2;
+//    private Resource xslt22;
+//    private Resource xslt3;
+//    private Resource xslt32;
+//    private Resource xslttd;
+//    private Resource logoP;
+//
+//    public Resource getJasperCFDI32() {
+//        return jasperCFDI32;
+//    }
+//
+//    public void setJasperCFDI32(Resource jasperCFDI32) {
+//        this.jasperCFDI32 = jasperCFDI32;
+//    }
+//
+//    public Resource getXslt2() {
+//        return xslt2;
+//    }
+//
+//    public void setXslt2(Resource xslt2) {
+//        this.xslt2 = xslt2;
+//    }
+//
+//    public Resource getXslt22() {
+//        return xslt22;
+//    }
+//
+//    public void setXslt22(Resource xslt22) {
+//        this.xslt22 = xslt22;
+//    }
+//
+//    public Resource getXslt3() {
+//        return xslt3;
+//    }
+//
+//    public void setXslt3(Resource xslt3) {
+//        this.xslt3 = xslt3;
+//    }
+//
+//    public Resource getXslt32() {
+//        return xslt32;
+//    }
+//
+//    public void setXslt32(Resource xslt32) {
+//        this.xslt32 = xslt32;
+//    }
+//
+//    public Resource getXslttd() {
+//        return xslttd;
+//    }
+//
+//    public void setXslttd(Resource xslttd) {
+//        this.xslttd = xslttd;
+//    }
+//
+//    public Resource getJasperCFDI22() {
+//        return jasperCFDI22;
+//    }
+//
+//    public void setJasperCFDI22(Resource jasperCFDI22) {
+//        this.jasperCFDI22 = jasperCFDI22;
+//    }
+//
+//    public Resource getLogoP() {
+//        return logoP;
+//    }
+//
+//    public void setLogoP(Resource logoP) {
+//        this.logoP = logoP;
+//    }
+//
+//}

@@ -1,0 +1,19 @@
+package com.infra.vis.util;
+
+import java.math.BigDecimal;
+
+public enum Divisor {
+    TEN_MILL(new BigDecimal(10000000)),
+    MILLON(new BigDecimal(1000000)),
+    CIEN_MIL(new BigDecimal(100000)),
+    TEN_MIL(new BigDecimal(10000)),
+    MIL(new BigDecimal(1000)),
+    CIEN(new BigDecimal(100)),
+    TEN(new BigDecimal(10));
+    
+    private final BigDecimal valor;
+    Divisor(final BigDecimal valor) {
+        this.valor = valor;
+    }
+    public BigDecimal valor() { return valor; }
+}

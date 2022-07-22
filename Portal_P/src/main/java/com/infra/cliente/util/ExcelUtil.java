@@ -1,0 +1,269 @@
+package com.infra.cliente.util;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import com.infra.cliente.model.dto.LayoutClienteDto;
+import com.infra.core.exception.CoreException;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.commons.lang3.StringUtils;
+public class ExcelUtil { 
+    public static List<LayoutClienteDto> readLayout(byte[] excel, boolean xlsx) throws Exception {
+        List<LayoutClienteDto> registros = new ArrayList<>();
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(excel);
+        Cell c = null;
+        String importe = null;    
+        Sheet hojas = null;
+        boolean endOfFile = false;
+        
+        if (xlsx) {
+            XSSFWorkbook xls = new XSSFWorkbook(bis);
+            hojas = xls.getSheetAt(0);
+        } else {
+            HSSFWorkbook xls = new HSSFWorkbook(bis);
+            hojas = xls.getSheetAt(0);
+        }
+
+        if (hojas == null) {
+            throw new CoreException(ClienteConstantes.ERROR_LAYOUT);
+        }
+
+        Iterator<Row> rowIterator = hojas.iterator();
+ 
+        rowIterator.next();
+
+        while (rowIterator.hasNext() && !endOfFile) {
+            Row row = rowIterator.next();
+
+            if (row != null && !isEndOfFile(row)) {
+                LayoutClienteDto l = new LayoutClienteDto();
+
+                	c = row.getCell(0);
+                	if(c != null){
+	                	c.setCellType(Cell.CELL_TYPE_STRING);
+	                	l.setNoPedido(c.getStringCellValue() == null ? null : c.getStringCellValue().trim());
+                	}
+                	
+                	c = row.getCell(1);
+                	if(c != null){
+	                	c.setCellType(Cell.CELL_TYPE_STRING);
+	                	l.setNoPosicion(c.getStringCellValue() == null ? null : c.getStringCellValue().trim());
+                	}
+                	
+                	c = row.getCell(2);
+                	if(c != null){
+	                	c.setCellType(Cell.CELL_TYPE_STRING);
+	                	l.setClaseCondicion(c.getStringCellValue() == null ? null : c.getStringCellValue().trim());
+                	}
+                	
+                	c = row.getCell(3);
+                	if(c != null){
+	                	c.setCellType(Cell.CELL_TYPE_STRING);
+	                	importe = c.getStringCellValue() == null ? null : c.getStringCellValue().trim().replaceAll(",", "");
+	                	if(importe != null){
+	                		l.setImporte(isNumeric(importe) ? new BigDecimal(importe).setScale(2, BigDecimal.ROUND_CEILING) : null);
+	                	}
+                	}
+                	
+                	c = row.getCell(4);
+                	if(c != null){
+	                	c.setCellType(Cell.CELL_TYPE_STRING);
+	                	l.setIndicadorImpuesto(c.getStringCellValue() == null ? null : c.getStringCellValue().trim().toUpperCase());
+                	}
+                	
+                	c = row.getCell(5);
+                	if(c != null){
+	                	c.setCellType(Cell.CELL_TYPE_STRING);
+	                	l.setTextoCabecera(c.getStringCellValue() == null ? null : c.getStringCellValue().trim());
+                	}
+                	
+                	c = row.getCell(6);
+                	if(c != null){
+	                	c.setCellType(Cell.CELL_TYPE_STRING);
+	                	l.setCondicionPago(c.getStringCellValue() == null ? null : c.getStringCellValue().trim());
+                	}
+                	
+                	c = row.getCell(7);
+                	if(c != null){
+	                	c.setCellType(Cell.CELL_TYPE_STRING);
+	                	l.setCuentaRetencion(c.getStringCellValue() == null ? null : c.getStringCellValue().trim());
+                	}
+                	
+                	l.setRenglon(row.getRowNum() + 1);
+                	
+                    System.out.println(l.toString());
+                    registros.add(l);
+                    
+                }else{
+                	
+                	endOfFile = true;
+                	
+                }
+        }
+
+        return registros;
+    }
+    
+    private static boolean isNumeric(String str){
+  	  return str.matches("-?\\d+(\\.\\d+)?");  //match a number with optional '-' and decimal.
+  	}
+    
+    private static boolean isEndOfFile(Row row){
+    	
+    	Cell c0 = row.getCell(0);
+    	Cell c1 = row.getCell(1);
+    	Cell c2 = row.getCell(2);
+    	Cell c3 = row.getCell(3);
+    	Cell c4 = row.getCell(4);
+    	Cell c5 = row.getCell(5);
+    	Cell c6 = row.getCell(6);
+    	Cell c7 = row.getCell(7);
+    	
+    	if(isEmpty(c0) && isEmpty(c1) && isEmpty(c2) && isEmpty(c3) && isEmpty(c4) && isEmpty(c5) && isEmpty(c6) && isEmpty(c7)){
+    		return true;
+    	}else{
+    		return false;	
+    	}
+    	
+    }
+    
+    private static boolean isEmpty(Cell c){
+    	
+    	if(c != null){
+    		c.setCellType(Cell.CELL_TYPE_STRING);
+    		if(c.getStringCellValue() != null && c.getStringCellValue().trim().length() > 0){
+    			return false;
+    		}else{
+    			return true;
+    		}
+    	}else{
+    		return true;
+    	}
+    }
+    
+  	public List<Map<String, String>> obtenerDatosArchivo(InputStream file,
+  			int numberColumns) throws InvalidFormatException, IOException {
+  		final int PRIMER_RENGLON = 1;
+  		List<Map<String, String>> registros = new ArrayList<Map<String, String>>();
+  		Map<String, String> registro = null;
+  		
+  		try {
+  			Workbook workbook = WorkbookFactory.create(file);
+  			Sheet sheet       = workbook.getSheetAt(0);
+  			Row row           = null;
+  			int row_count     = sheet.getLastRowNum() >= sheet.getPhysicalNumberOfRows() ? (sheet.getLastRowNum()+1) : sheet.getPhysicalNumberOfRows();
+              row               = sheet.getRow(0);
+              
+              for (int i = PRIMER_RENGLON; i <= row_count; i++) {
+              	row  = sheet.getRow(i);
+          		if (row != null) {
+          			registro = obtenerDatosArchivo(numberColumns, row);
+          			
+          			if(registro != null){
+          				registros.add(registro);   //se consideran todos los registros
+          			}
+          		}
+              }
+  		}
+  		catch (InvalidFormatException e) {
+  			//logger.error(e.getMessage());
+  			throw e;
+  		}
+  		catch(IOException e) {
+  			//logger.error(e.getMessage());
+  			throw e;
+  		}
+  		
+  		return registros;
+  	}
+  	
+  	private Map<String, String> obtenerDatosArchivo(int numberColumns, Row row) {
+		final int PRIMER_COLUMNA = 0;
+		Cell cellTemp = null;
+		Cell cell = null;
+		String columnName = null;
+		boolean nonBlankRowFound = false;
+		Map<String, String> registro = null;
+		
+		for (int j = PRIMER_COLUMNA; j < numberColumns; j++) {
+			cellTemp = row.getCell(j);
+            if (cellTemp != null && cellTemp.getCellType() != Cell.CELL_TYPE_BLANK) {
+                nonBlankRowFound = true;
+                break;
+            }
+        }
+	
+		if (nonBlankRowFound) {
+			registro = new HashMap<String, String>();
+			for (int j = PRIMER_COLUMNA; j < numberColumns; j++) {
+				cell = row.getCell(j);
+				columnName = getColumnName(j);
+				if (cell == null) {
+					registro.put(columnName, StringUtils.EMPTY);
+				}
+				else {
+					registro.put(columnName, getValueColumn(cell));
+				}
+			}
+		}
+		
+		return registro;
+	}
+  	
+  	private String getColumnName(int columnNumber) {    
+        String columnName = "";
+        int dividend = columnNumber + 1;
+        int modulus;
+ 
+        while (dividend > 0){
+            modulus = (dividend - 1) % 26;
+            columnName = (char)(65 + modulus) + columnName;
+            dividend = (int)((dividend - modulus) / 26);
+        } 
+ 
+        return columnName;
+    }
+  	
+  	private String getValueColumn(Cell cell) {
+		String value = "";
+		
+		if(cell.getCellType() != Cell.CELL_TYPE_FORMULA){
+			if (cell.getCellType() == Cell.CELL_TYPE_STRING) {
+				value = cell.getRichStringCellValue().getString();
+			}else if (DateUtil.isCellDateFormatted(cell)) {
+				DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+				value = formatter.format(DateUtil.getJavaDate(cell.getNumericCellValue()));
+			}else if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+				double dval = cell.getNumericCellValue();
+				NumberFormat f = NumberFormat.getInstance();
+				f.setGroupingUsed(false);
+				value = f.format(dval);
+				if(value.contains(",")){
+					value = value.replace(",", ".");
+				}
+			}else {
+				value = cell.getRichStringCellValue().toString();
+			}
+		}
+		
+		return value;
+	}
+}

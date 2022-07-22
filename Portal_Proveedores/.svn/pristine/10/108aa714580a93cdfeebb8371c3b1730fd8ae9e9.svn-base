@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                      http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<context:annotation-config />
+	<global-method-security secured-annotations="enabled" />
+
+	<http auto-config="true" access-denied-page="/content/error/AccesoDenegado.jsf">
+
+		<intercept-url pattern="/content/restricted/cuenta/cuenta.jsf"
+			access="IS_AUTHENTICATED_FULLY" />
+
+		<intercept-url pattern="/content/restricted/principal/dashboard.jsf"
+			access="IS_AUTHENTICATED_FULLY" />
+
+		<intercept-url pattern="/content/restricted/monitoreo/sesionesActivas.jsf"
+			access="ROLE_MONITOR_SESION" />
+
+		<form-login login-page="/index.jsf" login-processing-url="/j_spring_security_check"
+			always-use-default-target="true" authentication-failure-handler-ref="coreAuthenticationFailureHandler"
+			authentication-success-handler-ref="coreAuthenticationSuccessHandler"
+			authentication-failure-url="/index.jsf?error=sessionError"
+			default-target-url="/content/restricted/principal/dashboard.jsf" />
+
+		<logout logout-url="/j_spring_security_logout"
+			logout-success-url="/index.jsf" invalidate-session="true" />
+
+		<session-management invalid-session-url="/index.jsf"
+			session-fixation-protection="newSession">
+			<concurrency-control expired-url="/index.jsf"
+				session-registry-ref="sessionRegistry" />
+		</session-management>
+
+	</http>
+
+	<!-- <authentication-manager alias="authenticationManager"> -->
+	<!-- <authentication-provider user-service-ref="autenticacionService"> -->
+	<!-- <password-encoder ref="passwordEncoder" /> -->
+	<!-- </authentication-provider> -->
+	<!-- </authentication-manager> -->
+
+	<!-- <beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.Md5PasswordEncoder"/> -->
+	<!-- <beans:bean id="sessionRegistry" class="org.springframework.security.core.session.SessionRegistryImpl"/> -->
+
+	<!-- <authentication-manager alias="authenticationManager"> -->
+	<!-- <authentication-provider user-service-ref="autenticacionService"> -->
+	<!-- <password-encoder ref="passwordEncoder" /> -->
+	<!-- </authentication-provider> -->
+	<!-- </authentication-manager> -->
+
+	<beans:bean id="passwordEncoder"
+		class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" />
+	<beans:bean id="sessionRegistry"
+		class="org.springframework.security.core.session.SessionRegistryImpl" />
+
+	<authentication-manager>
+		<authentication-provider ref="autentificadorProvider" />
+	</authentication-manager>
+	<beans:bean id="autentificadorProvider"
+		class="com.infra.core.security.AutentificadorProvider" />
+
+</beans:beans>

@@ -1,0 +1,55 @@
+.icon-pdf{
+    background-image: url("#{resource['images/icons/pdf-20.png']}")!important;
+}
+
+.image-16px{
+    width: 16px; height: 16px;
+}
+
+.image-24px{
+    width: 24px; height: 24px;
+}
+
+.image-36px{
+    width: 36px; height: 36px;
+}
+
+.image-48px{
+    width: 48px; height: 48px;
+}
+
+.image-80px{
+    width: 80px; height: 80px;
+}
+
+
+.image-64px{
+    width: 64px; height: 64px;
+}
+
+.image-96px{
+    width: 96px; height: 96px;
+}
+
+.image-115px{
+    width: 115px; height: 115px;
+}
+
+
+.image-130px{
+    width: 130px; height: 130px;
+}
+
+
+
+.panel-grande{
+    background-size: 150px 150px !important;
+    background-repeat: no-repeat !important;
+    background-position: right top;
+    background-position: right 30px top 40px;
+    min-height: 240px;
+}
+
+.icon-documento{
+    background-image: url("#{resource['images/icons/documento.png']}")!important;
+}

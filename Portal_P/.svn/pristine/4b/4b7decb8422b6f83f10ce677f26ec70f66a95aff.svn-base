@@ -1,0 +1,76 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+	<br />
+	<table width="30%" style="border: 1px solid #7c297e;">
+		<tr>
+			<td><span
+				style="font-size: 12px; color: #7c297e; font-weight: bold;">#{msg['cuenta.cambio.password.regla.titulo']}</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-size: 11px;">#{msg['cuenta.cambio.password.regla.uno']}</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-size: 11px;">#{msg['cuenta.cambio.password.regla.dos']}</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-size: 11px;">#{msg['cuenta.cambio.password.regla.tres']}</span></td>
+		</tr>
+		<tr>
+			<td><span style="font-size: 11px;">#{msg['cuenta.cambio.password.regla.cuatro']}</span></td>
+		</tr>
+	</table>
+	<br />
+	<br />
+	<h:form id="formCambioPassword">
+		<p:messages closable="true" id="messages" globalOnly="true"
+			showDetail="true" autoUpdate="true" escape="false" />
+		<h:panelGrid columns="1">
+			<h:outputLabel for="password" style="font-size: 12px"
+				value="#{msg['cuenta.cambio.password.activo']}" />
+			<h:panelGroup>
+				<p:password id="password" value="#{managedMB.password}"
+					label="password" redisplay="true" />
+				<p:message for="password" />
+			</h:panelGroup>
+			<h:outputLabel for="nuevoPassword" style="font-size: 12px"
+				value="#{msg['cuenta.cambio.password.nuevo']}" />
+			<h:panelGroup>
+				<p:password id="nuevoPassword" value="#{managedMB.nuevoPassword}"
+					match="confPassword" label="#{msg['cuenta.cambio.password.nuevo']}"
+					maxlength="16"
+					validatorMessage="#{msg['cuenta.cambio.password.password.carateres.minimo']}"
+					feedback="false"
+					promptLabel="#{msg['cuenta.cambio.password.password.requerido.favor']}"
+					redisplay="true" weakLabel="#{msg['cuenta.cambio.password.debil']}"
+					goodLabel="#{msg['cuenta.cambio.password.buena']}"
+					strongLabel="#{msg['cuenta.cambio.password.fuerte']}">
+					<f:validateLength minimum="8" />
+				</p:password>
+				<p:message for="nuevoPassword" />
+			</h:panelGroup>
+			<h:outputLabel for="confPassword" style="font-size: 12px"
+				value="#{msg['cuenta.cambio.password.confirmar']}" />
+			<h:panelGroup>
+				<p:password id="confPassword" value="#{managedMB.confirmarPassword}"
+					label="#{msg['cuenta.cambio.password.confirmar']}" maxlength="16">
+					<f:validateLength minimum="8" />
+				</p:password>
+				<p:message for="confPassword"/>
+			</h:panelGroup>
+			<br></br>
+			<h:panelGroup>
+				<p:commandButton id="btnPassword"
+					value="#{msg['cuenta.cambio.password.cambiar']}"
+					action="#{managedMB.cambiarPassword()}"
+					update="formCambioPassword messages" disabled="#{diseable}"
+					onerror="PF('statusDialog').hide()"
+					onstart="PF('statusDialog').show()"
+					onsuccess="PF('statusDialog').hide()" />
+			</h:panelGroup>
+		</h:panelGrid>
+	</h:form>
+</ui:composition>

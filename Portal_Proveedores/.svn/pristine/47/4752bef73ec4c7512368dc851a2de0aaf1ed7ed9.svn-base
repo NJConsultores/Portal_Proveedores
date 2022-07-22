@@ -1,0 +1,226 @@
+package com.infra.factura.dto;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import com.infra.core.util.SessionUtil;
+import com.infra.factura.business.cfdi.ii.schema.Comprobante.Impuestos;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDEstatusAgenteAduanal;
+import com.infra.factura.util.FeConstantes.Nivel_Aprobacion;
+
+public class FeFacturaAgenteAduanalDto implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private long idFacturaAduanal;
+	private long idFactura;
+	private Nivel_Aprobacion nivel;
+	private String patente;
+	private String aduana;
+	private String pedimento;
+	private String cuentaContable;
+	private String planta;
+	private String referencia;
+	private BigDecimal pagoTerceros;
+	private BigDecimal honorarios;
+	private String nombreZip;
+	private CFDEstatusAgenteAduanal estatus;
+	private List<FeFacturaAgenteAduanalDetalleDto> listaDetalle;
+	
+	private String folio;
+	private String rfcReceptor;
+	private String uuid;
+	
+	//Para la Aprobacion
+	private String moneda;
+	private BigDecimal total;
+	private BigDecimal subtotal;
+	private BigDecimal iva;
+	private Impuestos impuestos;
+	private List<String> rfcsPermitidos;
+	
+	//Para el Reporte
+	private int idProveedor;
+	private String nombreProveedor;
+	
+	//Para el Log de Validacion
+	private String idUsuario;
+	private Date fecha;
+	
+	public long getIdFacturaAduanal() {
+		return idFacturaAduanal;
+	}
+	public void setIdFacturaAduanal(long idFacturaAduanal) {
+		this.idFacturaAduanal = idFacturaAduanal;
+	}
+	public String getReferencia() {
+		return referencia;
+	}
+	public void setReferencia(String referencia) {
+		this.referencia = referencia;
+	}
+	public String getPatente() {
+		return patente;
+	}
+	public void setPatente(String patente) {
+		this.patente = patente;
+	}
+	public String getAduana() {
+		return aduana;
+	}
+	public void setAduana(String aduana) {
+		this.aduana = aduana;
+	}
+	public String getPedimento() {
+		return pedimento;
+	}
+	public void setPedimento(String pedimento) {
+		this.pedimento = pedimento;
+	}
+	public String getCuentaContable() {
+		return cuentaContable;
+	}
+	public void setCuentaContable(String cuentaContable) {
+		this.cuentaContable = cuentaContable;
+	}
+	public BigDecimal getPagoTerceros() {
+		return pagoTerceros;
+	}
+	public void setPagoTerceros(BigDecimal pagoTerceros) {
+		this.pagoTerceros = pagoTerceros;
+	}
+	public BigDecimal getHonorarios() {
+		return honorarios;
+	}
+	public void setHonorarios(BigDecimal honorarios) {
+		this.honorarios = honorarios;
+	}
+	public Date getFecha() {
+		return fecha;
+	}
+	public void setFecha(Date fecha) {
+		this.fecha = fecha;
+	}
+	public String getNombreZip() {
+		return nombreZip;
+	}
+	public void setNombreZip(String nombreZip) {
+		this.nombreZip = nombreZip;
+	}
+	public CFDEstatusAgenteAduanal getEstatus() {
+		return estatus;
+	}
+	public void setEstatus(CFDEstatusAgenteAduanal estatus) {
+		this.estatus = estatus;
+	}
+	public List<FeFacturaAgenteAduanalDetalleDto> getListaDetalle() {
+		return listaDetalle;
+	}
+	public void setListaDetalle(List<FeFacturaAgenteAduanalDetalleDto> listaDetalle) {
+		this.listaDetalle = listaDetalle;
+	}
+	public List<String> getRfcsPermitidos() {
+		return rfcsPermitidos;
+	}
+	public void setRfcsPermitidos(List<String> rfcsPermitidos) {
+		this.rfcsPermitidos = rfcsPermitidos;
+	}
+	public String getFolio() {
+		return folio;
+	}
+	public void setFolio(String folio) {
+		this.folio = folio;
+	}
+	public Nivel_Aprobacion getNivel() {
+		return nivel;
+	}
+	public void setNivel(Nivel_Aprobacion nivel) {
+		this.nivel = nivel;
+	}
+	public String getIdUsuario() {
+		return idUsuario;
+	}
+	public void setIdUsuario(String idUsuario) {
+		this.idUsuario = idUsuario;
+	}
+	public String getMoneda() {
+		return moneda;
+	}
+	public void setMoneda(String moneda) {
+		this.moneda = moneda;
+	}
+	public BigDecimal getTotal() {
+		return total;
+	}
+	public void setTotal(BigDecimal total) {
+		this.total = total;
+	}
+	public BigDecimal getSubtotal() {
+		return subtotal;
+	}
+	public void setSubtotal(BigDecimal subtotal) {
+		this.subtotal = subtotal;
+	}
+	public Impuestos getImpuestos() {
+		return impuestos;
+	}
+	public void setImpuestos(Impuestos impuestos) {
+		this.impuestos = impuestos;
+	}
+	public BigDecimal getIva() {
+		return iva;
+	}
+	public void setIva(BigDecimal iva) {
+		this.iva = iva;
+	}
+	public String getRfcReceptor() {
+		return rfcReceptor;
+	}
+	public void setRfcReceptor(String rfcReceptor) {
+		this.rfcReceptor = rfcReceptor;
+	}
+	public long getIdFactura() {
+		return idFactura;
+	}
+	public void setIdFactura(long idFactura) {
+		this.idFactura = idFactura;
+	}
+	public String getUuid() {
+		return uuid;
+	}
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+	public int getIdProveedor() {
+		return idProveedor;
+	}
+	public void setIdProveedor(int idProveedor) {
+		this.idProveedor = idProveedor;
+	}
+	public String getNombreProveedor() {
+		return nombreProveedor;
+	}
+	public void setNombreProveedor(String nombreProveedor) {
+		this.nombreProveedor = nombreProveedor;
+	}
+	
+	public String getPlanta() {
+		return planta;
+	}
+	public void setPlanta(String planta) {
+		this.planta = planta;
+	}
+	public String getEstatusDescripcion() {
+		Locale locale = SessionUtil.getLocale();
+		
+		if(nivel == Nivel_Aprobacion.Dos  && estatus == CFDEstatusAgenteAduanal.Pendiente){
+			return CFDEstatusAgenteAduanal.PrimeraAprobacion.getNombre(locale);
+		}
+		
+		return estatus.getNombre(locale);
+	}
+}

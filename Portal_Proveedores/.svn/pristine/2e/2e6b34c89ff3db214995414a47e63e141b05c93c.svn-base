@@ -1,0 +1,51 @@
+package com.infra.vis.dto;
+
+import java.io.Serializable;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import net.sf.jasperreports.engine.JasperPrint;
+
+public class VisorBean implements Serializable {
+	
+    private static final long serialVersionUID = -5506726416149054714L;
+    
+    private String nameFile;
+    private JasperPrint jasperPrint;
+    private String errorMess;
+    
+    public String getNameFile() { return nameFile; }
+    public void setNameFile(String nameFile) { this.nameFile = nameFile; }
+    public JasperPrint getJasperPrint() { return jasperPrint; }
+    public void setJasperPrint(JasperPrint jasperPrint) { this.jasperPrint = jasperPrint; }
+    public String getErrorMess() { return errorMess; }
+    public void setErrorMess(String errorMess) { this.errorMess = errorMess; }
+
+    public boolean equals(Object other) {
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof VisorBean)) {
+			return false;
+		}
+		final VisorBean castOther = (VisorBean)other;
+		return new EqualsBuilder()
+			.append(this.getNameFile(), castOther.getNameFile())
+			.isEquals();
+    }
+    
+	public int hashCode() {
+		return new HashCodeBuilder()
+			.append(getNameFile())
+			.toHashCode();
+    }   
+
+	public String toString() {
+		return new ToStringBuilder(this)
+			.append("jaspernote", getNameFile())
+			.toString();
+	}
+	
+}

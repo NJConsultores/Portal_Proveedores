@@ -1,0 +1,127 @@
+/**
+ * ZfeSListaIi.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public class ZfeSListaIi implements java.io.Serializable {
+	private java.lang.String mwskz;
+
+	private java.lang.String text1;
+
+	private java.math.BigDecimal tasa;
+
+	public ZfeSListaIi() {
+	}
+
+	public ZfeSListaIi(java.lang.String mwskz, java.lang.String text1, java.math.BigDecimal tasa) {
+		this.mwskz = mwskz;
+		this.text1 = text1;
+		this.tasa = tasa;
+	}
+
+	/**
+	 * Gets the mwskz value for this ZfeSListaIi.
+	 * 
+	 * @return mwskz
+	 */
+	public java.lang.String getMwskz() {
+		return mwskz;
+	}
+
+	/**
+	 * Sets the mwskz value for this ZfeSListaIi.
+	 * 
+	 * @param mwskz
+	 */
+	public void setMwskz(java.lang.String mwskz) {
+		this.mwskz = mwskz;
+	}
+
+	/**
+	 * Gets the text1 value for this ZfeSListaIi.
+	 * 
+	 * @return text1
+	 */
+	public java.lang.String getText1() {
+		return text1;
+	}
+
+	/**
+	 * Sets the text1 value for this ZfeSListaIi.
+	 * 
+	 * @param text1
+	 */
+	public void setText1(java.lang.String text1) {
+		this.text1 = text1;
+	}
+
+	/**
+	 * Gets the tasa value for this ZfeSListaIi.
+	 * 
+	 * @return tasa
+	 */
+	public java.math.BigDecimal getTasa() {
+		return tasa;
+	}
+
+	/**
+	 * Sets the tasa value for this ZfeSListaIi.
+	 * 
+	 * @param tasa
+	 */
+	public void setTasa(java.math.BigDecimal tasa) {
+		this.tasa = tasa;
+	}
+
+	private java.lang.Object __equalsCalc = null;
+
+	public synchronized boolean equals(java.lang.Object obj) {
+		if (!(obj instanceof ZfeSListaIi))
+			return false;
+		ZfeSListaIi other = (ZfeSListaIi) obj;
+		if (obj == null)
+			return false;
+		if (this == obj)
+			return true;
+		if (__equalsCalc != null) {
+			return (__equalsCalc == obj);
+		}
+		__equalsCalc = obj;
+		boolean _equals;
+		_equals = true
+				&& ((this.mwskz == null && other.getMwskz() == null)
+						|| (this.mwskz != null && this.mwskz.equals(other.getMwskz())))
+				&& ((this.text1 == null && other.getText1() == null)
+						|| (this.text1 != null && this.text1.equals(other.getText1())))
+				&& ((this.tasa == null && other.getTasa() == null)
+						|| (this.tasa != null && this.tasa.equals(other.getTasa())));
+		__equalsCalc = null;
+		return _equals;
+	}
+
+	private boolean __hashCodeCalc = false;
+
+	public synchronized int hashCode() {
+		if (__hashCodeCalc) {
+			return 0;
+		}
+		__hashCodeCalc = true;
+		int _hashCode = 1;
+		if (getMwskz() != null) {
+			_hashCode += getMwskz().hashCode();
+		}
+		if (getText1() != null) {
+			_hashCode += getText1().hashCode();
+		}
+		if (getTasa() != null) {
+			_hashCode += getTasa().hashCode();
+		}
+		__hashCodeCalc = false;
+		return _hashCode;
+	}
+
+}

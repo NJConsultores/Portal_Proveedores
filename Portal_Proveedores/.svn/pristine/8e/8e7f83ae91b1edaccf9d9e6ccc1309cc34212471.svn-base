@@ -1,0 +1,9 @@
+package com.infra.vis.serv;
+
+import java.math.BigDecimal;
+
+public interface CurrencyServ {
+	
+    String extractCurrLet(final BigDecimal currency, final String moneda); 
+	
+}

@@ -1,0 +1,91 @@
+//package com.infra.cliente.service;
+//
+//import org.springframework.context.annotation.Scope;
+//import org.springframework.stereotype.Component;
+//
+//import com.infra.core.model.UsuarioWS;
+//import com.infra.factura.business.common.GenericCFD;
+//import com.infra.factura.business.validation.FeValidadorCFDBusiness;
+//import com.infra.factura.business.validation.util.FeConstantesValidacion;
+//import com.infra.factura.dto.FeFacturaDto;
+//import com.infra.factura.exception.base.SRFEBaseException;
+//
+///**
+// * 30/12/2014
+// * Utilizado para el flujo de importaciones
+// * Sobreescribe algunos metodos para evitar validaciones default y guardado.
+// * @author rlagunas
+// */
+//@Component
+//@Scope("prototype")
+//public class ValidadorCFDService extends FeValidadorCFDBusiness {
+//    // private static final Logger logger = LoggerFactory.getLogger(ValidadorCFDService.class);
+//
+//
+//    @Override
+//    protected void verificarAddenda(GenericCFD cfd, String xmlString) {
+//
+//        logger.debug("Verificar Addenda para importaciones");
+//
+//    }
+//
+//    @Override
+//    protected void procesaResultadoValidacion(FeConstantesValidacion.CFDVersion version, GenericCFD cfd, UsuarioWS usuario) {
+//
+//        logger.debug("procesaResultadoValidacion para importaciones");
+//
+//        FeFacturaDto facturaDto = null;
+//        
+//        feResultadoValidaCFDDto.setProveedorTMS(proveedorTMS);
+//        if (errorCount == 0) {
+//            facturaDto = new FeFacturaDto(version, cfd, FeConstantesValidacion.CFDEstatus.Aceptado);
+//            facturaDto.setIdFactura(idFactura);
+//            facturaDto.setIdProveedor(idProveedor);
+//            facturaDto.setOrigen(origen);
+////            facturaDto.setAddendaPnG(feAddendaDto);
+//            try {
+//
+//                idFactura = facturaDto.getIdFactura();
+//                feResultadoValidaCFDDto.setValido(true);
+//                feResultadoValidaCFDDto.setAceptada(true);
+//
+//                logger.debug("Factura OK");
+//
+//            } catch (Exception e) {
+//                logger.error("Ocurrió un error al guardar el comprobante.", e);
+//                final SRFEBaseException e1 = handleException(e);
+//                registraError("validacion-053", e1.getExceptionInfo().getExceptionID() + ". " + (e.getMessage() != null ? e.getMessage() : ""));
+//                feResultadoValidaCFDDto.setValido(true);
+//                feResultadoValidaCFDDto.setAceptada(false);
+//
+//            }
+//
+//        } else {
+//            logger.debug("Factura Error");
+//
+//            feResultadoValidaCFDDto.setErrores(errors);
+//            if (guardaFactura) {
+//                facturaDto = new FeFacturaDto(version, cfd, FeConstantesValidacion.CFDEstatus.RechazoFiscal);
+//                facturaDto.setIdFactura(idFactura);
+//                facturaDto.setIdProveedor(idProveedor);
+//                facturaDto.setOrigen(origen);
+////                facturaDto.setAddendaPnG(feAddendaDto);
+//
+//                try {
+//
+//                    idFactura = facturaDto.getIdFactura();
+//                } catch (Exception e) {
+//                    logger.error("Ocurrió un error al guardar el comprobante.", e);
+//                    final SRFEBaseException e1 = handleException(e);
+//                    registraError("validacion-054", e1.getExceptionInfo().getExceptionID() + ". " + (e.getMessage() != null ? e.getMessage() : ""));
+//                }
+//            }
+//
+//        }
+//        //errors.addAll(addendaErrors);
+//        feResultadoValidaCFDDto.setErrores(errors);
+//        feResultadoValidaCFDDto.setFactura(facturaDto);
+//
+//    }
+//
+//}

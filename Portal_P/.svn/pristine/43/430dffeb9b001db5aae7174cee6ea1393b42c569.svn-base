@@ -1,0 +1,60 @@
+package com.infra.cliente.ws;
+
+import com.infra.cliente.ws.holders.ZfeTAvisoHolder;
+
+public class ZFE_GET_AVISOSProxy implements ZFE_GET_AVISOS {
+	private String _endpoint = null;
+	private ZFE_GET_AVISOS zFE_GET_AVISOS = null;
+
+	public ZFE_GET_AVISOSProxy() {
+		_initZFE_GET_AVISOSProxy();
+	}
+
+	public ZFE_GET_AVISOSProxy(String endpoint) {
+		_endpoint = endpoint;
+		_initZFE_GET_AVISOSProxy();
+	}
+
+	private void _initZFE_GET_AVISOSProxy() {
+		try {
+			zFE_GET_AVISOS = (new AVISOSLocator()).getavisos();
+			if (zFE_GET_AVISOS != null) {
+				if (_endpoint != null)
+					((javax.xml.rpc.Stub) zFE_GET_AVISOS)._setProperty("javax.xml.rpc.service.endpoint.address",
+							_endpoint);
+				else
+					_endpoint = (String) ((javax.xml.rpc.Stub) zFE_GET_AVISOS)
+							._getProperty("javax.xml.rpc.service.endpoint.address");
+			}
+
+		} catch (javax.xml.rpc.ServiceException serviceException) {
+		}
+	}
+
+	public String getEndpoint() {
+		return _endpoint;
+	}
+
+	public void setEndpoint(String endpoint) {
+		_endpoint = endpoint;
+		if (zFE_GET_AVISOS != null)
+			((javax.xml.rpc.Stub) zFE_GET_AVISOS)._setProperty("javax.xml.rpc.service.endpoint.address", _endpoint);
+
+	}
+
+	public ZFE_GET_AVISOS getZFE_GET_AVISOS() {
+		if (zFE_GET_AVISOS == null)
+			_initZFE_GET_AVISOSProxy();
+		return zFE_GET_AVISOS;
+	}
+
+	public void zfeGetAvisos(java.lang.String ELang, java.lang.String ELifnr,
+			ZfeTAvisoHolder SAvisos,
+			javax.xml.rpc.holders.StringHolder SMsg, org.apache.axis.holders.UnsignedByteHolder SStat)
+			throws java.rmi.RemoteException {
+		if (zFE_GET_AVISOS == null)
+			_initZFE_GET_AVISOSProxy();
+		zFE_GET_AVISOS.zfeGetAvisos(ELang, ELifnr, SAvisos, SMsg, SStat);
+	}
+
+}

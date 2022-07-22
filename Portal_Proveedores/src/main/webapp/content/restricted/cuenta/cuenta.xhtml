@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templates/BaseTemplate.xhtml">
+
+	<ui:define name="content">
+	
+		<h:form id="frm_total">
+						
+			<p:messages closable="true" id="messages" showDetail="true"
+				autoUpdate="true" escape="false" />
+			<p:panel header="#{msg['cuenta.titulo']}" styleClass="cfdp-panels"
+				style="min-height: 380px;">
+				<p:tabView id="tabEntidad" style="width: 100%;">
+					<p:tab id="datosGrales" title="#{msg['cuenta.informacion']}">
+						<h:panelGrid columns="2">
+							<h:outputText value="#{msg['cuenta.usuario']}"
+								styleClass="textoNegrita" />
+							<h:outputText value="#{cuentaMB.usuario.nombreUser}" />
+
+							<h:outputText value="#{msg['cuenta.nombre']}"
+								styleClass="textoNegrita" />
+							<h:outputText value="#{cuentaMB.usuario.nombre}" />
+
+							<h:outputText value="#{msg['cuenta.correo']}"
+								styleClass="textoNegrita" />
+							<h:outputText value="#{cuentaMB.usuario.correo}" />
+
+							<h:outputText value="#{msg['cuenta.calificacion']}"
+								styleClass="textoNegrita" />
+							<h:outputText value="#{cuentaMB.usuario.calificacion}" />
+
+						</h:panelGrid>
+						<p:spacer style="color: red" />
+
+						<h:form id="formCambioCorreo">
+							<h:panelGrid columns="2">
+								<h:outputText value="#{msg['cuenta.correo']}"
+									styleClass="textoNegrita" />
+								<p:inputText value="#{cuentaMB.correo}" />
+
+								<p:commandButton id="btnCorreo" value="#{msg['accion.guardar']}"
+									action="#{cuentaMB.actualizarCorreo()}"
+									update="@form idRecargar" onerror="PF('statusDialog').hide()"
+									onstart="PF('statusDialog').show()"
+									onsuccess="PF('statusDialog').hide()" />
+							</h:panelGrid>
+
+							<p:dialog id="idRecargar" widgetVar="recargar" modal="false"
+								closable="false" style="border: 0px; width: 100%;">
+								<p:panelGrid>
+									<p:row>
+										<p:column colspan="4">
+											<h:outputLabel style="color:red"
+												value="#{msg['error.cuenta.cambio.correo']}" />
+										</p:column>
+									</p:row>
+									<p:row>
+										<p:column colspan="4">
+											<a
+												href="#{request.contextPath}/content/restricted/cuenta/cuenta.do"
+												onclick="PF('recargar').hide();">#{msg['accion.aceptar']}</a>
+										</p:column>
+									</p:row>
+								</p:panelGrid>
+							</p:dialog>
+
+						</h:form>
+
+					</p:tab>
+					<p:tab id="tabCambio" title="#{msg['cuenta.cambio.password']}">
+											<ui:include src="cambioPassword.xhtml"/>
+						
+					</p:tab>
+					<p:tab id="tabMultas"
+						title="#{msg['cuenta.cambio.password.multas']}">
+						<p:dataTable emptyMessage="" style="width: 100%; height: 1500px"
+							value="#{cuentaMB.multas}" var="mul">
+							<p:column headerText="#{msg['template.correo.descripcion']}">
+								<p:outputLabel value="#{mul.idDato}" />
+							</p:column>
+							<p:column headerText="#{msg['template.correo.monto']}">
+								<p:outputLabel value="#{mul.nombre}" />
+							</p:column>
+							<p:column headerText="#{msg['accion.descargar.archivos']}">
+								<p:commandButton icon="ui-icon-document"
+									value="#{msg['accion.descargar']}" ajax="false"
+									onclick="PrimeFaces.monitorDownload(start, stop);">
+									<p:fileDownload value="#{cuentaMB.descargarXLS(mul.relacion)}" />
+								</p:commandButton>
+							</p:column>
+						</p:dataTable>
+
+					</p:tab>
+				</p:tabView>
+			</p:panel>
+
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>

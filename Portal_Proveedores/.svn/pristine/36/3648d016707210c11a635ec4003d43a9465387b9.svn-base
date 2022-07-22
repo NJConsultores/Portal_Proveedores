@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.infra.factura.persistence.CertificadoPacMapper">
+
+    <resultMap id="certificadoPacMap" type="com.infra.factura.dto.FeCertificadoPacDto">
+    	<id property="idCertificadoPac" column="id" /> 
+        <result property="numeroCertificado" column="numero_certificado" />
+        <result property="fechaValidezIni" column="fecha_validez_ini" />
+        <result property="fechaValidezFin" column="fecha_validez_fin" />
+        <result property="estatus" column="estado" />
+        <result property="certificado" column="certificado" />
+    </resultMap>
+    
+    <select id="obtenerCertificado" parameterType="com.infra.factura.dto.FeCertificadoPacDto" resultMap="certificadoPacMap">
+        SELECT id, numero_certificado, certificado, fecha_validez_ini, fecha_validez_fin, estado 
+        FROM fe_c_certificados_pac
+        WHERE 1 = 1
+        
+        <if test="idCertificadoPac > 0">
+            AND id = #{idCertificadoPac}
+        </if>
+        
+        
+        <if test="idCertificadoPac lte 0">
+            AND numero_certificado = #{numeroCertificado}
+        </if>
+        
+        LIMIT 1
+        
+    </select>
+    
+    <select id="obtenerCertificados"  parameterType="com.infra.factura.dto.FeCertificadoPacDto" resultMap="certificadoPacMap">
+        SELECT id, numero_certificado, fecha_validez_ini, fecha_validez_fin, estado 
+        FROM fe_c_certificados_pac
+        WHERE 1 = 1
+        
+        <if test="numeroCertificado != ''">
+             AND numero_certificado = #{numeroCertificado}
+        </if>
+        
+        
+    </select>
+    
+    <insert id="registrar" parameterType="com.infra.factura.dto.FeCertificadoPacDto" >
+        INSERT INTO fe_c_certificados_pac (numero_certificado, certificado, fecha_validez_ini, fecha_validez_fin,estado) 
+        VALUES (#{numeroCertificado}, #{certificado}, #{fechaValidezIni}, #{fechaValidezFin}, 1)
+    </insert>
+    
+    <update id="actualizar" parameterType="com.infra.factura.dto.FeCertificadoPacDto">
+        UPDATE fe_c_certificados_pac 
+        SET numero_certificado = #{numeroCertificado}, certificado = #{certificado}, 
+        fecha_validez_ini = #{fechaValidezIni},
+        fecha_validez_fin = #{fechaValidezFin},
+        estado = 1 
+        WHERE id = #{idCertificadoPac}        
+    </update>
+                        
+                
+</mapper>

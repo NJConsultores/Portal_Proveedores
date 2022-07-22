@@ -1,0 +1,52 @@
+package com.infra.vis.util;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+import com.infra.vis.expo.VisException;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
+public class VisorPDFUtil {
+
+    public static final String CERO = "CERO";
+    public static final String DOBCERO = "00";
+    public static final String POSTCENT = "/100";
+    public static final int ZERO = 0;
+    public static final int ONE_PIECE = 1;
+    public static final int TEN = 10;
+    public static final int CASINO = 29;
+    
+    public static ByteArrayOutputStream genQR(final String rfcEmisor, final String rfcReceptor,
+            final BigDecimal total, final String uuid) throws VisException {
+        try {
+            final BitMatrix bitMatrix = new QRCodeWriter().encode(
+                    VisorPDFUtil.genCadQR(rfcEmisor, rfcReceptor, total, uuid), BarcodeFormat.QR_CODE, 150, 150);
+            final ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(bitMatrix, "png", stream);
+            return stream;
+        } catch (WriterException | IOException wexpo) {
+            throw new VisException(wexpo);
+        }
+    }
+    
+    public static String genCadQR(final String rfcEmisor, final String rfcReceptor,
+            final BigDecimal total, final String uuid) {
+        final StringBuilder cadena = new StringBuilder();
+        cadena.append("?re=");
+        cadena.append(rfcEmisor);
+        cadena.append("&rr=");
+        cadena.append(rfcReceptor);
+        cadena.append("&tt=");
+        cadena.append(total.setScale(6, RoundingMode.CEILING));
+        cadena.append("&id=");
+        cadena.append(uuid);
+        return cadena.toString();
+    }
+}

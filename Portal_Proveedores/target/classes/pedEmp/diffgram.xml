@@ -1,0 +1,10 @@
+<diffgr:diffgram xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:diffgr="urn:schemas-microsoft-com:xml-diffgram-v1">
+	<NewDataSet xmlns="">
+		<RcvControl diffgr:id="RcvControl1" msdata:rowOrder="0" diffgr:hasChanges="inserted">
+			<Patente>{0}</Patente>
+			<Aduana>{1}</Aduana>
+			<Archivo>{2}</Archivo>
+			<Clave>{3}</Clave>
+		</RcvControl>
+	</NewDataSet>
+</diffgr:diffgram>

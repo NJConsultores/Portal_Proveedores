@@ -1,0 +1,20 @@
+///*
+// * To change this license header, choose License Headers in Project Properties.
+// * To change this template file, choose Tools | Templates
+// * and open the template in the editor.
+// */
+//
+//package com.infra.factura.service;
+//
+//import java.util.List;
+//import com.infra.factura.dto.FeCertificadoSat;
+//
+///**
+// *
+// * @author rlagunas
+// */
+//public interface CertificadoSatService {
+//    public List<FeCertificadoSat> obtenerCertificados(String noSerie, String rfc, long inicio, long total);
+//    public Long obtenerTotalCertificados(String noSerie, String rfc);
+//    
+//}

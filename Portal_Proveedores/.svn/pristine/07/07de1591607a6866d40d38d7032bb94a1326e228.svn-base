@@ -1,0 +1,273 @@
+/*
+ *  Copyright 2010 BigData.mx
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+package com.infra.factura.bigdata.sat.cfd;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigInteger;
+import java.net.URL;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
+
+import javax.xml.XMLConstants;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.util.JAXBSource;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
+import com.infra.factura.bigdata.sat.common.NamespacePrefixMapperImpl;
+import com.infra.factura.bigdata.sat.common.URIResolverImpl;
+import com.infra.factura.bigdata.sat.security.KeyLoader;
+import com.infra.factura.business.cfd.ii.schema.Comprobante;
+import com.infra.factura.business.common.GenericCFD;
+import com.infra.factura.business.schema.util.StringAndInputstreamUtil;
+import com.infra.factura.business.validation.FeValidadorCFDBaseBusiness.CFDErrorHandler;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDVersion;
+
+import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.xml.sax.ErrorHandler;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
+public final class CFDv2_2 extends GenericCFD {
+
+	public static final ImmutableMap<String, String> PREFIXES = ImmutableMap
+			.of(XMLConstants.W3C_XML_SCHEMA_NS_URI, "xsi",
+					CFD_2_NAMESPACE, "");
+
+	private final Map<String, String> localPrefixes = Maps.newHashMap(PREFIXES);
+
+	public CFDv2_2(String xmlString, String... contexts) throws Exception {
+		super(CFDVersion.CFDv2_2, xmlString, contexts);
+	}
+
+	public CFDv2_2(Comprobante comprobante, String... contexts) throws Exception {
+		super(comprobante, contexts);
+		version = CFDVersion.CFDv2_2;
+	}
+
+	public void addNamespace(String uri, String prefix) {
+		localPrefixes.put(uri, prefix);
+	}
+
+	public void setTransformerFactory(TransformerFactory tf) {
+		this.tf = tf;
+		tf.setURIResolver(new URIResolverImpl());
+	}
+
+	public void sellar(PrivateKey key, X509Certificate cert) throws Exception {
+		cert.checkValidity();
+		String signature = getSignature(key);
+		((Comprobante) document).setSello(signature);
+		byte[] bytes = cert.getEncoded();
+		Base64 b64 = new Base64(-1);
+		String certStr = b64.encodeToString(bytes);
+		((Comprobante) document).setCertificado(certStr);
+		BigInteger bi = cert.getSerialNumber();
+		((Comprobante) document).setNoCertificado(new String(bi.toByteArray()));
+	}
+
+	public Comprobante sellarComprobante(PrivateKey key, X509Certificate cert)
+			throws Exception {
+		sellar(key, cert);
+		return getComprobante();
+	}
+
+	public void validar() throws Exception {
+		validar(null);
+	}
+
+	public void validar(ErrorHandler handler) throws Exception {
+		SchemaFactory sf = SchemaFactory
+				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		 Source[] source = {
+		          new StreamSource(getClass().getResource(XSDv2_2).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_ECC_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_DONAT2_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_DIVISAS_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_ECB_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_IMPLOCAL_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_PSGCFDSP_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_LEYENDAS_FISCALES_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_PFIC_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_TURISTAPASAJEROEXTRANJERO_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_DETALLISTA_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_IEDU_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_VENTA_VEHICULOS_XSD11).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_PSGECFD_XSD).openStream())
+		          new StreamSource(new URL(COMPLEMENTO_TERCEROS11_XSD).openStream())
+		          };
+		Schema schema = sf.newSchema(source);
+		Validator validator = schema.newValidator();
+		if (handler != null) {
+			validator.setErrorHandler(handler);
+		}
+		validator.validate(new JAXBSource(context, document));
+	}
+
+	public void verificar(ErrorHandler handler) throws Exception {
+		String certStr = ((Comprobante) document).getCertificado();
+		if (null == certStr) {
+			((CFDErrorHandler)handler).registraErrorValidacion("validacion-058");
+		}else{
+			Base64 b64 = new Base64();
+			byte[] cbs = b64.decode(certStr);
+			X509Certificate cert = KeyLoader
+					.loadX509Certificate(new ByteArrayInputStream(cbs));
+			verificar(cert, handler);
+		}
+	}
+
+	public void verificar(Certificate cert, ErrorHandler handler) throws Exception {
+		String sigStr = ((Comprobante) document).getSello();
+		Base64 b64 = new Base64();
+		byte[] signature = b64.decode(sigStr);
+		byte[] bytes = getOriginalBytes(XSLTv2_2);
+		boolean md5 = true;
+		if (getYear() < 2011) {
+			Signature sig = Signature.getInstance("MD5withRSA");
+			sig.initVerify(cert);
+			sig.update(bytes);
+			try {
+				boolean bool = sig.verify(signature);
+				if (!bool) {
+					((CFDErrorHandler)handler).registraErrorValidacion("validacion-057");
+				}
+			} catch (SignatureException e) {
+				// Not MD5
+				md5 = false;
+			}
+		}
+		if (getYear() > 2010 || !md5) {
+			Signature sig = Signature.getInstance("SHA1withRSA", BouncyCastleProvider.PROVIDER_NAME);
+			sig.initVerify(cert);
+			sig.update(bytes);
+			boolean bool = sig.verify(signature);
+			if (!bool) {
+				((CFDErrorHandler)handler).registraErrorValidacion("validacion-057");
+			}
+		}
+	}
+
+	public void guardar(OutputStream out) throws Exception {
+		Marshaller m = context.createMarshaller();
+		m.setProperty("com.sun.xml.bind.namespacePrefixMapper",
+				new NamespacePrefixMapperImpl(localPrefixes));
+		m.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+		m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+		m.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, CFD_2_NAMESPACE + " "
+				+ URL_CFDV2_2_XSD);
+		byte[] xmlHeaderBytes = XML_HEADER.getBytes("UTF8");
+		out.write(xmlHeaderBytes);
+		m.marshal(document, out);
+	}
+
+	public String getCadenaOriginal() throws Exception {
+		byte[] bytes = getOriginalBytes(XSLTv2_2);
+		return new String(bytes, "UTF8");
+	}
+
+	public static Comprobante newComprobante(String xmlString) throws Exception {
+		xmlString = StringAndInputstreamUtil.convertUnicodeEscape(xmlString);
+		return (Comprobante) load(CFDVersion.CFDv2_2, xmlString);
+	}
+
+	public static Comprobante newComprobanteForPDF(String xmlString) throws Exception {
+		return (Comprobante) load(CFDVersion.CFDv2_2, xmlString);
+	}
+
+	String getSignature(PrivateKey key) throws Exception {
+		byte[] bytes = getOriginalBytes(XSDv2_2);
+		byte[] signed;
+		String alg = getDigestAlgorithm();
+		Signature sig = Signature.getInstance(alg);
+		sig.initSign(key);
+		sig.update(bytes);
+		signed = sig.sign();
+		Base64 b64 = new Base64(-1);
+		return b64.encodeToString(signed);
+	}
+
+	private Comprobante getComprobante() throws Exception {
+		return (Comprobante) copy(document, context);
+	}
+
+	private String getDigestAlgorithm() {
+		return (getYear() > 2010) ? "SHA1withRSA" : "MD5withRSA";
+	}
+
+	private int getYear() {
+		Date date = ((Comprobante) document).getFecha();
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		return c.get(Calendar.YEAR);
+	}
+
+	public void validar(InputStream inputStream, ErrorHandler handler)
+			throws Exception {
+		SchemaFactory sf = SchemaFactory
+				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		 Source[] source = {
+		          new StreamSource(getClass().getResource(XSDv2_2).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_ECC_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_DONAT2_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_DIVISAS_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_ECB_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_IMPLOCAL_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_PSGCFDSP_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_LEYENDAS_FISCALES_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_PFIC_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_TURISTAPASAJEROEXTRANJERO_XSD).openStream()),
+		          new StreamSource(new URL(COMPLEMENTO_DETALLISTA_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_IEDU_XSD).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_VENTA_VEHICULOS_XSD11).openStream()),
+//		          new StreamSource(new URL(COMPLEMENTO_PSGECFD_XSD).openStream())
+		          new StreamSource(new URL(COMPLEMENTO_TERCEROS11_XSD).openStream())
+		          };
+		Schema schema = sf.newSchema(source);
+		Validator validator = schema.newValidator();
+		if (handler != null) {
+			validator.setErrorHandler(handler);
+		}
+		try {
+			validator.validate(new StreamSource(inputStream));
+		} finally {
+			inputStream.close();
+		}
+	}
+
+	public void validar(String xmlString, ErrorHandler handler)
+			throws Exception {
+		InputStream inputStream = StringAndInputstreamUtil
+				.convertStringToStream(xmlString);
+		validar(inputStream, handler);
+	}
+
+}

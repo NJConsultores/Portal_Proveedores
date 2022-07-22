@@ -1,0 +1,1267 @@
+package com.infra.factura.business.validation;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
+import org.jdom.Attribute;
+import org.jdom.Document;
+import org.jdom.input.JDOMParseException;
+import org.jdom.input.SAXBuilder;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.xml.sax.SAXException;
+
+import com.infra.cliente.addenda.common.APK;
+import com.infra.cliente.addenda.dto.FeAddendaDto;
+import com.infra.cliente.addenda.dto.FeAddendaPedimentosDto;
+import com.infra.core.model.UsuarioWS;
+import com.infra.factura.bigdata.sat.cfdi.CFDv3_2;
+import com.infra.factura.bigdata.sat.cfdi.CFDv3_3;
+import com.infra.factura.bigdata.sat.security.KeyLoader;
+import com.infra.factura.business.common.GenericCFD;
+import com.infra.factura.business.schema.util.StringAndInputstreamUtil;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDEstatus;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDOrigen;
+import com.infra.factura.business.validation.util.FeConstantesValidacion.CFDVersion;
+import com.infra.factura.dto.FeErrorValidacionDto;
+import com.infra.factura.dto.FeFacturaDto;
+import com.infra.factura.dto.FeResultadoValidaCFDDto;
+import com.infra.factura.dto.RespuestaEnvioMasivoDto;
+import com.infra.factura.exception.UnexpectedRuntimeException;
+import com.infra.factura.exception.base.SRFEBaseException;
+import com.infra.factura.util.ConstantesGenerales;
+import com.infra.factura.util.FacturaUtil;
+import com.infra.factura.util.FeConstantes;
+import com.infra.factura.util.FeConstantes.TipoProveedor;
+import com.infra.factura.util.FechaUtil;
+
+@Component
+@Scope("prototype")
+public class FeValidadorCFDAgenteAduanalBusiness extends FeValidadorCFDAgenteAduanalBaseBusiness {
+
+	// public RespuestaEnvioMasivoDto validaFacturasElectronicas(CFDOrigen
+	// origen, List<HashMap<String, byte[]>> archivos,
+	// UsuarioWS usuario, RFCReceptor sociedadReceptor, String noPlanta, Locale
+	// locale) {
+	// this.origen = origen;
+	// this.locale = locale;
+	// RespuestaEnvioMasivoDto respuesta = null;
+	// HashMap<String, String> validaciones =
+	// iniciarPrimerasValidaciones(archivos, sociedadReceptor, usuario);
+	//
+	// respuesta = validaZipVacio(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaNoHayArchivos(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaNoHayArchivoPDF(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaNoHayArchivoXML(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaRfcReceptorDistinto(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaCoincidaRfcReceptor(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaHayMasAddendas(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaEsProveedorAgenteAduanal(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaHayExcepcion(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaNoHayAddenda(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaXMLs(archivos, usuario, noPlanta, locale);
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	//
+	// validaciones = null;
+	//
+	// return respuesta;
+	// }
+
+	// public RespuestaEnvioMasivoDto
+	// validaFacturasElectronicasForwarder(CFDOrigen origen,
+	// List<HashMap<String, byte[]>> archivos, UsuarioWS usuario, RFCReceptor
+	// sociedadReceptor,
+	// FeProveedorDto proveedor, Locale locale) {
+	// this.origen = origen;
+	// this.locale = locale;
+	// RespuestaEnvioMasivoDto respuesta = null;
+	// HashMap<String, String> validaciones =
+	// iniciarPrimerasValidacionesForwarder(archivos, sociedadReceptor, usuario,
+	// proveedor);
+	//
+	// respuesta = validaZipVacio(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaNoHayArchivos(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaNoHayArchivoPDF(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaNoHayArchivoXML(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaRfcReceptorDistinto(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaCoincidaRfcReceptor(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaHayProveedorForwarders(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaEsProveedorAgenteAduanal(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaHayExcepcion(validaciones);
+	//
+	// if (!respuesta.isError()) {
+	// respuesta = validaXMLsForwarder(archivos, usuario, locale);
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+	//
+	// return respuesta;
+	// }
+
+	// private HashMap<String, String>
+	// iniciarPrimerasValidaciones(List<HashMap<String, byte[]>> archivos,
+	// RFCReceptor sociedadReceptor, UsuarioWS usuario) {
+	// HashMap<String, String> respuesta = new HashMap<String, String>();
+	// com.infra.factura.business.cfdi.ii.schema.Comprobante
+	// comprobanteV3_2 = null;
+	// String rfcReceptor = null;
+	// String xmlAddenda = null;
+	// String xmlAddendaAux = null;
+	// ByteArrayInputStream iosXML = null;
+	// String xmlStr = null;
+	// int contadorAdeenda = 0;
+	// String nombre = null;
+	// boolean agenteAduanalEncontrado = false;
+	//
+	// if (archivos == null || archivos.size() == 0) {
+	// registraError("validacion-082");
+	//
+	// respuesta.put(FeConstantes.VALIDACION_ZIP_VACIO, "");
+	// } else {
+	// for (HashMap<String, byte[]> factura : archivos) {
+	// nombre = new String(factura.get(FeConstantes.NOMBRE_ARCHIVO));
+	//
+	// if (factura.get(FeConstantes.ARCHIVO_TIPO_XML) == null
+	// && factura.get(FeConstantes.ARCHIVO_TIPO_PDF) == null) {
+	// registraError("validacion-078", nombre);
+	// respuesta.put(FeConstantes.VALIDACION_SIN_ARCHIVOS_XML_PDF, nombre);
+	//
+	// break;
+	// } else if (factura.get(FeConstantes.ARCHIVO_TIPO_XML) != null
+	// && factura.get(FeConstantes.ARCHIVO_TIPO_PDF) == null) {
+	// registraError("validacion-079", nombre + ".xml");
+	// respuesta.put(FeConstantes.VALIDACION_SIN_ARCHIVO_PDF, nombre);
+	//
+	// break;
+	// } else if (factura.get(FeConstantes.ARCHIVO_TIPO_XML) == null
+	// && factura.get(FeConstantes.ARCHIVO_TIPO_PDF) != null) {
+	// registraError("validacion-080", nombre + ".pdf");
+	// respuesta.put(FeConstantes.VALIDACION_SIN_ARCHIVO_XML, nombre);
+	//
+	// break;
+	// }
+	//
+	// try {
+	// iosXML = new
+	// ByteArrayInputStream(factura.get(FeConstantes.ARCHIVO_TIPO_XML));
+	// xmlStr =
+	// StringAndInputstreamUtil.convertStreamToStringUnicodeEscape(iosXML);
+	//
+	// if (xmlStr != null) {
+	// xmlStr = xmlStr.trim();
+	// xmlStr = xmlStr.replaceAll("\r\n", " ");
+	// xmlStr = xmlStr.replaceAll("\n", " ");
+	// xmlStr = xmlStr.replaceAll("\r", " ");
+	// xmlStr = xmlStr.replaceAll("\t", " ");
+	// }
+	//
+	// comprobanteV3_2 = CFDv3_2.newComprobante(xmlStr);
+	//
+	// if (rfcReceptor == null) {
+	// rfcReceptor = comprobanteV3_2.getReceptor().getRfc();
+	// } else if
+	// (!rfcReceptor.equalsIgnoreCase(comprobanteV3_2.getReceptor().getRfc())) {
+	// registraError("validacion-081");
+	// respuesta.put(FeConstantes.VALIDACION_RFC_RECEPTOR_DISTINTO, nombre +
+	// ".xml");
+	//
+	// break;
+	// }
+	//
+	// if (!rfcReceptor.equalsIgnoreCase(sociedadReceptor.getClave())) {
+	// registraError("validacion-085");
+	// respuesta.put(FeConstantes.VALIDACION_RFC_RECEPTOR_NO_COINCIDE, nombre +
+	// ".xml");
+	//
+	// break;
+	// }
+	//
+	// xmlAddendaAux = FacturaUtil.extraerPedimentos(xmlStr);
+	// contadorAdeenda += xmlAddendaAux != null ? 1 : 0;
+	//
+	// if (contadorAdeenda > 1) {
+	// registraError("validacion-087");
+	// respuesta.put(FeConstantes.VALIDACION_MAS_ADDENDAS, nombre + ".xml");
+	//
+	// break;
+	// }
+	//
+	// if (!agenteAduanalEncontrado && contadorAdeenda == 1) {
+	// agenteAduanalEncontrado = true;
+	// xmlAddenda = xmlAddendaAux;
+	// this.rfcProveedor = comprobanteV3_2.getEmisor().getRfc();
+	// factura.put(FeConstantes.RFC_AGENTE_ADUANAL,
+	// this.rfcProveedor.getBytes());
+	//
+	// }
+	// } catch (Exception e) {
+	// final UnexpectedRuntimeException unexpectedRuntimeException = new
+	// UnexpectedRuntimeException(e);
+	// unexpectedRuntimeException.logException();
+	// registraError("validacion-014", "",
+	// unexpectedRuntimeException.getExceptionInfo().getExceptionID()
+	// + ". " + (e.getMessage() != null ? e.getMessage() : ""));
+	// respuesta.put(FeConstantes.VALIDACION_EXCEPCION, nombre + ".xml");
+	//
+	// break;
+	// } finally {
+	// iosXML = null;
+	// xmlStr = null;
+	// }
+	// }
+	// }
+	//
+	// if (errorCount == 0) {
+	// if (xmlAddenda == null) {
+	// registraError("validacion-086");
+	// respuesta.put(FeConstantes.VALIDACION_SIN_ADDENDA, "");
+	// } else {
+	// for (HashMap<String, byte[]> factura : archivos) {
+	// factura.put(FeConstantes.XML_ADDENDA, xmlAddenda.getBytes());
+	// }
+	// }
+	// }
+	//
+	// comprobanteV3_2 = null;
+	// rfcReceptor = null;
+	// xmlAddenda = null;
+	// xmlAddendaAux = null;
+	// iosXML = null;
+	// xmlStr = null;
+	// nombre = null;
+	//
+	// return respuesta;
+	// }
+
+	// private HashMap<String, String>
+	// iniciarPrimerasValidacionesForwarder(List<HashMap<String, byte[]>>
+	// archivos,
+	// RFCReceptor sociedadReceptor, UsuarioWS usuario, FeProveedorDto
+	// proveedor) {
+	// HashMap<String, String> respuesta = new HashMap<String, String>();
+	// com.infra.factura.business.cfdi.ii.schema.Comprobante
+	// comprobanteV3_2 = null;
+	// String rfcReceptor = null;
+	// String rfcEmisor = null;
+	// ByteArrayInputStream iosXML = null;
+	// String xmlStr = null;
+	// String nombre = null;
+	// boolean agenteAduanalEncontrado = false;
+	//
+	// if (archivos == null || archivos.size() == 0) {
+	// registraError("validacion-082");
+	//
+	// respuesta.put(FeConstantes.VALIDACION_ZIP_VACIO, "");
+	// } else {
+	// for (HashMap<String, byte[]> factura : archivos) {
+	// nombre = new String(factura.get(FeConstantes.NOMBRE_ARCHIVO));
+	//
+	// if (factura.get(FeConstantes.ARCHIVO_TIPO_XML) == null
+	// && factura.get(FeConstantes.ARCHIVO_TIPO_PDF) == null) {
+	// registraError("validacion-078", nombre);
+	// respuesta.put(FeConstantes.VALIDACION_SIN_ARCHIVOS_XML_PDF, nombre);
+	//
+	// break;
+	// } else if (factura.get(FeConstantes.ARCHIVO_TIPO_XML) != null
+	// && factura.get(FeConstantes.ARCHIVO_TIPO_PDF) == null) {
+	// registraError("validacion-079", nombre + ".xml");
+	// respuesta.put(FeConstantes.VALIDACION_SIN_ARCHIVO_PDF, nombre);
+	//
+	// break;
+	// } else if (factura.get(FeConstantes.ARCHIVO_TIPO_XML) == null
+	// && factura.get(FeConstantes.ARCHIVO_TIPO_PDF) != null) {
+	// registraError("validacion-080", nombre + ".pdf");
+	// respuesta.put(FeConstantes.VALIDACION_SIN_ARCHIVO_XML, nombre);
+	//
+	// break;
+	// }
+	//
+	// try {
+	// iosXML = new
+	// ByteArrayInputStream(factura.get(FeConstantes.ARCHIVO_TIPO_XML));
+	// xmlStr =
+	// StringAndInputstreamUtil.convertStreamToStringUnicodeEscape(iosXML);
+	//
+	// if (xmlStr != null) {
+	// xmlStr = xmlStr.trim();
+	// xmlStr = xmlStr.replaceAll("\r\n", " ");
+	// xmlStr = xmlStr.replaceAll("\n", " ");
+	// xmlStr = xmlStr.replaceAll("\r", " ");
+	// xmlStr = xmlStr.replaceAll("\t", " ");
+	// }
+	//
+	// comprobanteV3_2 = CFDv3_2.newComprobante(xmlStr);
+	// rfcEmisor = comprobanteV3_2.getEmisor().getRfc();
+	//
+	// if (rfcReceptor == null) {
+	// rfcReceptor = comprobanteV3_2.getReceptor().getRfc();
+	// } else if
+	// (!rfcReceptor.equalsIgnoreCase(comprobanteV3_2.getReceptor().getRfc())) {
+	// registraError("validacion-081");
+	// respuesta.put(FeConstantes.VALIDACION_RFC_RECEPTOR_DISTINTO, nombre +
+	// ".xml");
+	//
+	// break;
+	// }
+	//
+	// if (!rfcReceptor.equalsIgnoreCase(sociedadReceptor.getClave())) {
+	// registraError("validacion-085");
+	// respuesta.put(FeConstantes.VALIDACION_RFC_RECEPTOR_NO_COINCIDE, nombre +
+	// ".xml");
+	//
+	// break;
+	// }
+	//
+	// if (!agenteAduanalEncontrado && proveedor.getRfc().equals(rfcEmisor)) {
+	// agenteAduanalEncontrado = true;
+	// this.rfcProveedor = rfcEmisor;
+	// factura.put(FeConstantes.RFC_AGENTE_ADUANAL,
+	// this.rfcProveedor.getBytes());
+	//
+	// } else if (agenteAduanalEncontrado &&
+	// proveedor.getRfc().equals(rfcEmisor)) {
+	// registraError("validacion-091");
+	// respuesta.put(FeConstantes.VALIDACION_MAS_PROVEEDOR_FORWARDER, nombre +
+	// ".xml");
+	//
+	// break;
+	// }
+	// } catch (Exception e) {
+	// final UnexpectedRuntimeException unexpectedRuntimeException = new
+	// UnexpectedRuntimeException(e);
+	// unexpectedRuntimeException.logException();
+	// registraError("validacion-014", "",
+	// unexpectedRuntimeException.getExceptionInfo().getExceptionID()
+	// + ". " + (e.getMessage() != null ? e.getMessage() : ""));
+	// respuesta.put(FeConstantes.VALIDACION_EXCEPCION, nombre + ".xml");
+	//
+	// break;
+	// } finally {
+	// iosXML = null;
+	// xmlStr = null;
+	// }
+	// }
+	// }
+	//
+	// return respuesta;
+	// }
+
+	private RespuestaEnvioMasivoDto validaZipVacio(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_ZIP_VACIO);
+	}
+
+	private RespuestaEnvioMasivoDto validaNoHayArchivos(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_SIN_ARCHIVOS_XML_PDF);
+	}
+
+	private RespuestaEnvioMasivoDto validaNoHayArchivoPDF(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_SIN_ARCHIVO_PDF);
+	}
+
+	private RespuestaEnvioMasivoDto validaNoHayArchivoXML(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_SIN_ARCHIVO_XML);
+	}
+
+	private RespuestaEnvioMasivoDto validaRfcReceptorDistinto(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_RFC_RECEPTOR_DISTINTO);
+	}
+
+	private RespuestaEnvioMasivoDto validaCoincidaRfcReceptor(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_RFC_RECEPTOR_NO_COINCIDE);
+	}
+
+	private RespuestaEnvioMasivoDto validaHayMasAddendas(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_MAS_ADDENDAS);
+	}
+
+	private RespuestaEnvioMasivoDto validaHayProveedorForwarders(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_MAS_PROVEEDOR_FORWARDER);
+	}
+
+	private RespuestaEnvioMasivoDto validaEsProveedorAgenteAduanal(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_NO_ES_PROVEEDOR_AGENTE_ADUANAL);
+	}
+
+	private RespuestaEnvioMasivoDto validaHayExcepcion(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_EXCEPCION);
+	}
+
+	private RespuestaEnvioMasivoDto validaNoHayAddenda(HashMap<String, String> validaciones) {
+		return valida(validaciones, FeConstantes.VALIDACION_SIN_ADDENDA);
+	}
+
+	private RespuestaEnvioMasivoDto valida(HashMap<String, String> validaciones, String idValidacion) {
+		RespuestaEnvioMasivoDto resuesta = null;
+		String nombre = null;
+		boolean error = false;
+
+		if (validaciones != null) {
+			nombre = validaciones.get(idValidacion);
+			error = nombre != null;
+		} else {
+			error = false;
+		}
+
+		resuesta = crearRespuesta(error, nombre);
+		nombre = null;
+
+		return resuesta;
+	}
+
+	private RespuestaEnvioMasivoDto crearRespuesta(boolean error, String nombre) {
+		RespuestaEnvioMasivoDto resuesta = new RespuestaEnvioMasivoDto();
+		FeFacturaDto facturaDto = new FeFacturaDto();
+		FeResultadoValidaCFDDto resultado = new FeResultadoValidaCFDDto();
+		List<FeResultadoValidaCFDDto> resultados = new ArrayList<FeResultadoValidaCFDDto>();
+
+		resuesta = new RespuestaEnvioMasivoDto();
+		facturaDto = new FeFacturaDto();
+		resultado = new FeResultadoValidaCFDDto();
+		resultados = new ArrayList<FeResultadoValidaCFDDto>();
+
+		facturaDto.setNombreArchivo(nombre);
+		resultado.setFactura(facturaDto);
+		resultado.setErrores(errors);
+		resultados.add(resultado);
+		resuesta.setError(error);
+		resuesta.setResultados(resultados);
+
+		facturaDto = null;
+		resultado = null;
+		resultados = null;
+
+		return resuesta;
+	}
+
+	public RespuestaEnvioMasivoDto validaXMLs(List<HashMap<String, byte[]>> archivos, UsuarioWS usuario,
+			String noPlanta, Locale locale) {
+		RespuestaEnvioMasivoDto respuesta = new RespuestaEnvioMasivoDto();
+		InputStream xml = null;
+		FeFacturaDto facturaDto = null;
+		List<FeResultadoValidaCFDDto> resultados = new ArrayList<FeResultadoValidaCFDDto>();
+		String nombre = null;
+		String xmlAddenda = null;
+		String xmlOriginal = null;
+		String xmlNuevo = null;
+		boolean esAgenteAduanal = false;
+
+		for (HashMap<String, byte[]> factura : archivos) {
+			xml = new ByteArrayInputStream(factura.get(FeConstantes.ARCHIVO_TIPO_XML));
+
+			try {
+				xmlOriginal = StringAndInputstreamUtil.convertStreamToStringUnicodeEscape(xml);
+				nombre = new String(factura.get(FeConstantes.NOMBRE_ARCHIVO));
+				xmlAddenda = factura.get(FeConstantes.XML_ADDENDA) == null ? null
+						: new String(factura.get(FeConstantes.XML_ADDENDA));
+				xmlNuevo = FacturaUtil.agregarAddendaAgenteAduanal(xmlOriginal, xmlAddenda);
+				esAgenteAduanal = factura.get(FeConstantes.RFC_AGENTE_ADUANAL) != null;
+				xml = new ByteArrayInputStream(xmlNuevo.getBytes("UTF-8"));
+
+				reset();
+				validaFacturaElectronica(origen, xml, null, xmlAddenda, usuario, locale);
+
+				if (feResultadoValidaCFDDto.getFactura() == null) {
+					facturaDto = new FeFacturaDto();
+
+					feResultadoValidaCFDDto.setFactura(facturaDto);
+				}
+
+				feResultadoValidaCFDDto.getFactura().setAgenteAduanal(esAgenteAduanal);
+				feResultadoValidaCFDDto.getFactura().setIdFacturaAduanal(esAgenteAduanal ? idFacturaAduanal : 0);
+				feResultadoValidaCFDDto.getFactura().setPlanta(esAgenteAduanal ? noPlanta : null);
+				feResultadoValidaCFDDto.getFactura().setNombreArchivo(nombre + ".xml");
+
+				try {
+					if (feResultadoValidaCFDDto.getFactura().getIdFactura() > 0) {
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+				if (feResultadoValidaCFDDto.isValido() && feResultadoValidaCFDDto.isAceptada()) {
+					feResultadoValidaCFDDto.getFactura().setPdfFactura(factura.get(FeConstantes.ARCHIVO_TIPO_PDF));
+					feResultadoValidaCFDDto.getFactura().setPdfFirmado(null);
+					resultados.add(feResultadoValidaCFDDto);
+				} else {
+					resultados.clear();
+					resultados.add(feResultadoValidaCFDDto);
+					respuesta.setError(true);
+					respuesta.setResultados(resultados);
+
+					return respuesta;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+				facturaDto = new FeFacturaDto();
+				unexpectedRuntimeException.logException();
+				registraError("validacion-001", unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+						+ (e.getMessage() != null ? e.getMessage() : ""));
+
+				facturaDto.setNombreArchivo(nombre + ".xml");
+				feResultadoValidaCFDDto.setFactura(facturaDto);
+				resultados.clear();
+				resultados.add(feResultadoValidaCFDDto);
+				respuesta.setError(true);
+				respuesta.setResultados(resultados);
+
+				return respuesta;
+			}
+		}
+
+		respuesta.setError(false);
+		respuesta.setResultados(resultados);
+
+		xml = null;
+		facturaDto = null;
+		resultados = null;
+		nombre = null;
+		xmlAddenda = null;
+		xmlOriginal = null;
+		xmlNuevo = null;
+
+		return respuesta;
+	}
+
+	public RespuestaEnvioMasivoDto validaXMLsForwarder(List<HashMap<String, byte[]>> archivos, UsuarioWS usuario,
+			Locale locale) {
+		RespuestaEnvioMasivoDto respuesta = new RespuestaEnvioMasivoDto();
+		InputStream xml = null;
+		FeFacturaDto facturaDto = null;
+		List<FeResultadoValidaCFDDto> resultados = new ArrayList<FeResultadoValidaCFDDto>();
+		String nombre = null;
+		boolean esAgenteAduanal = false;
+
+		for (HashMap<String, byte[]> factura : archivos) {
+			xml = new ByteArrayInputStream(factura.get(FeConstantes.ARCHIVO_TIPO_XML));
+
+			try {
+				nombre = new String(factura.get(FeConstantes.NOMBRE_ARCHIVO));
+				esAgenteAduanal = factura.get(FeConstantes.RFC_AGENTE_ADUANAL) != null;
+
+				reset();
+				validaFacturaElectronica(origen, xml, null, null, usuario, locale);
+
+				if (feResultadoValidaCFDDto.getFactura() == null) {
+					facturaDto = new FeFacturaDto();
+
+					feResultadoValidaCFDDto.setFactura(facturaDto);
+				}
+
+				feResultadoValidaCFDDto.getFactura().setAgenteAduanal(esAgenteAduanal);
+				feResultadoValidaCFDDto.getFactura().setNombreArchivo(nombre + ".xml");
+
+				if (feResultadoValidaCFDDto.isValido() && !feResultadoValidaCFDDto.isAceptada()
+						&& feResultadoValidaCFDDto.isEditarAddenda()) {
+					feResultadoValidaCFDDto.getFactura().setPdfFactura(factura.get(FeConstantes.ARCHIVO_TIPO_PDF));
+					feResultadoValidaCFDDto.getFactura().setPdfFirmado(null);
+					resultados.add(feResultadoValidaCFDDto);
+				} else {
+					resultados.clear();
+					resultados.add(feResultadoValidaCFDDto);
+					respuesta.setError(true);
+					respuesta.setResultados(resultados);
+
+					return respuesta;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+				facturaDto = new FeFacturaDto();
+				unexpectedRuntimeException.logException();
+				registraError("validacion-001", unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+						+ (e.getMessage() != null ? e.getMessage() : ""));
+
+				facturaDto.setNombreArchivo(nombre + ".xml");
+				feResultadoValidaCFDDto.setFactura(facturaDto);
+				resultados.clear();
+				resultados.add(feResultadoValidaCFDDto);
+				respuesta.setError(true);
+				respuesta.setResultados(resultados);
+
+				return respuesta;
+			}
+		}
+
+		respuesta.setError(false);
+		respuesta.setResultados(resultados);
+
+		return respuesta;
+	}
+
+	public FeResultadoValidaCFDDto validaFacturaElectronica(CFDOrigen origen, InputStream xmlInputStream,
+			InputStream certInputStream, UsuarioWS usuario, String rfcProveedor, Locale locale) {
+		this.rfcProveedor = rfcProveedor;
+
+		return validaFacturaElectronica(origen, xmlInputStream, certInputStream, null, usuario, locale);
+	}
+
+	public FeResultadoValidaCFDDto validaFacturaElectronica(CFDOrigen origen, InputStream xmlInputStream,
+			InputStream certInputStream, String xmlAddenda, UsuarioWS usuario, Locale locale) {
+		this.origen = origen;
+		this.locale = locale;
+		String xmlString = null;
+		try {
+			xmlString = StringAndInputstreamUtil.convertStreamToStringUnicodeEscape(xmlInputStream);
+
+			if (xmlString != null) {
+				xmlString = xmlString.trim();
+				xmlString = xmlString.replaceAll("\r\n", " ");
+				xmlString = xmlString.replaceAll("\n", " ");
+				xmlString = xmlString.replaceAll("\r", " ");
+				xmlString = xmlString.replaceAll("\t", " ");
+			}
+			try {
+				if (null != certInputStream) {
+					certificate = KeyLoader.loadX509Certificate(certInputStream);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+				unexpectedRuntimeException.logException();
+				registraError("validacion-001", unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+						+ (e.getMessage() != null ? e.getMessage() : ""));
+			}
+
+			validaFacturaElectronica(xmlInputStream, xmlString, xmlAddenda, usuario);
+		} catch (IOException e) {
+			e.printStackTrace();
+			final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+			unexpectedRuntimeException.logException();
+			registraError("validacion-002", unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+					+ (e.getMessage() != null ? e.getMessage() : ""));
+			feResultadoValidaCFDDto.setValido(false);
+			feResultadoValidaCFDDto.setAceptada(false);
+			feResultadoValidaCFDDto.setErrores(errors);
+		}
+
+		return feResultadoValidaCFDDto;
+	}
+
+	private FeResultadoValidaCFDDto validaFacturaElectronica(InputStream xmlInputStream, String xmlString,
+			String xmlAddenda, UsuarioWS usuario) {
+		Calendar fechaEmision = null;
+		Calendar fechaPermitida = null;
+
+		logger.info("Validar factura electronica");
+		try {
+			if (!(xmlInputStream instanceof FileInputStream)) {
+				xmlInputStream.reset();
+			}
+		} catch (IOException e) {
+			logger.error("Error al reprocesar el InputStream del XML", e);
+		}
+		Locale.setDefault(new Locale("es", "MX"));
+		boolean isValidCfdUTF8Encoding = false;
+		GenericCFD cfd = null;
+		SAXBuilder builder = new SAXBuilder();
+		String uriNamespace = null;
+
+		if (null != xmlString) {
+			Document d = null;
+			try {
+				d = builder.build(xmlInputStream);
+				uriNamespace = d.getRootElement().getNamespace().getURI();
+				isValidCfdUTF8Encoding = true;
+			} catch (JDOMParseException e) {
+				if (e.getMessage().contains(ERROR_INVALID_ENCODING_NAME)) {
+					registraError("validacion-003");
+				} else {
+					final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+					unexpectedRuntimeException.logException();
+					registraError("validacion-004", unexpectedRuntimeException.getExceptionInfo().getExceptionID()
+							+ ". " + (e.getMessage() != null ? e.getMessage() : ""));
+				}
+				guardaFactura = false;
+			} catch (Exception e) {
+				final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+				unexpectedRuntimeException.logException();
+				registraError("validacion-005", unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+						+ (e.getMessage() != null ? e.getMessage() : ""));
+				guardaFactura = false;
+			}
+
+			if (isValidCfdUTF8Encoding) {
+				Attribute versionComprobante = null;
+				versionComprobante = d.getRootElement().getAttribute("version");
+				if (versionComprobante == null) {
+					versionComprobante = d.getRootElement().getAttribute("Version");
+				}
+				if (versionComprobante != null) {
+					if (uriNamespace != null && uriNamespace.equals(GenericCFD.CFD_2_NAMESPACE)) {
+						version = CFDVersion.getVersionByNumber(versionComprobante.getValue());
+					} else if (uriNamespace != null && uriNamespace.equals(GenericCFD.CFD_3_NAMESPACE)) {
+						version = CFDVersion.getVersionByNumber(versionComprobante.getValue());
+					}
+				} else {
+					version = CFDVersion.None;
+				}
+				try {
+					switch (version) {
+					case CFDv3_2:
+						if (isCFDv2(xmlString)) {
+							registraError("validacion-006", uriNamespace);
+							guardaFactura = false;
+						} else {
+							comprobanteV3_2 = CFDv3_2.newComprobante(xmlString);
+						}
+						break;
+					case CFDv3_3:
+						if (isCFDv2(xmlString)) {
+							registraError("validacion-006", uriNamespace);
+							guardaFactura = false;
+						} else {
+							comprobanteV3_3 = CFDv3_3.newComprobante(xmlString);
+						}
+						break;
+					default:
+						guardaFactura = false;
+						registraError("validacion-055");
+						break;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+					unexpectedRuntimeException.logException();
+					registraError("validacion-007", unexpectedRuntimeException.getExceptionInfo().getExceptionID()
+							+ ". " + (e.getMessage() != null ? e.getMessage() : ""));
+					guardaFactura = false;
+				}
+				if (null != comprobanteV3_2 || null != comprobanteV3_3) {
+					try {
+						switch (version) {
+
+						case CFDv3_2:
+							cfd = new CFDv3_2(comprobanteV3_2);
+							break;
+						case CFDv3_3:
+							cfd = new CFDv3_3(comprobanteV3_3);
+							break;
+						default:
+							break;
+						}
+					} catch (Exception e) {
+						final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+						unexpectedRuntimeException.logException();
+						registraError("validacion-008", version.name(),
+								unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+										+ (e.getMessage() != null ? e.getMessage() : ""));
+					}
+					if (null != cfd) {
+						// if(tipoDeComprobante.getValue().equalsIgnoreCase("traslado")){
+						// registraError("validacion-008",version.name(),"No se
+						// aceptan documentos tipo traslado");
+						// }
+						cfd.setXmlDocument(xmlString);
+						// if(esCFDParaClienteProspectiva(version)){
+						if (true) {// if (esCFDProveedorRegistrado(version,
+									// usuario)) {
+							if (!esComprobanteAceptado(version)) {
+								if (contieneCertificadoEmisor(xmlString)) {
+
+									SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy");
+									SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+									fechaEmision = Calendar.getInstance();
+									fechaEmision.setTime(getFecha(version));
+//									String mesesAtras = propiedadesUtil
+//											.getProperty(ConstantesGenerales.MESES_ATRAS_PERMITIDOS);
+									String mesesAtras = ConstantesGenerales.MESES_ATRAS_PERMITIDOS+"";
+									int meses = mesesAtras == null || mesesAtras.trim().isEmpty() ? -3
+											: (Integer.parseInt(mesesAtras)) * (-1);
+
+									fechaPermitida = Calendar.getInstance();
+									fechaPermitida.setTime(new Date());
+									fechaPermitida.add(Calendar.MONTH, meses);
+									fechaPermitida.set(Calendar.DATE, 1);
+									fechaPermitida.set(Calendar.HOUR_OF_DAY, 0);
+									fechaPermitida.set(Calendar.MINUTE, 0);
+									fechaPermitida.set(Calendar.SECOND, 0);
+
+									logger.debug(" ===== > Fecha límite de emisión: "
+											+ dateFormat2.format(fechaPermitida.getTime()));
+									logger.debug(" ===== > Fecha de emisión de la factura: "
+											+ dateFormat2.format(fechaEmision.getTime()));
+
+									if (Integer.parseInt(dateFormat.format(new Date())) != getAnoFactura(version)) {
+										registraError("validacion-073");
+									} else if (fechaEmision.compareTo(fechaPermitida) < 0) {
+										registraError("validacion-074", String.valueOf(meses * (-1)));
+									} else {
+										try {
+											Calendar newCalendar = Calendar.getInstance();
+											newCalendar.setTime((getFecha(version)));
+
+											Calendar newCalendarHoy = Calendar.getInstance();
+											newCalendarHoy.setTime(new Date());
+
+											if (FechaUtil.esMenor(newCalendar, newCalendarHoy)) {
+												verificarAddenda(cfd, xmlString, xmlAddenda);
+											} else {
+												registraError("validacion-075");
+											}
+										} catch (Exception e) {
+											final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(
+													e);
+											unexpectedRuntimeException.logException();
+											registraError("validacion-008", version.name(),
+													unexpectedRuntimeException.getExceptionInfo().getExceptionID()
+															+ ". " + (e.getMessage() != null ? e.getMessage() : ""));
+										}
+
+										if ((origen.equals(CFDOrigen.WEB_PORTAL) && addendaErrorCount != 0)) {
+											errorCount = 0;
+											errors.clear();
+										} else {
+											logger.debug("Validar comprobante");
+											boolean modoPrueba = ConstantesGenerales.EN_MODO_PRUEBA;
+//											runningTestMode = modoPrueba == null || modoPrueba.trim().isEmpty() ? false
+//													: Boolean.parseBoolean(modoPrueba);
+											runningTestMode = modoPrueba ;
+											validarComprobante(xmlInputStream, cfd, version);
+											if (version == CFDVersion.CFDv3_2 && errorCount == 0) {
+												verificarTimbrado(cfd, comprobanteV3_2);
+											} else if (version == CFDVersion.CFDv3_3 && errorCount == 0) {
+												verificarTimbrado(cfd, comprobanteV3_3);
+											}
+										}
+									}
+								}
+							}
+						}
+						// }
+					}
+				}
+			}
+		}
+
+		logger.debug("Procesa Resultado validacion");
+		procesaResultadoValidacion(version, cfd, usuario);
+
+		return feResultadoValidaCFDDto;
+	}
+
+	private boolean contieneCertificadoEmisor(String xmlString) {
+		boolean tieneCertificado = true;
+		if (certificate != null) {
+			tieneCertificado = true;
+		} else {
+			final Pattern pattern = Pattern
+					.compile(" certificado(\\s){0,}=(\\s){0,}[\"']" + "[0-9a-zA-Z\\\\+/=\\s&#;]{20,}" + "[\"']");
+			final Matcher matcher = pattern.matcher(xmlString.toLowerCase());
+			if (!matcher.find()) {
+				guardaFactura = false;
+				tieneCertificado = false;
+				feResultadoValidaCFDDto.setValido(true);
+				feResultadoValidaCFDDto.setTieneCertificado(false);
+				registraError("validacion-028");
+			}
+		}
+
+		return tieneCertificado;
+	}
+
+	protected void verificarAddenda(GenericCFD cfd, String xmlString, String xmlAddenda) {
+		if (tipoProveedor == TipoProveedor.Agente_Aduanal_Nacional) {
+			// verificarAddendaAgenteAduanal(cfd, xmlString, xmlAddenda);
+		} else {
+			verificarAddendaForwarder(cfd, xmlString);
+		}
+	}
+
+	// private void verificarAddendaAgenteAduanal(GenericCFD cfd, String
+	// xmlString, String xmlAddenda) {
+	// FeAddendaPedimentosDto addendaClienteDto = null;
+	// String ctaExportacion =
+	// propiedadesUtil.getProperty(ConstantesGenerales.CUENTA_EXPORTACION);
+	// String ctaImportacion =
+	// propiedadesUtil.getProperty(ConstantesGenerales.CUENTA_IMPORTACION);
+	//
+	// ctaExportacion = ctaExportacion == null ? "" : ctaExportacion.trim();
+	// ctaImportacion = ctaImportacion == null ? "" : ctaImportacion.trim();
+	//
+	// if (xmlAddenda == null || xmlAddenda.trim().isEmpty()) {
+	// xmlAddenda = FacturaUtil.extraerPedimentos(xmlString);
+	// }
+	//
+	// if (xmlAddenda == null || xmlAddenda.trim().isEmpty()) {
+	// contieneAddenda = false;
+	// registraErrorAddenda("validacion-044");
+	// } else {
+	// addendaClienteDto = new FeAddendaPedimentosDto(xmlAddenda);
+	// }
+	//
+	// if (addendaClienteDto != null) {
+	// validarXmlAddenda(addendaClienteDto, xmlAddenda);
+	//
+	// if (addendaErrorCount == 0) {
+	// if (ctaImportacion != null
+	// &&
+	// !ctaImportacion.equalsIgnoreCase(addendaClienteDto.getCuentaContableConceptos())
+	// && ctaExportacion != null
+	// &&
+	// !ctaExportacion.equalsIgnoreCase(addendaClienteDto.getCuentaContableConceptos()))
+	// {
+	// registraErrorAddenda("validacion-092");
+	// }
+	// }
+	// }
+	//
+	// feAddendaDto = addendaClienteDto;
+	// }
+
+	private void verificarAddendaForwarder(GenericCFD cfd, String xmlString) {
+		FeAddendaDto addendaClienteDto = new FeAddendaDto(version, cfd, xmlString);
+
+		switch (addendaClienteDto.getTipoCliente()) {
+		case SOC:
+			if (addendaClienteDto.getTextoCabecera() == null || addendaClienteDto.getTextoCabecera().equals("")) {
+				registraErrorAddenda("validacion-076");
+				addendaClienteDto.setValidCliente(false);
+			}
+
+			if (addendaClienteDto.getPartidas() == null || addendaClienteDto.getPartidas().isEmpty()) {
+				registraErrorAddenda("validacion-077");
+				addendaClienteDto.setValidCliente(false);
+			}
+			break;
+		case COC:
+			if ((addendaClienteDto.getNumeroReferencia() == null
+					|| addendaClienteDto.getNumeroReferencia().trim().isEmpty())
+					&& (addendaClienteDto.getNumeroFactura() == null
+							|| addendaClienteDto.getNumeroFactura().equals(""))) {
+				registraErrorAddenda("validacion-029");
+				addendaClienteDto.setValidCliente(false);
+			}
+			break;
+		default:
+			if (addendaClienteDto.isEmpty()) {
+				contieneAddenda = false;
+				registraErrorAddenda("validacion-044");
+			} else {
+				if (!addendaClienteDto.isAddendaCliente()) {
+					registraErrorAddenda("validacion-046");
+				} else {
+					if (addendaClienteDto.isInsufficientInformation()) {
+						registraErrorAddenda("validacion-047");
+					} else {
+						addendaClienteDto.setValidCliente(false);
+						registraErrorAddenda("validacion-046");// Tiene la misma
+																// estructura,
+																// pero
+																// diferentes
+																// campos
+					}
+				}
+			}
+			break;
+		}
+
+		if (!addendaClienteDto.isEmpty() && addendaClienteDto.isAddendaCliente()
+				&& addendaClienteDto.isValidCliente()) {
+			String addendaXML = null;
+			switch (version) {
+			case CFDv2_2:
+			case CFDv2:
+				if (null != xmlString) {
+					final Pattern pattern = Pattern.compile("<requestForPayment" + "(.+?)" + "</requestForPayment>");
+					final Matcher matcher = pattern.matcher(xmlString);
+					if (matcher.find()) {
+						addendaXML = xmlString.substring(matcher.start(), matcher.end());
+						addendaXML = GenericCFD.XML_HEADER + addendaXML;
+					}
+				}
+				break;
+			case CFDv3_2:
+			case CFDv3_3:
+			case CFDv3:
+				if (null != xmlString) {
+					final Pattern pattern = Pattern
+							.compile("<cfdi:requestForPayment" + "(.+?)" + "</cfdi:requestForPayment>");
+					final Matcher matcher = pattern.matcher(xmlString);
+					if (matcher.find()) {
+						addendaXML = xmlString.substring(matcher.start(), matcher.end());
+						addendaXML = GenericCFD.XML_HEADER + addendaXML;
+						addendaXML = addendaXML.replace("cfdi:", "");
+					}
+				}
+				break;
+			default:
+				break;
+			}
+			if (addendaXML != null) {
+				validarXmlAddendaForwarder(addendaClienteDto, addendaXML);
+			}
+		}
+
+		feAddendaBocarDto = addendaClienteDto;
+	}
+
+	public void validarXmlAddenda(FeAddendaPedimentosDto addendaClienteDto, String addendaXML) {
+		APK validador = new APK(addendaClienteDto.getAddendaCliente());
+		AddendaErrorHandler handler = new AddendaErrorHandler();
+
+		try {
+			validador.validar(handler);
+		} catch (Exception e) {
+			logger.error("Ocurrió un error al validar la Addenda de Pedimentos", e);
+		}
+
+		if (addendaErrorCount > 0) {
+			addendaClienteDto.setValidCliente(false);
+		}
+	}
+
+	public void validarXmlAddendaForwarder(FeAddendaDto addendaClienteDto, String addendaXML) {
+		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.XML_NS_URI);
+		Schema schema = null;
+		try {
+			schema = sf.newSchema(getClass().getResource("/xsd/addenda/addenda.xsd"));
+			Validator validator = schema.newValidator();
+			AddendaErrorHandler handler = new AddendaErrorHandler();
+			if (handler != null) {
+				validator.setErrorHandler(handler);
+			}
+			validator.validate(new StreamSource(StringAndInputstreamUtil.convertStringToStream(addendaXML)));
+		} catch (SAXException e) {
+			logger.error("Ocurrió un error al validar la Addenda", e);
+		} catch (IOException e) {
+			logger.error("Ocurrió un error al validar la Addenda", e);
+		}
+
+		if (addendaErrorCount > 0) {
+			addendaClienteDto.setValidCliente(false);
+		}
+	}
+
+	public void validarComprobante(InputStream xmlInputStream, GenericCFD cfd, CFDVersion version) {
+		try {
+			if (!(xmlInputStream instanceof FileInputStream)) {
+				xmlInputStream.reset();
+			}
+		} catch (IOException e) {
+			logger.error("Error al reprocesar el InputStream del XML", e);
+		}
+		if (!runningTestMode) {
+			validaUuidSat(version);
+
+		}
+		final CFDErrorHandler errorhandler = new CFDErrorHandler();
+		try {
+			cfd.validar(xmlInputStream, errorhandler);
+		} catch (Exception e) {
+			final UnexpectedRuntimeException unexpectedRuntimeException = new UnexpectedRuntimeException(e);
+			unexpectedRuntimeException.logException();
+			registraError("validacion-018", version.name(),
+					unexpectedRuntimeException.getExceptionInfo().getExceptionID() + ". "
+							+ (e.getMessage() != null ? e.getMessage() : ""));
+		}
+		if (errorCount == 0) {
+			feResultadoValidaCFDDto.setValido(true);
+			if (!runningTestMode) {
+				verificarSelloComprobante(cfd, errorhandler);
+			}
+		}
+	}
+
+	protected void procesaResultadoValidacion(CFDVersion version, GenericCFD cfd, UsuarioWS usuario) {
+		FeFacturaDto facturaDto = null;
+		StringWriter sw = new StringWriter();
+
+		if (errorCount == 0 && addendaErrorCount == 0) {
+			facturaDto = new FeFacturaDto(version, cfd, CFDEstatus.Rechazado);
+			facturaDto.setIdFactura(idFactura);
+			facturaDto.setIdProveedor(idProveedor);
+			facturaDto.setOrigen(origen);
+			facturaDto.setAddendaClienteAgenteAduanal(version, cfd, feAddendaDto);
+			facturaDto.setAddendaPnG(feAddendaBocarDto);
+			facturaDto.setIdEscenario(1);// Escenario Con Orden de Compra
+
+			if (tipoProveedor == TipoProveedor.Agente_Aduanal_Nacional
+					|| tipoProveedor == TipoProveedor.Forwarder_Nacional) {
+				facturaDto.setRfcEmisor(rfcProveedor);
+			}
+
+			try {
+				// XML ADDENDA
+				APK creador = new APK(feAddendaDto.getAddendaCliente());
+				creador.guardar(sw);
+				facturaDto.setXmlAddenda(sw.toString());
+				// TERMINA XML ADDENDA
+
+				if (idFactura == 0) {
+				} else {
+				}
+
+				logger.debug("ID Factura " + facturaDto.getIdFactura());
+
+				idFactura = facturaDto.getIdFactura();
+				feResultadoValidaCFDDto.setValido(true);
+				feResultadoValidaCFDDto.setAceptada(true);
+
+			} catch (Exception e) {
+				logger.error("Ocurrió un error al guardar el comprobante.", e);
+				final SRFEBaseException e1 = handleException(e);
+				registraError("validacion-053",
+						e1.getExceptionInfo().getExceptionID() + ". " + (e.getMessage() != null ? e.getMessage() : ""));
+				feResultadoValidaCFDDto.setValido(true);
+				feResultadoValidaCFDDto.setAceptada(false);
+			}
+		} else if (errorCount == 0 && addendaErrorCount != 0) {
+			facturaDto = new FeFacturaDto(version, cfd, CFDEstatus.RegistroIncompleto);// Se
+																						// modifico
+																						// el
+																						// estatus
+																						// de
+																						// Sin
+																						// Addenda
+																						// por
+																						// Registro
+																						// Incompleto
+			facturaDto.setIdFactura(idFactura);
+			facturaDto.setIdProveedor(idProveedor);
+			facturaDto.setOrigen(origen);
+			facturaDto.setAddendaClienteAgenteAduanal(version, cfd, feAddendaDto);
+			facturaDto.setAddendaPnG(feAddendaBocarDto);
+
+			if (tipoProveedor == TipoProveedor.Agente_Aduanal_Nacional
+					|| tipoProveedor == TipoProveedor.Forwarder_Nacional) {
+				facturaDto.setRfcEmisor(rfcProveedor);
+			}
+
+			try {
+				guardarFacturaRechazo(facturaDto, addendaErrors);
+				idFactura = facturaDto.getIdFactura();
+
+				feResultadoValidaCFDDto.setValido(true);
+				feResultadoValidaCFDDto.setAceptada(false);
+				feResultadoValidaCFDDto.setEditarAddenda(true);
+				if (feAddendaDto != null && feAddendaDto.isEmpty()) {
+					feResultadoValidaCFDDto.setAddendaVacia(true);
+				} else if (feAddendaDto != null && !feAddendaDto.isAddendaCliente()) {
+					feResultadoValidaCFDDto.setAddendaPnG(false);
+				} else if (feAddendaDto != null
+						&& (feAddendaDto.isInsufficientInformation() || !feAddendaDto.isValidCliente())) {
+					feResultadoValidaCFDDto.setAddendaValida(false);
+				}
+
+			} catch (Exception e) {
+				logger.error("Ocurrió un error al guardar el comprobante.", e);
+				final SRFEBaseException e1 = handleException(e);
+				registraError("validacion-054",
+						e1.getExceptionInfo().getExceptionID() + ". " + (e.getMessage() != null ? e.getMessage() : ""));
+			}
+		} else {
+			errors.addAll(addendaErrors);
+			feResultadoValidaCFDDto.setErrores(errors);
+			if (guardaFactura) {
+				facturaDto = new FeFacturaDto(version, cfd, CFDEstatus.RechazoFiscal);
+				facturaDto.setIdFactura(idFactura);
+				facturaDto.setIdProveedor(idProveedor);
+				facturaDto.setOrigen(origen);
+				facturaDto.setAddendaClienteAgenteAduanal(version, cfd, feAddendaDto);
+				facturaDto.setAddendaPnG(feAddendaBocarDto);
+
+				if (tipoProveedor == TipoProveedor.Agente_Aduanal_Nacional
+						|| tipoProveedor == TipoProveedor.Forwarder_Nacional) {
+					facturaDto.setRfcEmisor(rfcProveedor);
+				}
+
+				try {
+					guardarFacturaRechazo(facturaDto, errors);
+
+					idFactura = facturaDto.getIdFactura();
+				} catch (Exception e) {
+					logger.error("Ocurrió un error al guardar el comprobante.", e);
+					final SRFEBaseException e1 = handleException(e);
+					registraError("validacion-054", e1.getExceptionInfo().getExceptionID() + ". "
+							+ (e.getMessage() != null ? e.getMessage() : ""));
+				}
+			}
+			// notificarResultadoValidacion(CFDEstatus.RechazoFiscal, errors,
+			// usuario);
+		}
+		errors.addAll(addendaErrors);
+
+		feResultadoValidaCFDDto.setErrores(errors);
+		feResultadoValidaCFDDto.setFactura(facturaDto);
+		feResultadoValidaCFDDto.setNoProveedorSAP(noProveedorSAP);
+	}
+
+	private void guardarFacturaRechazo(FeFacturaDto f, List<FeErrorValidacionDto> errores) throws Exception {
+
+		if (errores != null) {
+			for (FeErrorValidacionDto e : errores) {
+			}
+		}
+	}
+}

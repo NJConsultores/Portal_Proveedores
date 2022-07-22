@@ -1,0 +1,16 @@
+/**
+ * GET_LISTA_OC.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis 1.4 Apr 22, 2006 (06:55:48 PDT) WSDL2Java emitter.
+ */
+
+package com.infra.cliente.ws;
+
+public interface GET_LISTA_OC extends javax.xml.rpc.Service {
+    public java.lang.String getGET_LISTA_OCAddress();
+
+    public ZFE_GET_LISTA_OC getGET_LISTA_OC() throws javax.xml.rpc.ServiceException;
+
+    public ZFE_GET_LISTA_OC getGET_LISTA_OC(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+}
